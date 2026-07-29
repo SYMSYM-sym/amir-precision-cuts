@@ -1,0 +1,25 @@
+{
+  "name": "personal-services-factory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "derive": "node scripts/derive.mjs",
+    "publish": "node scripts/index.mjs",
+    "build": "node scripts/build-blog.mjs",
+    "dry": "node scripts/index.mjs --dry-run",
+    "test": "node --test scripts/*.test.mjs",
+    "verify": "node scripts/verify-live.mjs",
+    "assets": "python3 scripts/generate-assets.py",
+    "invariants": "node scripts/assert-invariants.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.0",
+    "@xenova/transformers": "^2.17.2",
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0",
+    "marked": "^14.1.0"
+  }
+}

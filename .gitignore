@@ -1,0 +1,23 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Local preview artifacts (not part of the deployable site)
+mobile-preview.html
+mobile-stage.html
+
+# Logs / temp
+*.log
+
+node_modules/
+__pycache__/
+*.pyc
+
+# ⚠ DO NOT ignore content/articles/_embeddings.json.
+# The reference repo ignored it; that was wrong. The dashboard reads its COMMIT AGE
+# to report embedding-cache staleness, so an ignored cache makes that panel lie —
+# and CI re-embeds the whole corpus every run instead of reusing it. Commit it.
+# See 14-PORTING-NOTES.md §D.

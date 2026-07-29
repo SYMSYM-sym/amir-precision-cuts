@@ -1,0 +1,406 @@
+# REFERENCE EXAMPLE — this is the LIVE queue.yaml from the production build, captured mid-life.
+# It was seeded with 50 topics; the 33 below are what REMAINED after publishing and quarantining.
+# So: 33 entries here is correct and expected. Seed your own queue with ~50 per 02-DERIVE-BRAIN.md §4.
+#
+# Read this file for SHAPE, not content: the exact field set per topic, the `notes` angle field that
+# keeps near-neighbors apart (R13), and the header comment convention that BOTH pick-topic.mjs
+# (QUEUE_HEADER) and dashboard/lib/constants.ts must byte-match or they reformat each other (A10).
+#
+# Hyperlocal share here: 9/33 = 27% — under the <=30% cap from R13. Check yours.
+
+- slug: what-is-back-end-waxing-men
+  title: What Is Back End Waxing for Men?
+  target_keyword: what is back end waxing for men
+  secondary_keywords:
+    - back end waxing explained
+    - targeted male waxing
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links:
+    - service: back_end
+    - page: services
+  notes: Define scope plainly; link service vocabulary.
+- slug: hard-wax-vs-soft-wax-men
+  title: "Hard Wax vs Soft Wax for Men: What Matters"
+  target_keyword: hard wax vs soft wax for men
+  secondary_keywords:
+    - wax types male grooming
+    - sensitive skin waxing men
+  intent: TOF / informational
+  bucket: comparison
+  internal_links:
+    - page: faq
+    - page: aftercare
+  notes: Educational; avoid brand-specific claims.
+- slug: waxing-vs-laser-hair-removal-men
+  title: Waxing vs Laser Hair Removal for Men
+  target_keyword: waxing vs laser hair removal men
+  secondary_keywords:
+    - is laser better than waxing men
+    - mens hair removal options
+  intent: TOF / informational
+  bucket: comparison
+  internal_links:
+    - service: brazilian
+    - page: about
+  notes: Neutral comparison; wax for immediate smooth results.
+- slug: european-wax-center-vs-private-salon-men
+  title: European Wax Center vs a Private Men’s Salon
+  target_keyword: european wax center vs private salon men
+  secondary_keywords:
+    - chain waxing vs boutique men
+    - private suite waxing
+  intent: MOF / commercial
+  bucket: comparison
+  internal_links:
+    - page: about
+    - page: visit
+  notes: Focus on experience differences; respectful wording.
+- slug: ingrown-hairs-after-male-waxing
+  title: "Ingrown Hairs After Male Waxing: Prevention and Care"
+  target_keyword: ingrown hairs after male waxing
+  secondary_keywords:
+    - razor bumps vs waxing men
+    - exfoliating after male waxing
+  intent: TOF / informational
+  bucket: aftercare
+  internal_links:
+    - page: aftercare
+    - service: chest
+  notes: No medical treatment claims; hygiene and exfoliation.
+- slug: discreet-brazilian-gay-men-los-angeles
+  title: Discreet Brazilian Wax for Gay Men in Los Angeles
+  target_keyword: discreet brazilian wax for gay men los angeles
+  secondary_keywords:
+    - private mens waxing weho
+    - lgbtq affirming waxing la
+  intent: BOF / commercial
+  bucket: demographic
+  internal_links:
+    - service: brazilian
+    - page: about
+  notes: WeHo context; discretion and respect.
+- slug: best-mens-waxing-salon-los-angeles
+  title: Choosing a Men’s Waxing Salon in Los Angeles
+  target_keyword: best men's waxing salon los angeles
+  secondary_keywords:
+    - private male grooming west hollywood
+    - experienced male brazilian waxer la
+  intent: MOF / commercial
+  bucket: commercial
+  internal_links:
+    - page: about
+    - page: faq
+  notes: Avoid superlatives; criteria-based guidance.
+- slug: private-male-grooming-west-hollywood
+  title: Private Male Grooming in West Hollywood
+  target_keyword: private male grooming west hollywood
+  secondary_keywords:
+    - single suite mens salon
+    - discreet waxing weho
+  intent: BOF / commercial
+  bucket: commercial
+  internal_links:
+    - page: visit
+    - page: about
+  notes: Privacy mechanics; appointment-only.
+- slug: mens-waxing-silver-lake
+  title: "Men's Waxing Near Silver Lake: Planning Your Visit"
+  target_keyword: men's waxing silver lake
+  secondary_keywords:
+    - east side mens waxing
+    - weho salon from silver lake
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links:
+    - page: visit
+    - service: back
+  notes: Neighborhood bridge; parking and discretion.
+- slug: how-often-should-men-get-waxed
+  title: How Often Should Men Get Waxed?
+  target_keyword: how often should men get waxed
+  secondary_keywords:
+    - waxing schedule men
+    - brazilian maintenance interval
+  intent: TOF / informational
+  bucket: question
+  internal_links:
+    - page: aftercare
+    - page: faq
+  notes: 4–6 weeks framing; individual variation.
+- slug: what-to-wear-after-male-brazilian-wax
+  title: What to Wear After a Male Brazilian Wax
+  target_keyword: what to wear after a male brazilian wax
+  secondary_keywords:
+    - clothing after waxing men
+    - first wax outfit tips
+  intent: MOF / informational
+  bucket: aftercare
+  internal_links:
+    - service: brazilian
+    - page: aftercare
+  notes: Loose fabrics; friction avoidance.
+- slug: full-body-trimming-men-west-hollywood
+  title: Full-Body Trimming for Men (Hourly Service)
+  target_keyword: full body trimming for men
+  secondary_keywords:
+    - mens trimming vs waxing
+    - full body grooming men
+  intent: MOF / commercial
+  bucket: service-detail
+  internal_links:
+    - service: trimming
+    - page: services
+  notes: Hourly model; who it suits.
+- slug: arm-waxing-for-men-guide
+  title: "Arm Waxing for Men: What to Expect"
+  target_keyword: arm waxing for men
+  secondary_keywords:
+    - full arm wax men la
+    - mens arm hair removal
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links:
+    - service: arms
+    - page: services
+  notes: Athletes; maintenance cadence.
+- slug: leg-waxing-for-men-guide
+  title: "Leg Waxing for Men: Coverage and Timing"
+  target_keyword: leg waxing for men
+  secondary_keywords:
+    - full leg wax men
+    - cyclists leg waxing
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links:
+    - service: legs
+    - page: services
+  notes: Cyclists and runners; realistic prep.
+- slug: brazilian-wax-men-intimate-areas-plain-language
+  title: What a Male Brazilian Wax Addresses (Plain Language)
+  target_keyword: brazilian wax men private parts
+  secondary_keywords:
+    - what is a male brazilian wax
+    - intimate waxing men
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links:
+    - service: brazilian
+    - page: faq
+  notes: Anatomical clarity without euphemism pile-on.
+- slug: mens-waxing-studio-city
+  title: Men's Waxing Near Studio City
+  target_keyword: men's waxing studio city
+  secondary_keywords:
+    - valley mens waxing
+    - private waxing near studio city
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links:
+    - page: visit
+    - page: about
+  notes: Drive context toward WeHo suite.
+- slug: mens-waxing-culver-city
+  title: Men's Waxing Near Culver City
+  target_keyword: men's waxing culver city
+  secondary_keywords:
+    - westside mens grooming
+    - appointment waxing la
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links:
+    - page: visit
+    - service: chest
+  notes: Neutral local bridge content.
+- slug: mens-waxing-near-the-grove
+  title: Men's Waxing Near The Grove
+  target_keyword: men's waxing near the grove
+  secondary_keywords:
+    - waxing near fairfax la
+    - mens grooming mid wilshire
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links:
+    - page: visit
+    - page: about
+  notes: Landmark proximity; discretion.
+- slug: back-waxing-beverly-hills-clients
+  title: Back Waxing for Beverly Hills Clients
+  target_keyword: back waxing beverly hills
+  secondary_keywords:
+    - mens back wax near beverly hills
+    - full back wax la
+  intent: BOF / transactional
+  bucket: hyperlocal
+  internal_links:
+    - service: back
+    - page: visit
+  notes: Cross-neighborhood booking.
+- slug: mens-back-waxing-cost-los-angeles
+  title: How Much Does Men's Back Waxing Cost in LA?
+  target_keyword: how much does men's back waxing cost la
+  secondary_keywords:
+    - back wax price men
+    - la mens waxing pricing
+  intent: MOF / commercial
+  bucket: pricing
+  internal_links:
+    - service: back
+    - page: services
+  notes: Starting prices; density caveat.
+- slug: male-eyebrow-waxing-vs-threading
+  title: Male Eyebrow Waxing vs Threading
+  target_keyword: male eyebrow waxing vs threading
+  secondary_keywords:
+    - mens brow wax weho
+    - eyebrow shaping men
+  intent: TOF / informational
+  bucket: comparison
+  internal_links:
+    - service: eyebrows
+    - page: services
+  notes: Tradeoffs and cleanliness.
+- slug: benefits-of-waxing-for-men
+  title: Benefits of Waxing for Men
+  target_keyword: benefits of waxing for men
+  secondary_keywords:
+    - waxing vs trimming men
+    - longer lasting hair removal men
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links:
+    - page: services
+    - page: aftercare
+  notes: Measured claims; no miracle language.
+- slug: wax-lab-vs-igor-for-men
+  title: Choosing Between Wax Lab and a Private Suite Experience
+  target_keyword: wax lab vs igor for men
+  secondary_keywords:
+    - private mens waxing weho
+    - boutique waxing los angeles
+  intent: BOF / commercial
+  bucket: comparison
+  internal_links:
+    - page: about
+    - page: visit
+  notes: Respectful; focus on fit and discretion.
+- slug: experienced-male-brazilian-waxer-la
+  title: What an Experienced Male Brazilian Waxer Does Differently
+  target_keyword: experienced male brazilian waxer la
+  secondary_keywords:
+    - private practitioner mens waxing
+    - technique male brazilian
+  intent: BOF / commercial
+  bucket: eeat
+  internal_links:
+    - service: brazilian
+    - page: about
+  notes: Technique and pacing; Rene' perspective.
+- slug: mens-waxing-summer-special-los-angeles
+  title: Summer Grooming for Men in Los Angeles
+  target_keyword: men's waxing summer special los angeles
+  secondary_keywords:
+    - pool season waxing men
+    - swimsuit grooming men la
+  intent: BOF / transactional
+  bucket: seasonal
+  internal_links:
+    - service: chest
+    - page: services
+  notes: Seasonal framing without hard promo unless owner adds one.
+- slug: bodybuilder-waxing-west-hollywood
+  title: Bodybuilder Waxing in West Hollywood
+  target_keyword: bodybuilder waxing west hollywood
+  secondary_keywords:
+    - competition grooming men
+    - definition waxing men
+  intent: MOF / commercial
+  bucket: demographic
+  internal_links:
+    - service: chest
+    - service: arms
+  notes: Stage and photoshoot context.
+- slug: male-model-grooming-west-hollywood
+  title: Male Model Grooming in West Hollywood
+  target_keyword: male model grooming west hollywood
+  secondary_keywords:
+    - editorial grooming men
+    - photoshoot waxing men
+  intent: MOF / commercial
+  bucket: demographic
+  internal_links:
+    - service: eyebrows
+    - service: trimming
+  notes: Subtle; discretion for working talent.
+- slug: brazilian-wax-for-men-hollywood
+  title: Brazilian Wax for Men Near Hollywood
+  target_keyword: brazilian wax for men hollywood
+  secondary_keywords:
+    - mens brazilian near hollywood
+    - private wax hollywood
+  intent: BOF / transactional
+  bucket: hyperlocal
+  internal_links:
+    - service: brazilian
+    - page: visit
+  notes: Neighborhood overlap with WeHo.
+- slug: mens-waxing-mid-city-la
+  title: Men's Waxing Near Mid-City LA
+  target_keyword: men's waxing mid city la
+  secondary_keywords:
+    - central la mens waxing
+    - appointment near mid city
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links:
+    - page: visit
+    - page: about
+  notes: Fairfax / Melrose bridges.
+- slug: mens-brazilian-near-beverly-center
+  title: Men's Brazilian Near the Beverly Center
+  target_keyword: men's brazilian near beverly center
+  secondary_keywords:
+    - waxing near beverly grove
+    - private suite near beverly center
+  intent: BOF / transactional
+  bucket: hyperlocal
+  internal_links:
+    - service: brazilian
+    - page: visit
+  notes: Landmark mention minimum three locations overall.
+- slug: waxing-salon-near-pacific-design-center
+  title: Private Waxing Near the Pacific Design Center
+  target_keyword: waxing salon near pacific design center
+  secondary_keywords:
+    - mens grooming west hollywood design district
+    - discreet waxing weho
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links:
+    - page: visit
+    - service: back
+  notes: Design district proximity.
+- slug: what-happens-during-male-brazilian-wax
+  title: What Happens During a Male Brazilian Wax
+  target_keyword: what happens during male brazilian wax
+  secondary_keywords:
+    - male brazilian appointment steps
+    - first wax walkthrough men
+  intent: TOF / informational
+  bucket: first-timer
+  internal_links:
+    - service: brazilian
+    - page: faq
+  notes: Step clarity; modesty and pacing.
+- slug: can-i-workout-after-male-brazilian-wax
+  title: Can I Work Out After a Male Brazilian Wax?
+  target_keyword: can i workout after male brazilian wax
+  secondary_keywords:
+    - exercise after waxing men
+    - sweating after brazilian
+  intent: MOF / informational
+  bucket: aftercare
+  internal_links:
+    - page: aftercare
+    - service: brazilian
+  notes: 24-hour sweat avoidance aligned with site aftercare.
