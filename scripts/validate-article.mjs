@@ -4,35 +4,21 @@ import yaml from 'js-yaml';
 import { marked } from 'marked';
 import { join, resolve } from 'path';
 import { pathToFileURL } from 'url';
-import { ROOT } from './paths.mjs';
+import { ROOT, cfg } from './paths.mjs';
 import { maxSimilarityToCorpus } from './embed-similarity.mjs';
 
 const FORBIDDEN_PATH = join(ROOT, 'content/brand/forbidden.yaml');
 const ARTICLES_DIR = join(ROOT, 'content/articles');
 
+/**
+ * Was a 21-entry hardcoded array of one city's landmarks. A second business
+ * would have been graded on whether its articles mentioned Sunset Strip.
+ */
 const LOCATION_ANCHORS = [
-  'west hollywood',
-  'weho',
-  'larrabee',
-  'sunset strip',
-  'pacific design center',
-  'the abbey',
-  'beverly center',
-  'cedars-sinai',
-  'robertson',
-  'santa monica boulevard',
-  'beverly hills',
-  'hollywood',
-  'mid-city',
-  'fairfax',
-  'melrose',
-  'beverly grove',
-  'century city',
-  'hancock park',
-  'larchmont',
-  'los angeles',
-  'westside',
-];
+  ...cfg.location.location_anchors,
+  cfg.location.neighborhood,
+  cfg.location.address_city,
+].map((a) => String(a).toLowerCase());
 
 function wordCount(text) {
   return text.trim().split(/\s+/).filter(Boolean).length;
@@ -79,7 +65,7 @@ function countBlockquotes(body) {
 
 function countInternalLinks(body) {
   const a = [...body.matchAll(/\]\(\/(?!\/)/g)].length;
-  const b = [...body.matchAll(/\]\(https:\/\/igorformen\.com\//gi)].length;
+  const b = [...body.matchAll(new RegExp(`\\]\\(https://${cfg.site.domain.replace(/\./g, '\\.')}/`, 'gi'))].length;
   return a + b;
 }
 
@@ -129,15 +115,69 @@ function escapeWord(w) {
   return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * BUG A7 (fixed): these errors carried no stable prefix, so `classifyFailure`
+ * fell through to TRANSIENT and the engine regenerated the topic twice before
+ * quarantining. A model that leaked a phone number once will do it again — this
+ * is PERMANENT, and the `Contact leak:` prefix is what makes it so.
+ *
+ * R20: the prompt suggests, the validator enforces. Publishing contact details
+ * the business chose not to publish is the failure this exists to prevent, so
+ * the checks run even when publish_phone is true (an article still should not
+ * carry raw contact details — that is what the site is for).
+ */
 function contactLeakChecks(body) {
   const errors = [];
-  if (/mailto:/i.test(body)) errors.push('mailto: link not allowed');
-  if (/tel:/i.test(body)) errors.push('tel: link not allowed');
-  if (/\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/.test(body)) errors.push('Phone-like digit pattern detected');
-  if (/\(\d{3}\)\s*\d{3}[-.\s]?\d{4}\b/.test(body)) errors.push('Phone-like digit pattern detected');
-  if (/\b\+?1[-.\s]?\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/.test(body)) errors.push('Phone-like digit pattern detected');
-  const emailRe = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
-  if (emailRe.test(body)) errors.push('Email-like pattern detected');
+  if (/mailto:/i.test(body)) errors.push('Contact leak: mailto: link not allowed');
+  if (/tel:/i.test(body)) errors.push('Contact leak: tel: link not allowed');
+  const phonePatterns = [
+    /\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/,
+    /\(\d{3}\)\s*\d{3}[-.\s]?\d{4}\b/,
+    /\b\+?1[-.\s]?\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/,
+  ];
+  if (phonePatterns.some((re) => re.test(body))) {
+    errors.push('Contact leak: phone-like digit pattern detected');
+  }
+  if (/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/.test(body)) {
+    errors.push('Contact leak: email-like pattern detected');
+  }
+  return errors;
+}
+
+/** R20 — compliance is a validator rule, not a hope. */
+function complianceChecks(body) {
+  const errors = [];
+  const lower = body.toLowerCase();
+  const c = cfg.compliance || {};
+  if (c.no_medical_claims) {
+    const m = lower.match(/\b(cures?|heals?|treats?|curing|healing|medically proven|clinically proven)\b/);
+    if (m) errors.push(`Forbidden: medical claim "${m[0]}" (compliance.no_medical_claims)`);
+  }
+  if (c.no_guarantees) {
+    const m = lower.match(/\b(guaranteed?|pain-free|painless|risk-free|100% safe|no risk)\b/);
+    if (m) errors.push(`Forbidden: guarantee "${m[0]}" (compliance.no_guarantees)`);
+  }
+  if (c.no_superlatives_without_evidence) {
+    const m = lower.match(/\b(the best|world-class|the ultimate|number one|#1|unrivalled|unrivaled|the finest)\b/);
+    if (m) errors.push(`Forbidden: unevidenced superlative "${m[0]}" (compliance.no_superlatives_without_evidence)`);
+  }
+  if (c.no_invented_prices) {
+    const allowed = new Set(
+      (cfg.services || [])
+        .map((sv) => String(sv.price_from || '').replace(/[^0-9]/g, ''))
+        .filter(Boolean),
+    );
+    for (const m of body.matchAll(/\$\s?(\d[\d,]*)/g)) {
+      const digits = m[1].replace(/,/g, '');
+      if (!allowed.has(digits)) {
+        errors.push(
+          `Forbidden: price "${m[0]}" is not in services[].price_from ` +
+          '(compliance.no_invented_prices)',
+        );
+        break;
+      }
+    }
+  }
   return errors;
 }
 
@@ -193,7 +233,10 @@ export async function validateArticleFile(mdPath, options = {}) {
   if (!faq || !/^##\s+Frequently asked/im.test(body)) errors.push('Missing "## Frequently asked" section');
 
   const wcMain = wordCount(main);
-  if (wcMain < 700 || wcMain > 1500) errors.push(`Main body word count ${wcMain} ((need 700–1500, excluding FAQ)`);
+  const { min: WC_MIN, max: WC_MAX } = cfg.content.word_count;
+  if (wcMain < WC_MIN || wcMain > WC_MAX) {
+    errors.push(`Word count: main body ${wcMain} (need ${WC_MIN}–${WC_MAX}, excluding FAQ)`);
+  }
 
   const h2Main = countH2BeforeFaq(main);
   if (h2Main < 3 || h2Main > 5) errors.push(`H2 sections in main body: ${h2Main} (need 3–5)`);
@@ -203,14 +246,17 @@ export async function validateArticleFile(mdPath, options = {}) {
 
   if (faq) {
     const qs = faqQuestionCount(faq);
-    if (qs < 4) errors.push(`FAQ questions found: ${qs} (need ≥4 bold question lines)`);
+    const needQ = cfg.content.faq_questions;
+    if (qs < needQ) errors.push(`FAQ questions found: ${qs} (need >=${needQ} bold question lines)`);
   }
 
   const il = countInternalLinks(body);
-  if (il < 2 || il > 4) errors.push(`Internal links: ${il} (need 2–4)`);
+  const { min: IL_MIN, max: IL_MAX } = cfg.content.internal_links;
+  if (il < IL_MIN || il > IL_MAX) errors.push(`Internal links: ${il} (need ${IL_MIN}–${IL_MAX})`);
 
   const loc = countLocationMentions(body);
-  if (loc < 3) errors.push(`Location mentions: ${loc} (need ≥3)`);
+  const LOC_MIN = cfg.content.location_mentions_min;
+  if (loc < LOC_MIN) errors.push(`Location mentions: ${loc} (need >=${LOC_MIN})`);
 
   const desc = String(data.description || '');
   if (desc.length < 70 || desc.length > 160) errors.push(`Meta description length ${desc.length} (need 70–160)`);
@@ -220,8 +266,12 @@ export async function validateArticleFile(mdPath, options = {}) {
   if (bad.length) errors.push(`Forbidden: ${bad.join(', ')}`);
 
   errors.push(...contactLeakChecks(body));
+  errors.push(...complianceChecks(body));
 
   if (!markdownParseOk(body)) errors.push('Markdown failed to parse');
+
+  // 14 §D: the template emits <h1>{{TITLE}}</h1>, so an H1 in the body renders twice.
+  if (/^#\s+/m.test(main)) errors.push('Structure: body contains an H1 (the template renders the title)');
 
   const skipEmbed = options.skipSimilarity === true;
   if (!skipEmbed && data.slug) {
@@ -229,7 +279,10 @@ export async function validateArticleFile(mdPath, options = {}) {
     if (priorCount > 0) {
       try {
         const sim = await maxSimilarityToCorpus(body, data.slug);
-        if (sim > 0.85) errors.push(`Originality: max cosine similarity ${sim.toFixed(3)} exceeds 0.85`);
+        const MAX_SIM = cfg.content.originality_max_similarity;
+        if (sim > MAX_SIM) {
+          errors.push(`Originality: max cosine similarity ${sim.toFixed(3)} exceeds ${MAX_SIM}`);
+        }
       } catch (e) {
         warnings.push(`Embedding check skipped/failed: ${e.message}`);
       }

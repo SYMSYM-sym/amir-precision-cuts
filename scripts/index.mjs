@@ -9,7 +9,7 @@ import {
 } from 'fs';
 import { join } from 'path';
 import matter from 'gray-matter';
-import { ROOT } from './paths.mjs';
+import { ROOT, cfg } from './paths.mjs';
 import { generateArticleFromTopic } from './generate-article.mjs';
 import { validateArticleFile } from './validate-article.mjs';
 import { buildBlog } from './build-blog.mjs';
@@ -19,15 +19,36 @@ import {
   appendPublished,
   archiveCompletedFrontmatter,
   alreadyPublishedToday,
-  laDateString,
+  localDateString,
   quarantineTopic,
 } from './pick-topic.mjs';
 import {
   MAX_TOPICS_PER_RUN,
   MAX_REGEN_PER_TOPIC,
+  MAX_API_CALLS_PER_RUN,
   classifyFailure,
   isConfigError,
 } from './failure-classify.mjs';
+
+/**
+ * R19 — the reference had NO counter at all. The cap was aspirational: worst
+ * case was MAX_TOPICS_PER_RUN x (MAX_REGEN_PER_TOPIC + 1) = 9 uncapped calls.
+ * This is the real thing: a counter that aborts the run.
+ */
+let apiCalls = 0;
+export function resetApiCalls() { apiCalls = 0; }
+export function apiCallCount() { return apiCalls; }
+function chargeApiCall() {
+  apiCalls += 1;
+  if (apiCalls > MAX_API_CALLS_PER_RUN) {
+    throw new ApiBudgetExceeded(
+      `API call budget exhausted: ${apiCalls} > MAX_API_CALLS_PER_RUN=${MAX_API_CALLS_PER_RUN} (R19)`,
+    );
+  }
+}
+export class ApiBudgetExceeded extends Error {
+  constructor(m) { super(m); this.name = 'ApiBudgetExceeded'; }
+}
 
 const ARTICLES_DIR = join(ROOT, 'content/articles');
 const FIXTURE_PATH = join(ROOT, 'scripts/fixtures/dry-run-sample.md');
@@ -74,7 +95,7 @@ function safeUnlink(path) {
 async function runDryRunFixture() {
   removePriorDryRunArtifacts();
   mkdirSync(ARTICLES_DIR, { recursive: true });
-  const iso = laDateString();
+  const iso = localDateString();
   const raw = readFileSync(FIXTURE_PATH, 'utf8');
   const { data, content } = matter(raw);
   data.date = iso;
@@ -85,6 +106,7 @@ async function runDryRunFixture() {
 }
 
 async function publishValidatedTopic(topic, index, skipMergePrep) {
+  chargeApiCall();
   const gen = await generateArticleFromTopic(topic);
   const v = await validateArticleFile(gen.filePath, { skipSimilarity: false });
   for (const w of v.warnings) console.warn('WARN:', w);
@@ -93,7 +115,7 @@ async function publishValidatedTopic(topic, index, skipMergePrep) {
       dequeueTopic(index);
       appendPublished({
         slug: topic.slug,
-        published_at: laDateString(),
+        published_at: localDateString(),
         title: topic.title,
         target_keyword: topic.target_keyword,
       });
@@ -104,6 +126,9 @@ async function publishValidatedTopic(topic, index, skipMergePrep) {
   }
 
   for (const e of v.errors) console.error('ERR:', e);
+  // 14 §A2 — DO NOT REMOVE. A rejected draft left on disk poisons the
+  // originality corpus (every future article is scored against text that was
+  // never good enough to publish) and build-blog renders it.
   safeUnlink(gen.filePath);
   return { published: false, errors: v.errors };
 }
@@ -180,9 +205,20 @@ async function main() {
   const { dryRun, skipMergePrep } = parseArgs();
   const forceSlug = (process.env.FORCE_SLUG || '').trim();
 
-  if (process.env.GITHUB_ACTIONS === 'true' && !dryRun && !forceSlug && alreadyPublishedToday()) {
-    console.log('Already published today (America/Los_Angeles). Skipping.');
-    process.exit(0);
+  if (process.env.GITHUB_ACTIONS === 'true' && !dryRun && !forceSlug) {
+    if (alreadyPublishedToday()) {
+      console.log(`Already published today (${cfg.location.timezone}). Skipping.`);
+      process.exit(0);
+    }
+    // R7 — the once-per-day guard reads published.yaml on main, which only
+    // updates ON MERGE. While merges were stalled, the reference build's guard
+    // never tripped and every run opened ANOTHER PR. This second guard is what
+    // stops the pile-up. It FAILS OPEN: a GitHub API hiccup must not block
+    // publishing (that would trade a pile-up for an outage).
+    if (process.env.OPEN_AUTO_ARTICLE_PR === 'true') {
+      console.log('An auto-article PR is already open. Skipping (R7 dedup guard).');
+      process.exit(0);
+    }
   }
 
   let articlePath;
@@ -224,8 +260,15 @@ async function main() {
 }
 
 main().catch((e) => {
+  // R15 — a config error is an environment problem. Say so loudly, and make it
+  // unmistakable in the log that NOTHING was quarantined.
+  if (isConfigError(e)) {
+    console.error('\nCONFIG ERROR — hard stop. No topic was quarantined.\n');
+    console.error(e.message);
+    process.exit(2);
+  }
   console.error(e);
   process.exit(1);
 });
 
-export { runSelfHealingPublish, classifyFailure };
+export { runSelfHealingPublish, classifyFailure, publishValidatedTopic };

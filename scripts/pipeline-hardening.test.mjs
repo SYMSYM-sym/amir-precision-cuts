@@ -33,7 +33,7 @@ describe('Change 1 — authoritative frontmatter', () => {
     assert.equal(data.bucket, topic.bucket);
     assert.equal(data.slug, topic.slug);
 
-    const tmpDir = mkdtempSync(join(tmpdir(), 'ifm-fm-'));
+    const tmpDir = mkdtempSync(join(tmpdir(), 'fx-fm-'));
     const mdPath = join(tmpDir, 'article.md');
     writeFileSync(mdPath, matter.stringify(content.trim(), data), 'utf8');
 
@@ -51,7 +51,7 @@ describe('Change 2 — failure classification and quarantine', () => {
   });
 
   it('quarantines a topic and advances the queue', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ifm-q-'));
+    const dir = mkdtempSync(join(tmpdir(), 'fx-q-'));
     const queuePath = join(dir, 'queue.yaml');
     const reviewPath = join(dir, 'needs-review.yaml');
     const topics = [

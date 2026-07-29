@@ -1,10 +1,11 @@
-import { readFileSync, writeFileSync, readdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import matter from 'gray-matter';
 import yaml from 'js-yaml';
 import Anthropic from '@anthropic-ai/sdk';
-import { ROOT } from './paths.mjs';
-import { laDateString } from './pick-topic.mjs';
+import { ROOT, cfg, ConfigError } from './paths.mjs';
+import { localDateString } from './pick-topic.mjs';
+import { readAuthor } from './authors.mjs';
 import { applyAuthoritativeFrontmatter } from './frontmatter.mjs';
 
 const VOICE_PATH = join(ROOT, 'content/brand/voice.md');
@@ -63,7 +64,39 @@ function buildSystemPrompt(topic, isoDate) {
 
   const secKw = yaml.dump(topic.secondary_keywords || [], { lineWidth: 120 });
 
-  return `You write articles for Igor For Men (IFM), a private male grooming salon in West Hollywood. Your output is published verbatim. You follow the brand voice exactly.
+  const b = cfg.business;
+  const loc = cfg.location;
+  const wc = cfg.content.word_count;
+  const il = cfg.content.internal_links;
+  const author = readAuthor();
+
+  // Prices: ONLY what services[].price_from actually says. R20 / compliance —
+  // "no prices unless they appear here" is enforced by the validator too, so a
+  // model that invents one fails the build rather than publishing it.
+  const priceLines = cfg.services
+    .map((sv) => (sv.price_from ? `${sv.label} from ${sv.price_from}` : `${sv.label} (price on request — DO NOT state a price)`))
+    .join(', ');
+
+  // The contact rule is stated as a prohibition, not an omission. A prompt that
+  // simply fails to mention a phone number is not the same as one that forbids it.
+  const contactRules = [
+    cfg.booking.publish_phone === true
+      ? `- The business phone is ${cfg.booking.phone}, but articles must NOT contain it. Link to the site instead.`
+      : '- This business does NOT publish a phone number. Never write a phone number or a tel: link.',
+    cfg.booking.publish_email === true
+      ? `- The business email is ${cfg.booking.email}, but articles must NOT contain it.`
+      : '- This business does NOT publish an email address. Never write an email or a mailto: link.',
+  ].join('\n');
+
+  const complianceRules = [
+    cfg.compliance?.no_medical_claims && '- No medical claims. Never write that anything cures, heals, or treats a condition.',
+    cfg.compliance?.no_guarantees && '- No guarantees. Never promise a result, and never write "pain-free" or "painless".',
+    cfg.compliance?.no_superlatives_without_evidence && '- No superlatives without evidence ("best", "the ultimate", "number one").',
+    cfg.compliance?.no_invented_prices && '- Never state a price that is not in the reference data below.',
+    cfg.compliance?.extra_notes && `- ${cfg.compliance.extra_notes}`,
+  ].filter(Boolean).join('\n');
+
+  return `You write articles for ${b.name}, a ${b.type} in ${loc.address_city}, ${loc.address_region}. Your output is published verbatim. You follow the brand voice exactly.
 
 # Brand voice (authoritative)
 ${voice}
@@ -72,37 +105,35 @@ ${voice}
 ${forbiddenBullets}
 
 # Internal link map
-The article MUST include at least 2 internal links chosen from this map. Use ONE anchor variant per service/page; do not reuse the same anchor twice in the article. Always link to the absolute path. Do not invent paths.
+The article MUST include at least ${il.min} internal links chosen from this map. Use ONE anchor variant per service/page; do not reuse the same anchor twice in the article. Always link to the absolute path. Do not invent paths.
 ${internalTable}
 
-# Location anchors (use 3+ in the article, naturally)
-West Hollywood, WeHo, Larrabee Street, Sunset Strip, Pacific Design Center, The Abbey, Beverly Center, Cedars-Sinai, Robertson Boulevard, Santa Monica Boulevard, Beverly Hills, Hollywood, Mid-City, Sunset Strip, Fairfax, Melrose, Beverly Grove
+# Location anchors (use ${cfg.content.location_mentions_min}+ in the article, naturally)
+${loc.location_anchors.join(', ')}
 
 # Recent articles (avoid repeating angles, examples, or quotes)
 ${recentBlock}
 
 # Output rules
-- Word count: 900–1400.
-- One H1 (the article title — exactly the title field below).
+- Word count: ${wc.target_min}–${wc.target_max} (hard limits ${wc.min}–${wc.max}, excluding the FAQ).
 - 3–5 H2 sections. H3 sparingly.
 - Open with a 40–60 word "answer paragraph" that directly answers the article's keyword query. No preamble.
-- Include exactly ONE blockquote. Voice it as Rene' (the practitioner with 21+ years of experience). No first person plural in the quote.
-- Include exactly ONE FAQ section at the end with 4 Q&As. Each Q must be a real long-tail query a man might type.
-- Internal links: minimum 2, maximum 4.
-- Location mentions: minimum 3 (neighborhood, cross street, or landmark).
+- Include exactly ONE blockquote. Voice it as ${b.practitioner_name} (the practitioner, ${b.years_experience} years of experience). No first person plural in the quote.
+- Include exactly ONE FAQ section at the end with ${cfg.content.faq_questions} Q&As. Each Q must be a real long-tail query someone would type.
+- Internal links: minimum ${il.min}, maximum ${il.max}.
+- Location mentions: minimum ${cfg.content.location_mentions_min} (neighborhood, cross street, or landmark).
 - No emojis. No exclamation points except in the FAQ if a real question contains one.
-- No superlatives without evidence ("best", "most", "ultimate").
-- No medical claims.
-- No prices unless they appear in the brand reference data below.
+${complianceRules}
 
 # Brand reference data — these are the only prices/facts you may cite
-- Address: 801 Larrabee St, Suite 5, West Hollywood, CA 90069
-- Hours: Tue–Sat, 8 AM – 6 PM
-- Practitioner: Rene', 21+ years experience
-- Service prices (start at): Male Brazilian $145+, Back End $105+, Back $145+, Chest & Abdomen $145+, Arms $145+, Legs $195+, Eyebrows $65+, Full-Body Trimming $150/hr
-- We do not publish a phone number on the site (visitors tap a CTA). Do not write a phone number.
-- We do not have an email on the site. Do not write an email.
-- Salon is by appointment only.
+- Business: ${b.name} (${b.short_name}), ${b.type}
+- Address: ${cfg.derived.address_one_line}
+- Neighborhood: ${loc.neighborhood}
+- Hours: ${cfg.derived.hours_days_short}, ${cfg.derived.hours_times_long}
+- Practitioner: ${b.practitioner_name}, ${b.years_experience} years experience
+- Booking: ${cfg.derived.booking_line}
+- Service prices (start at): ${priceLines}
+${contactRules}
 
 # Output format — STRICT
 Return a single fenced markdown block. No prose before or after. Frontmatter is YAML. Body is Markdown. Do not include the H1 heading inside the body — it is rendered from the title field.
@@ -113,9 +144,9 @@ title: "${topic.title.replace(/"/g, '\\"')}"
 slug: "${topic.slug}"
 target_keyword: "${topic.target_keyword.replace(/"/g, '\\"')}"
 secondary_keywords: ${secKw.trimEnd()}
-description: "<150 character meta description, no quotes around it>"
+description: "<70-160 character meta description, no quotes around it>"
 date: "${isoDate}"
-author: "ifm-team"
+author: "${b.author_id}"
 bucket: "${topic.bucket}"
 intent: "${topic.intent}"
 reading_time_minutes: <integer>
@@ -128,7 +159,7 @@ self_check:
   has_faq_block: <boolean>
 ---
 
-<answer paragraph, 40–60 words, no header>
+<answer paragraph, 40-60 words, no header>
 
 ## <H2 #1>
 <body>
@@ -136,25 +167,15 @@ self_check:
 ## <H2 #2>
 <body>
 
-> "<Rene' quote, 1–3 sentences>"
-> — Rene', practitioner
+> "<${b.practitioner_name} quote, 1-3 sentences>"
+> — ${b.practitioner_name}, practitioner
 
 ## <H2 #3>
 <body>
 
 ## Frequently asked
 
-**<Q1>**
-<A1, 1–3 sentences>
-
-**<Q2>**
-<A2, 1–3 sentences>
-
-**<Q3>**
-<A3, 1–3 sentences>
-
-**<Q4>**
-<A4, 1–3 sentences>
+${Array.from({ length: cfg.content.faq_questions }, (_, i) => `**<Q${i + 1}>**\n<A${i + 1}, 1-3 sentences>`).join('\n\n')}
 \`\`\`
 
 Now write the article for:
@@ -178,11 +199,15 @@ function extractFencedMarkdown(text) {
  * @returns {{ filePath: string, frontmatter: object }}
  */
 export async function generateArticleFromTopic(topic) {
-  const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929';
+  // R15 — a missing key / retired model / exhausted credit is an ENVIRONMENT
+  // problem. It must hard-stop, never quarantine, or one bad secret silently
+  // burns the entire backlog.
+  const model = process.env.ANTHROPIC_MODEL || cfg.integrations.anthropic_model;
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY is not set');
+  if (!apiKey) throw new ConfigError('ANTHROPIC_API_KEY is not set');
+  if (!model) throw new ConfigError('No model configured (integrations.anthropic_model)');
 
-  const isoDate = laDateString();
+  const isoDate = localDateString();
   const system = buildSystemPrompt(topic, isoDate);
   const client = new Anthropic({ apiKey });
 
@@ -200,8 +225,10 @@ export async function generateArticleFromTopic(topic) {
   applyAuthoritativeFrontmatter(data, topic, isoDate);
   const body = content.trim();
   const stitched = matter.stringify(body, data);
+  mkdirSync(ARTICLES_DIR, { recursive: true });
   const fileName = `${isoDate}-${data.slug}.md`;
   const filePath = join(ARTICLES_DIR, fileName);
   writeFileSync(filePath, stitched, 'utf8');
   return { filePath, frontmatter: data };
 }
+export { ConfigError } from './paths.mjs';

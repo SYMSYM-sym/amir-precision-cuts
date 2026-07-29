@@ -3,7 +3,7 @@
     <span class="topbar__item"><span class="dot" aria-hidden="true"></span>{{derived.booking_line}}</span>
     <span class="topbar__spacer"></span>
     {{#if booking.publish_phone}}
-    <a class="topbar__item js-tel" href="#" aria-label="Call {{business.name}}">Call</a>
+    <a class="topbar__item js-tel" href="tel:{{booking.phone}}" aria-label="Call {{business.name}}">{{booking.phone}}</a>
     {{else}}
     {{#if booking.url}}<a class="topbar__item" href="{{booking.url}}">Book</a>{{/if}}
     {{/if}}

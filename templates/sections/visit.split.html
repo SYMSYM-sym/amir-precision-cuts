@@ -17,7 +17,7 @@
         <div class="visit__row">
           <p class="visit__row-label">Contact</p>
           <p class="visit__row-value">
-            {{#if booking.publish_phone}}<a class="js-tel" href="#">Call the studio</a>{{/if}}
+            {{#if booking.publish_phone}}<a class="js-tel" href="tel:{{booking.phone}}">Call {{business.short_name}}</a>{{/if}}
             {{#if booking.publish_email}}<a href="mailto:{{booking.email}}">{{booking.email}}</a>{{/if}}
           </p>
         </div>

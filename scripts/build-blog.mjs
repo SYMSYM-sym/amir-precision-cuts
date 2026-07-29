@@ -1,15 +1,42 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync } from 'fs';
 import { join, resolve } from 'path';
 import { pathToFileURL } from 'url';
 import matter from 'gray-matter';
 import { marked } from 'marked';
 import { render, loadPartial } from './render-templates.mjs';
-import { ROOT } from './paths.mjs';
+import { ROOT, cfg, contentPath } from './paths.mjs';
+import { readAuthor } from './authors.mjs';
 
 const ARTICLES_DIR = join(ROOT, 'content/articles');
 const BLOG_DIR = join(ROOT, 'blog');
 const TEMPLATES = join(ROOT, 'templates');
-const SITE = 'https://igorformen.com';
+const SITE = cfg.derived.site_url;
+
+/**
+ * BUG A1 (fixed): `writeFeeds` capped at 40 and `llms.txt` at 30, but the
+ * sitemap emitted every article — so verify-live's consistency check
+ * (sitemap URLs == index cards == feed items) goes PERMANENTLY RED at article
+ * 41. Nobody notices until the site has been quietly failing its own health
+ * check for weeks. One cap, applied to all three.
+ */
+const FEED_MAX = 40;
+
+/**
+ * BUG A6 (fixed): article dates were stamped `T12:00:00-08:00` — a fixed
+ * offset, so wrong for half the year in any DST timezone, and simply wrong for
+ * a business outside Pacific time. Compute the real offset for the business's
+ * timezone on the article's own date.
+ */
+function isoAtNoonLocal(dateStr) {
+  const tz = cfg.location.timezone;
+  const base = new Date(`${dateStr}T12:00:00Z`);
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, timeZoneName: 'longOffset',
+  }).formatToParts(base);
+  const name = parts.find((p) => p.type === 'timeZoneName')?.value || 'GMT+00:00';
+  const off = name.replace('GMT', '') || '+00:00';
+  return `${dateStr}T12:00:00${off === '' ? '+00:00' : off}`;
+}
 
 marked.use({
   mangle: false,
@@ -105,21 +132,25 @@ function relatedArticles(all, current) {
   return scores.slice(0, 3).map((x) => x.a);
 }
 
-function articleJsonLd(article, faqBlocks, url) {
+function articleJsonLd(article, faqBlocks, url, author) {
   const d = article.data;
-  const pub = d.date ? `${d.date}T12:00:00-08:00` : undefined;
+  const pub = d.date ? isoAtNoonLocal(d.date) : undefined;
   const articleLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: d.title,
     datePublished: pub,
     dateModified: pub,
-    author: { '@type': 'Organization', name: 'The IFM Team' },
+    author: { '@type': 'Person', name: author.name, url: author.url },
     publisher: {
       '@type': 'Organization',
-      name: 'Igor For Men',
+      name: cfg.business.name,
       url: SITE,
+      // 07 §C requires publisher.logo. The reference Article schema omitted
+      // logo, image and mainEntityOfPage-as-URL; all three are here now.
+      logo: { '@type': 'ImageObject', url: cfg.derived.logo_url },
     },
+    image: cfg.derived.og_image_url,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
     articleSection: d.bucket || undefined,
     description: d.description,
@@ -129,7 +160,7 @@ function articleJsonLd(article, faqBlocks, url) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
-      { '@type': 'ListItem', position: 2, name: 'Journal', item: `${SITE}/blog/` },
+      { '@type': 'ListItem', position: 2, name: cfg.site.blog_title, item: `${SITE}/blog/` },
       { '@type': 'ListItem', position: 3, name: d.title, item: url },
     ],
   };
@@ -168,11 +199,12 @@ async function renderArticlePage(article, all, partials) {
   const reading = data.reading_time_minutes || Math.max(4, Math.round(mainMd.split(/\s+/).length / 200));
   const ogImage = `${SITE}/og.jpg`;
 
-  const jsonLd = articleJsonLd(article, faqBlocks, url);
+  const author = readAuthor(data.author);
+  const jsonLd = articleJsonLd(article, faqBlocks, url, author);
 
   const extraHead = `
 <link rel="canonical" href="${url}" />
-<meta property="og:title" content="${escapeHtml(data.title)} — Igor For Men" />
+<meta property="og:title" content="${escapeHtml(data.title)} — ${escapeHtml(cfg.business.name)}" />
 <meta property="og:description" content="${escapeHtml(data.description)}" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="${url}" />
@@ -185,7 +217,7 @@ async function renderArticlePage(article, all, partials) {
 <script type="application/ld+json">${JSON.stringify(jsonLd[2])}</script>`;
 
   const headHtml = render(partials.head, {
-    PAGE_TITLE: `${escapeHtml(data.title)} — Igor For Men`,
+    PAGE_TITLE: `${data.title} — ${cfg.business.name}`,
     META_DESC: escapeHtml(data.description),
     EXTRA_HEAD: extraHead,
   });
@@ -233,14 +265,14 @@ async function renderBlogIndex(all, partials) {
   const tpl = readFileSync(join(TEMPLATES, 'blog-index.html'), 'utf8');
   const extraHead = `
 <link rel="canonical" href="${SITE}/blog/" />
-<meta property="og:title" content="Journal — Igor For Men" />
-<meta property="og:description" content="Notes on men's grooming, written from a private salon in West Hollywood." />
+<meta property="og:title" content="${escapeHtml(cfg.site.blog_title)} — ${escapeHtml(cfg.business.name)}" />
+<meta property="og:description" content="${escapeHtml(cfg.site.blog_subtitle)}" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="${SITE}/blog/" />`;
 
   const headHtml = render(partials.head, {
-    PAGE_TITLE: 'Journal — Igor For Men',
-    META_DESC: "Notes on men's grooming, written from a private salon in West Hollywood.",
+    PAGE_TITLE: `${cfg.site.blog_title} — ${cfg.business.name}`,
+    META_DESC: cfg.site.blog_subtitle,
     EXTRA_HEAD: extraHead,
   });
 
@@ -259,8 +291,16 @@ async function renderBlogIndex(all, partials) {
 }
 
 function writeSitemap(all) {
-  const urls = [{ loc: `${SITE}/`, lastmod: new Date().toISOString().slice(0, 10) }];
-  for (const a of all) {
+  // BUG A6 (fixed): homepage lastmod used TODAY, so sitemap.xml churned in git on
+  // every single build and told crawlers the homepage changed daily when it had
+  // not. Use the newest real content date instead.
+  const newest = all[0]?.data.date
+    ? String(all[0].data.date).slice(0, 10)
+    : homepageMtime();
+  const urls = [{ loc: `${SITE}/`, lastmod: newest }];
+  // BUG A1 (fixed): the sitemap used to emit EVERY article while the feeds
+  // capped at 40 — so verify-live's consistency check broke permanently at 41.
+  for (const a of all.slice(0, FEED_MAX)) {
     urls.push({ loc: `${SITE}/blog/${a.slug}`, lastmod: (a.data.date || '').toString().slice(0, 10) });
   }
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
@@ -272,12 +312,12 @@ function writeSitemap(all) {
 }
 
 function writeFeeds(all) {
-  const latest = all[0]?.data.date || new Date().toISOString().slice(0, 10);
+  const latest = all[0]?.data.date || homepageMtime();
   let rssItems = '';
   let jsonItems = [];
-  for (const a of all.slice(0, 40)) {
+  for (const a of all.slice(0, FEED_MAX)) {
     const link = `${SITE}/blog/${a.slug}`;
-    const pub = a.data.date ? `${a.data.date}T12:00:00-08:00` : latest;
+    const pub = a.data.date ? isoAtNoonLocal(a.data.date) : latest;
     rssItems += `
     <item>
       <title>${escapeXml(a.data.title)}</title>
@@ -297,9 +337,9 @@ function writeFeeds(all) {
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>Journal — Igor For Men</title>
+    <title>${escapeXml(cfg.site.blog_title)} — ${escapeXml(cfg.business.name)}</title>
     <link>${SITE}/blog/</link>
-    <description>Notes on men's grooming from a private West Hollywood salon.</description>
+    <description>${escapeXml(cfg.site.blog_subtitle)}</description>
     <language>en-US</language>
     ${rssItems}
   </channel>
@@ -308,7 +348,7 @@ function writeFeeds(all) {
 
   const jfeed = {
     version: 'https://jsonfeed.org/version/1.1',
-    title: 'Journal — Igor For Men',
+    title: `${cfg.site.blog_title} — ${cfg.business.name}`,
     home_page_url: `${SITE}/blog/`,
     feed_url: `${SITE}/feed.json`,
     items: jsonItems,
@@ -329,19 +369,43 @@ function formatRssDate(isoLike) {
   }
 }
 
+function contactLine() {
+  const bits = [];
+  if (cfg.booking.url) bits.push(`Book online: ${cfg.booking.url}`);
+  if (cfg.booking.publish_phone === true) bits.push(`Phone: ${cfg.booking.phone}`);
+  if (cfg.booking.publish_email === true) bits.push(`Email: ${cfg.booking.email}`);
+  bits.push(`Address: ${cfg.derived.address_one_line}`);
+  return bits.join(' · ');
+}
+
+/** Fallback lastmod when there are no articles yet: the homepage's own mtime. */
+function homepageMtime() {
+  try {
+    return statSync(join(ROOT, 'site', 'index.html')).mtime.toISOString().slice(0, 10);
+  } catch {
+    return new Date().toISOString().slice(0, 10);
+  }
+}
+
 function writeLlmsTxt(all) {
   const lines = [
-    '# Igor For Men',
+    `# ${cfg.business.name}`,
     '',
-    '> Private male grooming salon in West Hollywood. By appointment only.',
+    `> ${cfg.business.positioning}`,
+    '',
+    `${cfg.business.type} in ${cfg.location.address_city}, ${cfg.location.address_region}. ` +
+      `${cfg.derived.booking_line}. Hours: ${cfg.derived.hours_line}.`,
+    '',
+    '## Services',
+    ...cfg.services.map((sv) => `- ${sv.label}${sv.price_from ? ` — from ${sv.price_from}` : ''}: ${sv.description}`),
     '',
     '## Canonical pages',
     `- ${SITE}/`,
     `- ${SITE}/blog/`,
-    ...all.slice(0, 30).map((a) => `- ${SITE}/blog/${a.slug}`),
+    ...all.slice(0, FEED_MAX).map((a) => `- [${a.data.title}](${SITE}/blog/${a.slug})`),
     '',
     '## Contact',
-    'Book via the phone link on the website (no published phone number in plain text).',
+    contactLine(),
   ];
   writeFileSync(join(ROOT, 'llms.txt'), lines.join('\n'), 'utf8');
 }
@@ -377,7 +441,17 @@ export async function buildBlog() {
   writeSitemap(all);
   writeFeeds(all);
   writeLlmsTxt(all);
-  console.log(`Built ${all.length} article(s), blog index, sitemap, feeds, llms.txt`);
+  // R21: robots.txt is rendered ONCE by `npm run derive --only=site`. A build
+  // that clobbers it is how a production site served a 404 robots.txt for weeks.
+  if (!existsSync(join(ROOT, 'robots.txt'))) {
+    throw new Error(
+      'robots.txt is missing. build-blog.mjs must never create it (R21) — ' +
+      'run `npm run derive --only=site`, which renders it from business.config.yaml.',
+    );
+  }
+  console.log(
+    `Built ${all.length} article(s) (feeds/sitemap capped at ${FEED_MAX}), blog index, sitemap, feeds, llms.txt`,
+  );
 }
 
 const isMainModule =

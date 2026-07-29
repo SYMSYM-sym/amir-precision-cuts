@@ -19,7 +19,7 @@
       {{#if derived.has_contact}}
       <div class="visit__panel">
         <h3 class="h3 visit__panel-title">Contact</h3>
-        {{#if booking.publish_phone}}<p><a class="js-tel" href="#">Call the studio</a></p>{{/if}}
+        {{#if booking.publish_phone}}<p><a class="js-tel" href="tel:{{booking.phone}}">Call {{business.short_name}}</a></p>{{/if}}
         {{#if booking.publish_email}}<p><a href="mailto:{{booking.email}}">{{booking.email}}</a></p>{{/if}}
       </div>
       {{/if}}

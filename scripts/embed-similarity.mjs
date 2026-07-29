@@ -1,7 +1,20 @@
-import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
+import { join, dirname } from 'path';
 import matter from 'gray-matter';
+import { createHash } from 'crypto';
 import { ROOT } from './paths.mjs';
+import { cfg } from './paths.mjs';
+
+/**
+ * BUG A2 (fixed): the reference cached embeddings under the bare slug, so an
+ * edited article kept its stale vector forever and the originality gate scored
+ * it against text that no longer existed. The key now carries a content hash,
+ * so editing an article naturally misses the cache and re-embeds.
+ */
+function ck(prefix, slug, text) {
+  const h = createHash('sha1').update(String(text)).digest('hex').slice(0, 12);
+  return `${prefix}:${slug}:${h}`;
+}
 
 const CACHE_PATH = join(ROOT, 'content/articles/_embeddings.json');
 const ARTICLES_DIR = join(ROOT, 'content/articles');
@@ -26,8 +39,18 @@ function loadCache() {
 }
 
 export function saveEmbeddingCache(cache) {
+  mkdirSync(dirname(CACHE_PATH), { recursive: true });
+  // Content-hash keys mean stale entries accumulate as articles are edited.
+  // Keep the file bounded; it is committed on purpose (14 §D) so it must not
+  // grow without limit.
+  const keys = Object.keys(cache);
+  if (keys.length > MAX_CACHE_ENTRIES) {
+    for (const k of keys.slice(0, keys.length - MAX_CACHE_ENTRIES)) delete cache[k];
+  }
   writeFileSync(CACHE_PATH, JSON.stringify(cache), 'utf8');
 }
+
+const MAX_CACHE_ENTRIES = 500;
 
 function dot(a, b) {
   let s = 0;
@@ -57,7 +80,7 @@ export async function maxSimilarityForTopic(title, targetKeyword, options = {}) 
   const { queueTopics = [], excludeSlug } = options;
   const sig = topicSignatureText(title, targetKeyword);
   const cache = loadCache();
-  const vecNew = await cachedEmbed(cache, `topic-sig:${excludeSlug || sig}`, sig);
+  const vecNew = await cachedEmbed(cache, ck('topic-sig', excludeSlug || 'new', sig), sig);
 
   let max = 0;
   let matchSlug = null;
@@ -68,7 +91,7 @@ export async function maxSimilarityForTopic(title, targetKeyword, options = {}) 
     const slug = data.slug || file.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '');
     if (slug === excludeSlug) continue;
     const otherSig = topicSignatureText(data.title, data.target_keyword);
-    const vec = await cachedEmbed(cache, `topic-sig:${slug}`, otherSig);
+    const vec = await cachedEmbed(cache, ck('topic-sig', slug, otherSig), otherSig);
     const sim = dot(vecNew, vec);
     if (sim > max) {
       max = sim;
@@ -79,7 +102,7 @@ export async function maxSimilarityForTopic(title, targetKeyword, options = {}) 
   for (const t of queueTopics) {
     if (t.slug === excludeSlug) continue;
     const otherSig = topicSignatureText(t.title, t.target_keyword);
-    const vec = await cachedEmbed(cache, `topic-sig:q:${t.slug}`, otherSig);
+    const vec = await cachedEmbed(cache, ck('topic-sig:q', t.slug, otherSig), otherSig);
     const sim = dot(vecNew, vec);
     if (sim > max) {
       max = sim;
@@ -93,7 +116,10 @@ export async function maxSimilarityForTopic(title, targetKeyword, options = {}) 
 
 /** @returns {Promise<string|null>} slug of near-duplicate match, or null if OK */
 export async function findNearDuplicateTopic(topic, options = {}) {
-  const threshold = options.threshold ?? 0.8;
+  // 0.80 in the reference was a default PARAMETER — the one threshold that was
+  // never config. Two thresholds do two jobs: this SEED gate is deliberately
+  // stricter than the article PUBLISH gate (R13, §02.4).
+  const threshold = options.threshold ?? cfg.content.queue_dedupe_max_similarity;
   const { max, matchSlug } = await maxSimilarityForTopic(topic.title, topic.target_keyword, options);
   if (max > threshold) return matchSlug;
   return null;
@@ -128,19 +154,11 @@ export async function maxSimilarityToCorpus(bodyText, currentSlug) {
   if (others.length === 0) return 0;
 
   const cache = loadCache();
-  let vecNew = cache[currentSlug];
-  if (!vecNew) {
-    vecNew = await embedText(bodyText);
-    cache[currentSlug] = vecNew;
-  }
+  const vecNew = await cachedEmbed(cache, ck('body', currentSlug, bodyText), bodyText);
 
   let max = 0;
   for (const o of others) {
-    let vec = cache[o.slug];
-    if (!vec) {
-      vec = await embedText(o.body);
-      cache[o.slug] = vec;
-    }
+    const vec = await cachedEmbed(cache, ck('body', o.slug, o.body), o.body);
     const sim = dot(vecNew, vec);
     if (sim > max) max = sim;
   }
