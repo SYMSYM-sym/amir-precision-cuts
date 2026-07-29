@@ -1,0 +1,20 @@
+# The ONLY internal links the model may use. One entry per services[] + the 4 pages.
+# Prompt rules enforced alongside this map:
+#   - use min..max links per article (content.internal_links)
+#   - ONE anchor variant per target per article; never reuse the same anchor twice
+#   - always link the absolute path; never invent paths
+
+services:
+  # <service.key from business.config.yaml>:
+  example_service:
+    href: "/#services"
+    variants:
+      - "natural anchor phrase one"
+      - "natural anchor phrase two"
+      - "natural anchor phrase three"
+
+pages:
+  about:     { href: "/#about",     variants: ["about {{brand}}", "our studio", "our {{city}} salon"] }
+  faq:       { href: "/#faq",       variants: ["common questions", "frequently asked questions"] }
+  aftercare: { href: "/#aftercare", variants: ["aftercare guide", "post-visit care"] }
+  visit:     { href: "/#visit",     variants: ["our location", "directions and hours", "visit {{brand}}"] }

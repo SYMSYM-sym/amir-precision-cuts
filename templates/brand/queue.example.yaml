@@ -1,0 +1,65 @@
+# Topic queue — the editorial backlog. Published in order; queue[0] is next.
+# Seed ~50, deduped at < 0.80 (R13), hyperlocal <= ~30%.
+# `notes` is THE most important field: it's the article's reason to exist.
+
+# --- GOOD: a distinct angle. This is what makes near-neighbor topics survive the
+#     0.85 originality gate.
+- slug: male-waxing-near-sunset-strip
+  title: "Male Waxing Near the Sunset Strip: The Walk-In Option"
+  target_keyword: male waxing near sunset strip
+  secondary_keywords:
+    - walkable men's waxing sunset strip
+    - waxing near sunset strip hotels
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links:
+    - page: visit
+    - service: chest
+  notes: >-
+    DISTINCT ANGLE — must NOT overlap the "drive in from [suburb]" hyperlocal articles.
+    We sit half a block off the Strip: lead with WALKABILITY — guests at Strip hotels,
+    people who work or perform nearby, appearance/on-camera prep before a shoot or stage
+    night. Reference specific landmarks. Do NOT reuse "3-4 week cadence", "single-room
+    suite", or "drive time" phrasing. Use 2-3 internal links. Target 1000-1300 words.
+
+# --- BAD (do not ship): interchangeable with every other hyperlocal topic.
+#     This is exactly what scores 0.85+ and gets quarantined forever.
+# - slug: mens-waxing-near-city-x
+#   title: "Men's Waxing Near City X"
+#   notes: Local guide for City X.        # <-- no reason to exist
+
+- slug: how-long-does-service-last
+  title: How Long Does {{service}} Last?
+  target_keyword: how long does {{service}} last
+  secondary_keywords: ["how often should i book {{service}}", "{{service}} regrowth"]
+  intent: TOF / informational
+  bucket: question
+  internal_links: [{ page: aftercare }, { service: example_service }]
+  notes: "Hair/growth cycle mechanics; the 4-6 week rhythm; tie to aftercare. Distinct from the aftercare timeline article: this is about DURATION, not care steps."
+
+- slug: prepare-for-first-service
+  title: How to Prepare for Your First {{service}}
+  target_keyword: how to prepare for {{service}}
+  secondary_keywords: ["first {{service}} tips", "before {{service}} checklist"]
+  intent: MOF / informational
+  bucket: first-timer
+  internal_links: [{ service: example_service }, { page: visit }]
+  notes: "Concrete prep steps + what to wear + timing. Anxiety-aware but never coy. No pain promises."
+
+- slug: service-a-vs-service-b
+  title: "{{Service A}} vs {{Service B}}: Which Is Right for You?"
+  target_keyword: "{{service a}} vs {{service b}}"
+  secondary_keywords: ["is {{a}} better than {{b}}", "{{a}} or {{b}}"]
+  intent: TOF / informational
+  bucket: comparison
+  internal_links: [{ service: example_service }, { page: faq }]
+  notes: "Neutral, evidence-based comparison. No trash talk about alternatives or competitors."
+
+- slug: practitioner-years-experience
+  title: What {{N}} Years of {{craft}} Has Taught {{Practitioner}}
+  target_keyword: experienced {{craft}} {{city}}
+  secondary_keywords: ["best {{craft}} {{city}}", "{{craft}} expert {{city}}"]
+  intent: MOF / commercial
+  bucket: eeat
+  internal_links: [{ page: about }, { service: example_service }]
+  notes: "E-E-A-T piece. Specific, concrete lessons — not a resume. Quote the practitioner heavily."

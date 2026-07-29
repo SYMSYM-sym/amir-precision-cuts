@@ -1,0 +1,49 @@
+# The validator HARD-FAILS on any hit. Only list things that must NEVER appear.
+# = universal AI-slop + hype  ++  brand.banned_extra  ++  compliance terms (R20).
+
+phrases:
+  # --- universal AI/marketing slop ---
+  - "in today's fast-paced world"
+  - "let's dive in"
+  - "look no further"
+  - "game-changer"
+  - "level up"
+  - "next-level"
+  - "tap into"
+  - "leverage"
+  - "elevate your"
+  - "revolutionize"
+  - "synergy"
+  - "supercharge"
+  - "ultimate guide"
+  - "must-have"
+  - "you won't believe"
+  - "the secret to"
+  - "say goodbye to"
+  - "kiss goodbye to"
+  - "when it comes to"
+  - "at the end of the day"
+  # --- compliance: guarantees (R20) ---
+  - "pain-free"
+  - "completely painless"
+  - "guaranteed results"
+  - "permanent hair removal"   # unless literally true for the vertical
+  # --- ADD per business.brand.banned_extra ---
+
+words:
+  # --- tone: how we refer to people ---
+  - "guys"
+  - "dudes"
+  - "bros"
+  - "bestie"
+  - "yass"
+  # --- vertical cringe (tune per business.type) ---
+  - "manscaping"
+  - "down there"
+  - "private parts"
+  # --- compliance: medical claims (R20) ---
+  - "cures"
+  - "heals"
+  - "treats"
+  - "medical-grade"   # unless licensed and true
+  # --- ADD per vertical ---
