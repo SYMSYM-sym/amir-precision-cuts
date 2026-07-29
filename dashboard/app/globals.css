@@ -6,8 +6,8 @@
 
 html {
   color-scheme: dark;
-  --f-serif: var(--font-cg), 'Cormorant Garamond', Georgia, serif;
-  --f-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --f-serif: ui-serif, Georgia, 'Times New Roman', serif;
+  --f-sans: ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 body {

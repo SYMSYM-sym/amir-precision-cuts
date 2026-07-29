@@ -15,8 +15,8 @@
   --warn: #d4b46a;
   --ok: #6cae8a;
 
-  --f-serif: 'Cormorant Garamond', Georgia, serif;
-  --f-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --f-serif: ui-serif, Georgia, 'Times New Roman', serif;
+  --f-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --f-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --radius: 6px;
