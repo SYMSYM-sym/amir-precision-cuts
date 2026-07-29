@@ -1,9 +1,11 @@
-<div class="topbar" aria-label="Contact information">
-  <div class="topbar__inner">
-    <span class="topbar__item"><span class="dot"></span> By appointment only</span>
+<div class="topbar">
+  <div class="topbar__inner container">
+    <span class="topbar__item"><span class="dot" aria-hidden="true"></span>{{derived.booking_line}}</span>
     <span class="topbar__spacer"></span>
-    <a class="topbar__item js-tel" data-tel="1" aria-label="Call Igor For Men">
-      <img src="/assets/img/phone-sm.png" alt="" class="phone-img phone-img--sm" decoding="async" loading="lazy" />
-    </a>
+    {{#if booking.publish_phone}}
+    <a class="topbar__item js-tel" href="#" aria-label="Call {{business.name}}">Call</a>
+    {{else}}
+    {{#if booking.url}}<a class="topbar__item" href="{{booking.url}}">Book</a>{{/if}}
+    {{/if}}
   </div>
 </div>

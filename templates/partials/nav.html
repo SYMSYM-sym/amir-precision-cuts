@@ -1,29 +1,29 @@
 <header class="nav" id="nav">
-  <div class="nav__inner">
-    <a href="/#home" class="nav__brand" aria-label="Igor For Men — Home">
-      <span class="nav__mark">IFM</span>
-      <span class="nav__name">Igor For Men</span>
+  <div class="nav__inner container">
+    <a class="nav__brand" href="{{HOME_HREF}}" aria-label="{{business.name}} — Home">
+      <span class="nav__mark">{{business.initials}}</span>
+      <span class="nav__name">{{business.short_name}}</span>
     </a>
-    <nav class="nav__links" aria-label="Primary navigation">
-      <a href="/#about">About</a>
-      <a href="/#services">Services</a>
-      <a href="/blog/">Journal</a>
-      <a href="/#aftercare">Aftercare</a>
-      <a href="/#faq">FAQ</a>
-      <a href="/#visit">Visit</a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="{{HOME_HREF}}#about">About</a>
+      <a href="{{HOME_HREF}}#services">Services</a>
+      <a href="/blog/"{{#if NAV_JOURNAL_ACTIVE}} class="nav__link--active" aria-current="page"{{/if}}>{{site.blog_title}}</a>
+      <a href="{{HOME_HREF}}#aftercare">Aftercare</a>
+      <a href="{{HOME_HREF}}#faq">FAQ</a>
+      <a href="{{HOME_HREF}}#visit">Visit</a>
     </nav>
-    <a class="btn btn--accent nav__cta js-tel" data-tel="1">Book Now</a>
-    <button class="nav__toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+    {{#if booking.url}}<a class="btn btn--accent nav__cta" href="{{booking.url}}">Book</a>{{/if}}
+    <button class="nav__toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navMobile" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
   </div>
   <div class="nav__mobile" id="navMobile">
-    <a href="/#about">About</a>
-    <a href="/#services">Services</a>
-    <a href="/blog/">Journal</a>
-    <a href="/#aftercare">Aftercare</a>
-    <a href="/#faq">FAQ</a>
-    <a href="/#visit">Visit</a>
-    <a class="btn btn--accent js-tel" data-tel="1">Call to Book</a>
+    <a href="{{HOME_HREF}}#about">About</a>
+    <a href="{{HOME_HREF}}#services">Services</a>
+    <a href="/blog/">{{site.blog_title}}</a>
+    <a href="{{HOME_HREF}}#aftercare">Aftercare</a>
+    <a href="{{HOME_HREF}}#faq">FAQ</a>
+    <a href="{{HOME_HREF}}#visit">Visit</a>
+    {{#if booking.url}}<a class="btn btn--accent" href="{{booking.url}}">Book an appointment</a>{{/if}}
   </div>
 </header>

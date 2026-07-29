@@ -1,12 +1,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="description" content="{{META_DESC}}" />
-<meta name="theme-color" content="#0b0b0d" />
+<meta name="format-detection" content="telephone=no" />
 <title>{{PAGE_TITLE}}</title>
+<meta name="description" content="{{META_DESC}}" />
+<meta name="theme-color" content="{{brand.palette.bg}}" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/img/icon-512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="{{FONTS_HREF}}" />
 <link rel="stylesheet" href="/assets/styles.css" />
-{{EXTRA_HEAD}}
+<link rel="alternate" type="application/rss+xml" title="{{site.blog_title}}" href="/feed.xml" />
+<link rel="alternate" type="application/feed+json" title="{{site.blog_title}}" href="/feed.json" />
+{{{EXTRA_HEAD}}}
 </head>

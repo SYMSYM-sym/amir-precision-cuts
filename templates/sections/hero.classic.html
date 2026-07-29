@@ -1,0 +1,13 @@
+<section class="hero hero--classic" id="home">
+  <div class="hero__inner container hero__inner--center">
+    <p class="eyebrow">Established practice &middot; {{location.address_city}}</p>
+    <h1 class="hero__title">{{business.name}}</h1>
+    <hr class="hero__rule" />
+    <p class="hero__tagline">{{business.tagline}}</p>
+    <p class="hero__lede">{{business.positioning}}</p>
+    <div class="hero__cta">
+      {{#if booking.url}}<a class="btn btn--accent btn--lg" href="{{booking.url}}">Request an appointment</a>{{/if}}
+      <a class="btn btn--ghost btn--lg" href="#services">Services &amp; pricing</a>
+    </div>
+  </div>
+</section>

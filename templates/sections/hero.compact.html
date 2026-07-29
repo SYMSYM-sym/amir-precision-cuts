@@ -1,0 +1,19 @@
+<section class="hero hero--compact" id="home">
+  <div class="container hero__bar">
+    <div class="hero__lead">
+      <h1 class="hero__title">{{business.name}}</h1>
+      <p class="hero__tagline">{{business.tagline}}</p>
+      <p class="hero__lede">{{business.positioning}}</p>
+    </div>
+    <ul class="hero__facts">
+      <li><span class="hero__fact-k">Where</span><span class="hero__fact-v">{{location.neighborhood}}, {{location.address_city}}</span></li>
+      <li><span class="hero__fact-k">Hours</span><span class="hero__fact-v">{{derived.hours_line}}</span></li>
+      <li><span class="hero__fact-k">Booking</span><span class="hero__fact-v">{{derived.booking_line}}</span></li>
+      <li><span class="hero__fact-k">Since</span><span class="hero__fact-v">{{business.years_experience}} years in practice</span></li>
+    </ul>
+    <div class="hero__cta">
+      {{#if booking.url}}<a class="btn btn--accent" href="{{booking.url}}">Book</a>{{/if}}
+      <a class="btn btn--ghost" href="#services">Prices</a>
+    </div>
+  </div>
+</section>

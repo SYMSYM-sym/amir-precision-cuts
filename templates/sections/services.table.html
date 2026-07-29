@@ -1,0 +1,26 @@
+<section class="section {{SECTION_TONE}} section--services" id="services">
+  <div class="container">
+    <div class="section__head {{HEAD_ALIGN}}">
+      <p class="eyebrow">Services</p>
+      <h2 class="h2">Price list</h2>
+    </div>
+    <table class="service-table">
+      <caption class="visually-hidden">Services, duration and starting price</caption>
+      <thead>
+        <tr><th scope="col">Service</th><th scope="col">Time</th><th scope="col">From</th></tr>
+      </thead>
+      <tbody>
+        {{#each services}}
+        <tr class="service-table__row" id="service-{{key}}">
+          <th scope="row" class="service-table__label">
+            <span class="service-table__name">{{label}}</span>
+            <span class="service-table__desc">{{description}}</span>
+          </th>
+          <td class="service-table__duration">{{#if duration}}{{duration}}{{else}}&mdash;{{/if}}</td>
+          <td class="service-table__price">{{#if price_from}}{{price_from}}{{else}}<span class="service-table__ask">ask</span>{{/if}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>

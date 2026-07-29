@@ -1,0 +1,26 @@
+<section class="section {{SECTION_TONE}} section--about" id="about">
+  <div class="container grid grid--about">
+    <div class="about__copy">
+      <p class="eyebrow">About</p>
+      <h2 class="h2">{{business.short_name}}</h2>
+      <p class="lead">{{business.positioning}}</p>
+      <p>{{homepage.about_body}}</p>
+      <ul class="about__points">
+        <li><span class="check" aria-hidden="true"></span>{{business.years_experience}} years of practice</li>
+        <li><span class="check" aria-hidden="true"></span>{{derived.booking_line}}</li>
+        <li><span class="check" aria-hidden="true"></span>{{location.neighborhood}}, {{location.address_city}}</li>
+      </ul>
+    </div>
+    <aside class="about__card">
+      <div class="about__card-top">
+        <p class="about__card-label">Visit</p>
+        <p class="about__card-address">{{location.address_street}}<br />{{derived.address_city_region_postal}}</p>
+      </div>
+      <div class="about__card-row">
+        <div><p class="about__card-label">Hours</p><p>{{derived.hours_days_short}}<br />{{derived.hours_times_long}}</p></div>
+        <div><p class="about__card-label">Booking</p><p>{{derived.booking_line}}</p></div>
+      </div>
+      <a class="btn btn--accent btn--block" href="{{derived.address_maps_url}}" rel="noopener" target="_blank">Get directions</a>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,186 @@
+# ============================================================================
+# DEV FIXTURE B — NOT a real business, NOT the shipping config.
+#
+# The adversary to fixture A. Every axis is deliberately opposed so that any
+# weld left uncut shows up immediately as fixture A's data appearing in
+# fixture B's output:
+#
+#   A: lash studio  · BeautySalon · Providence RI · America/New_York
+#   B: nail lounge  · NailSalon   · Boise ID      · America/Boise
+#   A: dark warm    · Fraunces/Inter   · editorial · appointment-only · no contact
+#   B: light cool   · Spectral/Karla   · gallery   · walk-ins welcome · email published
+#   A: 5 open days, 6 services, Mon/Thu cadence
+#   B: 6 open days, 4 services, Tue/Fri/Sun cadence
+#
+# The layout_variant difference is the load-bearing one: 04 §D forbids shipping
+# a recolor, and a recolor passes every automated gate. Diffing A's index.html
+# against B's must show a different DOM, not the same skeleton in new hex codes.
+# ============================================================================
+
+business:
+  name: "Sweetwater Nail Lounge"
+  short_name: "Sweetwater"
+  initials: "SW"
+  type: "nail lounge"
+  category_schema: "NailSalon"
+  tagline: "Clean hands, good light, no rush"
+  positioning: "A bright walk-in nail lounge on the Boise Bench. Natural-nail work, honest wear times, and a table you can actually see what you are getting on."
+  practitioner_name: "Marisol"
+  years_experience: "9"
+  author_id: "sweetwater-team"
+
+location:
+  address_street: "2140 Vista Avenue"
+  address_city: "Boise"
+  address_region: "ID"
+  address_postal: "83705"
+  address_country: "US"
+  timezone: "America/Boise"
+  neighborhood: "Boise Bench"
+  location_anchors:
+    - "Boise Bench"
+    - "Vista Avenue"
+    - "Depot Bench"
+    - "Boise Depot"
+    - "Ann Morrison Park"
+    - "Downtown Boise"
+    - "Boise State University"
+    - "Hyde Park"
+    - "North End"
+    - "Garden City"
+    - "Kathryn Albertson Park"
+
+hours:
+  days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  opens: "10:00"
+  closes: "19:00"
+
+booking:
+  model: "walk-ins welcome"
+  url: ""
+  publish_phone: false
+  phone: ""
+  publish_email: true
+  email: "hello@sweetwaternails.com"
+
+homepage:
+  about_body: >-
+    Sweetwater is a six-table lounge on Vista Avenue with south-facing windows,
+    which is the whole reason Marisol signed the lease. Colour reads true in
+    daylight and so do cuticles. We took the walk-in model on purpose — most
+    people decide they want their nails done about forty minutes before they
+    want them done.
+  aftercare_body: >-
+    Give a fresh gel set twelve hours before anything abrasive: no scrubbing
+    pans, no gardening gloves, no picking at a lifted edge. Oil the cuticle
+    nightly — it is the single thing that separates a set that lasts three weeks
+    from one that lifts in eight days. Wear gloves for dishes and cleaning
+    products. If a corner lifts, come in and let us seal it; water under a gel
+    edge is how a small lift becomes a full removal.
+  faq:
+    - q: "Do I need an appointment?"
+      a: "No. We are walk-in first and hold most of the day open for it. If you want a specific tech or a long set, email ahead and we will pencil you in."
+    - q: "How long does a gel manicure last?"
+      a: "Two to three weeks on most people before regrowth shows. Nail growth rate does more of the work here than the product does."
+    - q: "Do you do acrylics?"
+      a: "No. We are a natural-nail lounge — gel, builder gel, and polish. If you want a full acrylic set we will happily point you to someone across town who does them well."
+    - q: "Can you take off a set I got somewhere else?"
+      a: "Yes. Soak-off removal is priced on its own and we will tell you honestly what the nail underneath looks like before we put anything new on it."
+    - q: "Is builder gel the same as acrylic?"
+      a: "No. Builder gel adds strength over your own nail without a tip or an extension. It files off softer and is a lot kinder to a thin nail plate."
+    - q: "What if a nail chips in the first week?"
+      a: "Come back and we will fix that nail at no charge within seven days. It happens and it is usually our application, not you."
+    - q: "Are your tools sanitised between clients?"
+      a: "Everything metal is autoclaved. Files and buffers are single-use and go in the bin in front of you."
+    - q: "Do you take kids?"
+      a: "Yes, polish only, and they need an adult at the table."
+
+services:
+  - key: "gel-manicure"
+    label: "Gel Manicure"
+    price_from: "$55"
+    duration: "50 min"
+    description: "Shaped, cuticle work, and a gel colour cured to a hard finish. Two to three weeks of honest wear."
+  - key: "builder-gel"
+    label: "Builder Gel Overlay"
+    price_from: "$75"
+    duration: "75 min"
+    description: "Strength over your own nail with no tip and no extension. For nails that bend or peel."
+  - key: "soak-off"
+    label: "Soak-Off Removal"
+    price_from: "$25"
+    duration: "30 min"
+    description: "Gentle removal of gel from anywhere, including sets we did not place. Priced on its own so nobody pays twice."
+  - key: "pedicure"
+    label: "Pedicure"
+    price_from: ""
+    duration: "60 min"
+    description: "Soak, shape, callus work, and polish or gel. Pricing depends on whether you want gel; ask at the desk."
+
+brand:
+  voice_adjectives: ["bright", "direct", "practical", "warm", "unfussy"]
+  audience: "Working people on the Bench who want good nails without a two-hour production or a sales pitch."
+  banned_extra:
+    - "pamper"
+    - "treat yourself"
+    - "me-time"
+    - "mani-pedi"
+    - "self-care journey"
+    - "luxe"
+  palette:
+    bg: "#fbfaf7"
+    surface: "#ffffff"
+    accent: "#2f6f6a"
+    text: "#1a1c1b"
+    muted: "#5f6b68"
+  fonts:
+    display: "Spectral"
+    body: "Karla"
+  layout_variant: "gallery"
+  feel: "sunlit, straightforward, cheerful without being loud"
+
+site:
+  domain: "sweetwaternails.com"
+  blog_path: "/blog"
+  blog_title: "From the Table"
+  blog_subtitle: "Natural-nail care, written in a south-facing room on Vista Avenue."
+
+content:
+  cadence_days: ["Tuesday", "Friday", "Sunday"]
+  publish_hour_local: "08:30"
+  articles_per_day_max: 1
+  publish_mode: "instant"
+  word_count: { min: 800, max: 1400, target_min: 850, target_max: 1250 }
+  originality_max_similarity: 0.84
+  queue_dedupe_max_similarity: 0.78
+  internal_links: { min: 2, max: 3 }
+  location_mentions_min: 3
+  faq_questions: 5
+  buckets:
+    - "hyperlocal"
+    - "service-detail"
+    - "question"
+    - "aftercare"
+    - "comparison"
+    - "first-timer"
+    - "eeat"
+  topics_to_seed: 40
+  limits:
+    max_topics_per_run: 3
+    max_regen_per_topic: 2
+    max_api_calls_per_run: 5
+    max_derive_api_calls: 4
+
+compliance:
+  no_medical_claims: true
+  no_guarantees: true
+  no_superlatives_without_evidence: true
+  no_invented_prices: true
+  extra_notes: "Never diagnose nail conditions. Fungal, psoriatic, or discoloured nails get referred to a physician, not treated."
+
+integrations:
+  anthropic_model: "claude-sonnet-4-5-20250929"
+  vercel_project: ""
+  github_repo: ""
+  sentry_dsn: ""
+  analytics: ""

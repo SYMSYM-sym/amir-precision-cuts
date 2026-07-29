@@ -1,0 +1,17 @@
+<section class="hero hero--gallery" id="home">
+  <div class="hero__band" aria-hidden="true">
+    <span class="hero__band-tile hero__band-tile--1"></span>
+    <span class="hero__band-tile hero__band-tile--2"></span>
+    <span class="hero__band-tile hero__band-tile--3"></span>
+  </div>
+  <div class="hero__inner container hero__inner--center">
+    <p class="eyebrow">{{business.type}} in {{location.address_city}}</p>
+    <h1 class="hero__title">{{business.tagline}}</h1>
+    <p class="hero__lede">{{business.positioning}}</p>
+    <div class="hero__cta">
+      {{#if booking.url}}<a class="btn btn--accent btn--lg" href="{{booking.url}}">Book now</a>{{/if}}
+      <a class="btn btn--ghost btn--lg" href="#services">Browse services</a>
+    </div>
+    <p class="hero__note">{{derived.booking_line}} &middot; {{derived.hours_line}}</p>
+  </div>
+</section>

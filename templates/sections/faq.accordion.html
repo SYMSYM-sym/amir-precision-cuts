@@ -1,0 +1,16 @@
+<section class="section {{SECTION_TONE}} section--faq" id="faq">
+  <div class="container">
+    <div class="section__head {{HEAD_ALIGN}}">
+      <p class="eyebrow">Frequently asked</p>
+      <h2 class="h2">Questions people actually ask.</h2>
+    </div>
+    <div class="faq">
+      {{#each homepage.faq}}
+      <details class="faq__item"{{#if @first}} open{{/if}}>
+        <summary><span>{{q}}</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__body"><p>{{a}}</p></div>
+      </details>
+      {{/each}}
+    </div>
+  </div>
+</section>

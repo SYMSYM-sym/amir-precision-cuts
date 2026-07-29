@@ -1,0 +1,39 @@
+<section class="section {{SECTION_TONE}} section--visit" id="visit">
+  <div class="container grid grid--visit">
+    <div class="visit__copy">
+      <p class="eyebrow">Visit</p>
+      <h2 class="h2">{{location.neighborhood}}, {{location.address_city}}</h2>
+      <p class="lead">{{location.address_street}} &mdash; {{derived.booking_line_period}}</p>
+      <div class="visit__rows">
+        <div class="visit__row">
+          <p class="visit__row-label">Address</p>
+          <p class="visit__row-value">{{location.address_street}}<br />{{derived.address_city_region_postal}}</p>
+        </div>
+        <div class="visit__row">
+          <p class="visit__row-label">Hours</p>
+          <p class="visit__row-value">{{derived.hours_days_long}}<br />{{derived.hours_times_long}}</p>
+        </div>
+        {{#if derived.has_contact}}
+        <div class="visit__row">
+          <p class="visit__row-label">Contact</p>
+          <p class="visit__row-value">
+            {{#if booking.publish_phone}}<a class="js-tel" href="#">Call the studio</a>{{/if}}
+            {{#if booking.publish_email}}<a href="mailto:{{booking.email}}">{{booking.email}}</a>{{/if}}
+          </p>
+        </div>
+        {{/if}}
+      </div>
+      <div class="visit__cta">
+        {{#if booking.url}}<a class="btn btn--accent btn--lg" href="{{booking.url}}">Book an appointment</a>{{/if}}
+        <a class="btn btn--ghost btn--lg" href="{{derived.address_maps_url}}" rel="noopener" target="_blank">Get directions</a>
+      </div>
+    </div>
+    <aside class="visit__aside">
+      <h3 class="h3 visit__aside-title">Getting here</h3>
+      <p class="visit__aside-body">We are in {{location.neighborhood}}, close to {{ANCHOR_1}} and {{ANCHOR_2}}. {{ANCHOR_3}} is the nearest landmark most people know.</p>
+      <ul class="visit__anchors">
+        {{#each NEARBY}}<li>{{this}}</li>{{/each}}
+      </ul>
+    </aside>
+  </div>
+</section>

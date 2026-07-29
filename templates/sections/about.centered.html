@@ -1,0 +1,16 @@
+<section class="section {{SECTION_TONE}} section--about" id="about">
+  <div class="container about__narrow">
+    <div class="section__head section__head--center">
+      <p class="eyebrow">About</p>
+      <h2 class="h2">{{business.short_name}}</h2>
+    </div>
+    <p class="lead about__lead">{{business.positioning}}</p>
+    <p class="about__body">{{homepage.about_body}}</p>
+    <ul class="about__strip">
+      <li><strong>{{business.years_experience}}</strong><span>years in practice</span></li>
+      <li><strong>{{location.neighborhood}}</strong><span>{{location.address_city}}, {{location.address_region}}</span></li>
+      <li><strong>{{derived.hours_days_short}}</strong><span>{{derived.hours_times_long}}</span></li>
+    </ul>
+    <p class="about__cta"><a class="btn btn--ghost" href="{{derived.address_maps_url}}" rel="noopener" target="_blank">Get directions</a></p>
+  </div>
+</section>

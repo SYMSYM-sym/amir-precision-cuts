@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-{{HEAD}}
+{{{HEAD}}}
 <body class="blog-page">
-{{TOPBAR}}
-{{NAV}}
+{{{TOPBAR}}}
+{{{NAV}}}
 <main>
   <article class="article-shell" itemscope itemtype="https://schema.org/Article">
     <header class="article-hero">
@@ -12,18 +12,18 @@
         <h1 class="article-hero__title" itemprop="headline">{{TITLE}}</h1>
         <div class="article-hero__meta">
           <span class="article-pill">{{READING_TIME}} min read</span>
-          <span class="article-byline muted">The IFM Team</span>
+          <span class="article-byline muted">{{AUTHOR_NAME}}</span>
         </div>
       </div>
     </header>
     <div class="article-body container" itemprop="articleBody">
-      {{BODY_HTML}}
+      {{{BODY_HTML}}}
     </div>
-    {{FAQ_HTML}}
-    {{RELATED_HTML}}
+    {{{FAQ_HTML}}}
+    {{{RELATED_HTML}}}
   </article>
 </main>
-{{FOOTER}}
-<script src="/assets/script.js"></script>
+{{{FOOTER}}}
+<script src="/assets/script.js" defer></script>
 </body>
 </html>

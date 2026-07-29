@@ -1,0 +1,24 @@
+<section class="section {{SECTION_TONE}} section--services" id="services">
+  <div class="container">
+    <div class="section__head {{HEAD_ALIGN}}">
+      <p class="eyebrow">Services</p>
+      <h2 class="h2">What we do, and what it costs.</h2>
+      <p class="section__sub">Prices start at the amounts listed. Where a price is not shown, it depends on the work and we will quote it before we start.</p>
+    </div>
+    <ol class="service-rows">
+      {{#each services}}
+      <li class="service-row" id="service-{{key}}">
+        <span class="service-row__num" aria-hidden="true">{{@number}}</span>
+        <div class="service-row__body">
+          <h3 class="service-row__title h3">{{label}}</h3>
+          <p class="service-row__desc">{{description}}</p>
+        </div>
+        <div class="service-row__meta">
+          {{#if price_from}}<p class="service-row__price">{{price_from}}</p>{{/if}}
+          {{#if duration}}<p class="service-row__duration">{{duration}}</p>{{/if}}
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+  </div>
+</section>

@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-{{HEAD}}
+{{{HEAD}}}
 <body class="blog-page blog-index-page">
-{{TOPBAR}}
-{{NAV}}
+{{{TOPBAR}}}
+{{{NAV}}}
 <main>
   <section class="section blog-index-hero">
     <div class="container">
-      <p class="eyebrow">Journal</p>
-      <h1 class="h2">Notes on men's grooming</h1>
-      <p class="section__sub">Written from a private salon in West Hollywood.</p>
+      <p class="eyebrow">{{site.blog_title}}</p>
+      <h1 class="h2">{{site.blog_title}}</h1>
+      <p class="section__sub">{{site.blog_subtitle}}</p>
       <div class="blog-filter" role="group" aria-label="Filter by topic">
         <button type="button" class="blog-filter__btn blog-filter__btn--all is-active" data-bucket="">All</button>
-        {{FILTER_BUTTONS}}
+        {{{FILTER_BUTTONS}}}
       </div>
     </div>
   </section>
   <section class="section section--dark">
     <div class="container">
       <div class="blog-grid" id="blogGrid">
-        {{ARTICLE_CARDS}}
+        {{{ARTICLE_CARDS}}}
       </div>
-      {{EMPTY_STATE_HTML}}
+      {{{EMPTY_STATE_HTML}}}
       <div class="blog-load-more-wrap">
         <button type="button" class="btn btn--ghost blog-load-more" id="blogLoadMore" hidden>Load more</button>
       </div>
     </div>
   </section>
 </main>
-{{FOOTER}}
+{{{FOOTER}}}
 <script>
 (function () {
   var LOAD = 12;
@@ -85,6 +85,6 @@
   layout();
 })();
 </script>
-<script src="/assets/script.js"></script>
+<script src="/assets/script.js" defer></script>
 </body>
 </html>

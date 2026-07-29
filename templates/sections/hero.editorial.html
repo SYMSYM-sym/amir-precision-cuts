@@ -1,0 +1,19 @@
+<section class="hero hero--editorial" id="home">
+  <div class="hero__inner container">
+    <p class="eyebrow eyebrow--light">{{location.neighborhood}} &middot; {{business.type}}</p>
+    <h1 class="hero__title">
+      <span class="hero__title-line">{{business.tagline}}</span>
+    </h1>
+    <p class="hero__lede">{{business.positioning}}</p>
+    <div class="hero__cta">
+      {{#if booking.url}}<a class="btn btn--accent btn--lg" href="{{booking.url}}">Book an appointment</a>{{/if}}
+      <a class="btn btn--ghost btn--lg" href="#services">See services</a>
+    </div>
+    <dl class="hero__meta">
+      <div><dt>{{business.years_experience}}+</dt><dd>years, {{business.practitioner_name}} at the chair</dd></div>
+      <div><dt>{{SERVICE_COUNT}}</dt><dd>services, no packages</dd></div>
+      <div><dt>{{derived.hours_times_tight}}</dt><dd>{{derived.hours_days_tight}}</dd></div>
+    </dl>
+  </div>
+  <a class="hero__scroll" href="#about" aria-label="Scroll to about"></a>
+</section>
