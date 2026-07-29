@@ -136,8 +136,154 @@ export function buildPortal() {
   return { dest, bytes: Buffer.byteLength(html), templates: Object.keys(collectTemplates()).length };
 }
 
+/**
+ * Self-extracting build.
+ *
+ * The portal is ~194 KB of markup, engine and templates. Getting it onto a host
+ * whose API takes file contents INLINE means transmitting all of it, so the
+ * hosted copy ships gzipped and base64'd inside a ~2 KB loader: 194 KB becomes
+ * 69 KB on the wire, and the browser inflates it with DecompressionStream.
+ *
+ * The loader carries a SHA-256 of the payload and checks it before writing. A
+ * truncated or corrupted upload otherwise produces a page that half-renders,
+ * which is a far worse failure than one that refuses to start and says why.
+ *
+ * portal/index.html stays the plain, readable artifact. This is only for hosts
+ * that need the bytes inline.
+ */
+/**
+ * Minify the bundle for hosting. The repo copy stays readable — every comment
+ * in the engine explains a bug that cost someone real downtime, and stripping
+ * those from the source would be a bad trade. Stripping them from a hosted
+ * artifact costs nothing, because the source is right here.
+ */
+async function minifyBundle(html) {
+  let esbuild;
+  try {
+    ({ default: esbuild } = await import('esbuild'));
+  } catch {
+    console.log('  (esbuild not installed — shipping the unminified bundle)');
+    return html;
+  }
+  // NOTE: every replacement below passes a FUNCTION, not a string.
+  // String.replace interprets $&, $` and $' inside a string replacement, and
+  // minified JS is full of $. The first version of this used a string and $'
+  // ("everything after the match") spliced the rest of the bundle back in --
+  // 194 KB became 357 KB and the build reported it cheerfully.
+  const blocks = [...html.matchAll(/<script( type="module")?>([\s\S]*?)<\/script>/g)];
+  let out = html;
+  for (const [full, isModule, code] of blocks) {
+    const min = await esbuild.transform(code, {
+      loader: 'js', minify: true, format: isModule ? 'esm' : undefined, target: 'es2022',
+    });
+    const replacement = `<script${isModule || ''}>${escapeScriptClose(min.code)}</script>`;
+    out = out.replace(full, () => replacement);
+  }
+  const styles = [...out.matchAll(/<style>([\s\S]*?)<\/style>/g)];
+  for (const [full, css] of styles) {
+    const min = await esbuild.transform(css, { loader: 'css', minify: true });
+    const replacement = `<style>${min.code}</style>`;
+    out = out.replace(full, () => replacement);
+  }
+  return out;
+}
+
+export async function buildSelfExtracting() {
+  const { gzipSync } = await import('zlib');
+  const { createHash } = await import('crypto');
+  const html = await minifyBundle(readFileSync(join(PORTAL, 'index.html'), 'utf8'));
+  const raw = Buffer.from(html, 'utf8');
+  const gz = gzipSync(raw, { level: 9 });
+  const b64 = gz.toString('base64');
+  const sha = createHash('sha256').update(raw).digest('hex');
+
+  const loader = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Site Intake — Personal Services Factory</title>
+<meta name="description" content="Everything the factory needs to build a marketing site and a self-publishing SEO blog for a personal-services business." />
+<meta name="robots" content="index,follow" />
+<style>
+  body{margin:0;font:15px/1.6 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f7f6f3;color:#17181a;display:grid;place-items:center;min-height:100dvh}
+  .boot{max-width:46ch;padding:2rem;text-align:center}
+  .boot h1{font-size:17px;margin:0 0 .5rem}
+  .boot p{color:#6b6f76;font-size:14px;margin:0}
+  .boot code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:#eceae5;padding:2px 6px;border-radius:4px}
+  .err{color:#a3271f}
+</style>
+</head>
+<body>
+<div class="boot" id="boot">
+  <h1>Loading the intake portal…</h1>
+  <p>Unpacking. This happens once.</p>
+</div>
+<noscript>
+  <div class="boot"><h1>This portal needs JavaScript</h1>
+  <p>Everything runs in your browser — the validation, the site preview, the config export. Nothing is sent anywhere.</p></div>
+</noscript>
+<script>
+(async function () {
+  var boot = document.getElementById('boot');
+  function fail(title, detail) {
+    boot.innerHTML = '<h1 class="err">' + title + '</h1><p>' + detail + '</p>';
+  }
+  try {
+    if (typeof DecompressionStream === 'undefined') {
+      return fail('Your browser is too old for this page',
+        'It needs DecompressionStream (Chrome/Edge 103+, Firefox 113+, Safari 16.4+). ' +
+        'The portal itself works anywhere — ask for the plain HTML file instead.');
+    }
+    var bin = Uint8Array.from(atob(PAYLOAD), function (c) { return c.charCodeAt(0); });
+    var stream = new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'));
+    var buf = await new Response(stream).arrayBuffer();
+
+    var digest = await crypto.subtle.digest('SHA-256', buf);
+    var hex = Array.from(new Uint8Array(digest)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+    if (hex !== INTEGRITY) {
+      return fail('This page did not arrive intact',
+        'The unpacked portal does not match its checksum, so it is not safe to run. ' +
+        'A half-rendered form that silently drops answers is worse than one that refuses to start.');
+    }
+
+    var doc = new TextDecoder().decode(buf);
+    document.open();
+    document.write(doc);
+    document.close();
+  } catch (e) {
+    fail('The portal could not be unpacked', String(e && e.message ? e.message : e));
+  }
+})();
+</script>
+</body>
+</html>`;
+
+  const withData = loader
+    .replace('PAYLOAD', JSON.stringify(b64))
+    .replace('INTEGRITY', JSON.stringify(sha));
+
+  const dist = join(PORTAL, 'dist');
+  mkdirSync(dist, { recursive: true });
+  writeFileSync(join(dist, 'index.html'), withData, 'utf8');
+  return {
+    dest: join(dist, 'index.html'),
+    rawBytes: raw.length,
+    wireBytes: Buffer.byteLength(withData),
+    sha,
+  };
+}
+
 const invoked = process.argv[1] && process.argv[1].endsWith('build-portal.mjs');
 if (invoked) {
   const r = buildPortal();
   console.log(`portal built: ${r.dest.replace(`${ROOT}/`, '')} — ${(r.bytes / 1024).toFixed(0)} KB, ${r.templates} templates inlined`);
+  if (process.argv.includes('--self-extracting')) {
+    const z = await buildSelfExtracting();
+    console.log(
+      `self-extracting: ${z.dest.replace(`${ROOT}/`, '')} — `
+      + `${(z.rawBytes / 1024).toFixed(0)} KB unpacked, ${(z.wireBytes / 1024).toFixed(1)} KB on the wire`,
+    );
+    console.log(`  sha256 ${z.sha}`);
+  }
 }
