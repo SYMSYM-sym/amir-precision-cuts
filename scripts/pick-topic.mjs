@@ -111,6 +111,16 @@ export function quarantineTopic(topic, reason) {
     slug: topic.slug,
     title: topic.title,
     target_keyword: topic.target_keyword,
+    // intent + bucket are carried through the quarantine so a triaged topic can
+    // be requeued without guessing them. The reference dropped both, which made
+    // the (never-built) triage surface unable to put a topic back correctly:
+    // a requeued topic with the wrong bucket fails validation next run for an
+    // entirely new reason, and looks like the rewrite did not work.
+    intent: topic.intent,
+    bucket: topic.bucket,
+    secondary_keywords: topic.secondary_keywords || [],
+    internal_links: topic.internal_links || [],
+    notes: topic.notes,
     reason,
     quarantined_at: localDateString(),
   });

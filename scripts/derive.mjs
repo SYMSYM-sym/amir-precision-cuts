@@ -479,6 +479,7 @@ export const PUBLISH_HOUR_LOCAL = ${j(c.content.publish_hour_local)};
 export const TIMEZONE = ${j(c.location.timezone)};
 export const LIVE_URL = ${j(c.derived.site_url)};
 export const BUSINESS_NAME = ${j(c.business.name)};
+export const AUTHOR_ID = ${j(c.business.author_id)};
 `;
 }
 
