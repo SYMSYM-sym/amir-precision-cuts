@@ -4,7 +4,7 @@
    Rendered by `npm run derive --only=site` from business.config.yaml.
    DO NOT HAND-EDIT. Change the config (palette, fonts, layout_variant) instead;
    this file is output, and the next derive will overwrite anything you write here.
-   Layout variant: compact
+   Layout variant: editorial
    ========================================================================== */
 
 :root {
@@ -22,26 +22,26 @@
   --font-display: "Fraunces", Georgia, 'Times New Roman', serif;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ease: cubic-bezier(.2,.7,.2,1);
-  --step--1: clamp(.8rem, .78rem + .1vw, .86rem);
-  --step-0: clamp(.94rem, .92rem + .15vw, 1rem);
-  --step-1: clamp(1.13rem, 1.08rem + .25vw, 1.25rem);
-  --step-2: clamp(1.35rem, 1.26rem + .45vw, 1.56rem);
-  --step-3: clamp(1.62rem, 1.47rem + .75vw, 1.95rem);
-  --step-4: clamp(1.95rem, 1.7rem + 1.25vw, 2.44rem);
-  --space: clamp(.75rem, .68rem + .35vw, 1rem);
-  --section-y: clamp(3rem, 4.5vw, 4.5rem);
-  --measure: 72ch;
-  --radius: 4px;
-  --radius-sm: 2px;
+  --step--1: clamp(.83rem, .8rem + .2vw, .94rem);
+  --step-0: clamp(1rem, .95rem + .3vw, 1.13rem);
+  --step-1: clamp(1.33rem, 1.2rem + .7vw, 1.78rem);
+  --step-2: clamp(1.78rem, 1.55rem + 1.2vw, 2.37rem);
+  --step-3: clamp(2.37rem, 1.95rem + 2.1vw, 3.16rem);
+  --step-4: clamp(3.16rem, 2.4rem + 3.8vw, 5.61rem);
+  --space: clamp(1.25rem, 1rem + .9vw, 2rem);
+  --section-y: clamp(6rem, 9vw, 10rem);
+  --measure: 60ch;
+  --radius: 0px;
+  --radius-sm: 0px;
   --rule: 1px;
-  --grid-about: 1fr 1fr;
-  --grid-visit: 1fr 1fr;
-  --max: 1100px;
-  --pad: clamp(16px, 3vw, 32px);
-  --display-weight: 600;
-  --display-tracking: -0.01em;
-  --eyebrow-tracking: .12em;
-  --nav-h: 58px;
+  --grid-about: 1.35fr .65fr;
+  --grid-visit: 1fr .8fr;
+  --max: 1240px;
+  --pad: clamp(20px, 4vw, 64px);
+  --display-weight: 400;
+  --display-tracking: -0.02em;
+  --eyebrow-tracking: .24em;
+  --nav-h: 76px;
 }
 
 /* ---------- reset ---------- */
@@ -205,57 +205,64 @@ a.topbar__item:hover { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
 
 /* ==========================================================================
-   VARIANT: compact
+   VARIANT: editorial
    Only the active variant's rules are emitted. Two configs with different
    layout_variant values produce different DOM (see templates/sections/) AND a
    different stylesheet — not the same skeleton in new hex codes (04 §D).
    ========================================================================== */
 
 
-
-
-/* --- compact: dense, tabular, information-first --- */
-.hero--compact { padding-block: calc(var(--section-y) * 1.1); border-bottom: var(--rule) solid var(--line); }
-.hero__bar { display: grid; grid-template-columns: 1.2fr 1fr auto; gap: calc(var(--space) * 2); align-items: start; }
-.hero--compact .hero__title { font-size: var(--step-4); margin-bottom: .15em; }
-.hero__tagline { color: var(--accent); font-size: var(--step-1); margin-bottom: .5em; font-family: var(--font-display); }
-.hero--compact .hero__lede { font-size: var(--step-0); }
-.hero__facts { list-style: none; margin: 0; padding: 0; border-top: var(--rule) solid var(--line); }
-.hero__facts li { display: grid; grid-template-columns: 5.5rem 1fr; gap: var(--space); padding-block: .55em; border-bottom: var(--rule) solid var(--line); font-size: var(--step--1); }
-.hero__fact-k { color: var(--accent); text-transform: uppercase; letter-spacing: var(--eyebrow-tracking); }
-.hero__fact-v { color: var(--muted); }
-.hero--compact .hero__cta { flex-direction: column; margin-top: 0; }
-
-.service-table { font-size: var(--step-0); }
-.service-table thead th {
-  text-align: left; font-family: var(--font-body); font-size: var(--step--1);
-  text-transform: uppercase; letter-spacing: var(--eyebrow-tracking); color: var(--accent);
-  border-bottom: var(--rule) solid var(--line-strong); padding: .6em .5em;
+/* --- editorial: type-led, asymmetric, no radius --- */
+.hero--editorial { padding-block: calc(var(--section-y) * 1.15) var(--section-y); border-bottom: var(--rule) solid var(--line); }
+.hero--editorial .hero__title { font-size: var(--step-4); max-width: 16ch; }
+.hero--editorial .hero__title-line { display: block; }
+.hero--editorial .hero__meta {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space); margin: calc(var(--space) * 2.5) 0 0; padding-top: calc(var(--space) * 1.5);
+  border-top: var(--rule) solid var(--line);
 }
-.service-table th, .service-table td { padding: .85em .5em; border-bottom: var(--rule) solid var(--line); vertical-align: top; }
-.service-table__label { text-align: left; font-weight: 400; }
-.service-table__name { display: block; font-family: var(--font-display); font-size: var(--step-1); }
-.service-table__desc { display: block; color: var(--muted); font-size: var(--step--1); max-width: var(--measure); }
-.service-table__duration, .service-table__price { white-space: nowrap; color: var(--muted); }
-.service-table__price { font-family: var(--font-display); font-size: var(--step-1); color: var(--text); text-align: right; }
-.service-table__ask { color: var(--muted); font-family: var(--font-body); font-size: var(--step--1); }
+.hero--editorial .hero__meta div { margin: 0; }
+.hero--editorial .hero__meta dt { font-family: var(--font-display); font-size: var(--step-2); color: var(--accent); }
+.hero--editorial .hero__meta dd { margin: .25em 0 0; color: var(--muted); font-size: var(--step--1); }
+.hero__scroll { display: block; width: 1px; height: 48px; margin: 0 auto; background: var(--line-strong); }
 
-.about__card { border: var(--rule) solid var(--line); padding: var(--space); border-radius: var(--radius); }
-.about__card-label { font-size: var(--step--1); text-transform: uppercase; letter-spacing: var(--eyebrow-tracking); color: var(--accent); margin-bottom: .3em; }
-.about__card-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space); margin-block: var(--space); }
-.about__points { list-style: none; padding: 0; }
-.about__points li { display: flex; gap: .6em; align-items: baseline; margin-bottom: .4em; color: var(--muted); font-size: var(--step--1); }
-.check { width: 6px; height: 6px; flex: none; background: var(--accent); border-radius: var(--radius-sm); }
+.service-rows { list-style: none; margin: 0; padding: 0; border-top: var(--rule) solid var(--line); }
+.service-row {
+  display: grid; grid-template-columns: 3rem 1fr auto; gap: calc(var(--space) * 1.5);
+  align-items: baseline; padding-block: calc(var(--space) * 1.6);
+  border-bottom: var(--rule) solid var(--line);
+}
+.service-row__num { font-family: var(--font-display); color: var(--accent); font-size: var(--step-1); }
+.service-row__title { margin-bottom: .3em; }
+.service-row__desc { color: var(--muted); max-width: var(--measure); margin: 0; }
+.service-row__meta { text-align: right; }
+.service-row__price { font-family: var(--font-display); font-size: var(--step-2); margin: 0; }
+.service-row__duration { color: var(--muted); font-size: var(--step--1); margin: .2em 0 0; }
 
-.care-inline { display: grid; grid-template-columns: 1fr 2fr; gap: calc(var(--space) * 2); align-items: start; }
-.care-inline__body p { color: var(--muted); }
-.care-inline__ask { border-left: 2px solid var(--accent); padding-left: var(--space); }
+.about__card { border: var(--rule) solid var(--line); padding: calc(var(--space) * 1.5); position: sticky; top: calc(var(--nav-h) + 16px); }
+.about__card-label { font-size: var(--step--1); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--accent); margin-bottom: .4em; }
+.about__card-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space); margin-block: calc(var(--space) * 1.2); }
+.about__card-row p:last-child { margin-bottom: 0; }
+.about__points { list-style: none; padding: 0; margin-top: calc(var(--space) * 1.2); }
+.about__points li { display: flex; gap: .7em; align-items: baseline; margin-bottom: .6em; color: var(--muted); }
+.check { width: 7px; height: 7px; flex: none; background: var(--accent); }
 
-.visit__panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space); }
-.visit__panel { border: var(--rule) solid var(--line); border-radius: var(--radius); padding: var(--space); }
-.visit__panel-title { font-size: var(--step-0); margin-bottom: .4em; }
-.visit__panel p { color: var(--muted); font-size: var(--step--1); }
-.visit__cta--center { text-align: center; margin-top: calc(var(--space) * 1.5); }
+.care { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(var(--space) * 2); }
+.care__col--accent { border-left: 2px solid var(--accent); padding-left: calc(var(--space) * 1.2); }
+.care__title { font-size: var(--step-1); }
+.care__col p { color: var(--muted); }
+
+.visit__rows { display: grid; gap: calc(var(--space) * 1.2); margin-block: calc(var(--space) * 1.8); }
+.visit__row { display: grid; grid-template-columns: 8rem 1fr; gap: var(--space); border-top: var(--rule) solid var(--line); padding-top: calc(var(--space) * .9); }
+.visit__row-label { font-size: var(--step--1); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--accent); margin: 0; }
+.visit__row-value { margin: 0; color: var(--muted); }
+.visit__cta { display: flex; flex-wrap: wrap; gap: var(--space); }
+.visit__aside { border: var(--rule) solid var(--line); padding: calc(var(--space) * 1.5); }
+.visit__aside-body { color: var(--muted); }
+.visit__anchors { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5em; margin: 0; }
+.visit__anchors li { font-size: var(--step--1); color: var(--muted); border: var(--rule) solid var(--line); padding: .3em .7em; }
+
+
 
 
 

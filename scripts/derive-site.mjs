@@ -37,7 +37,7 @@ export async function renderSite(cfg, { write = true } = {}) {
     mkdirSync(join(SITE, 'assets'), { recursive: true });
     writeFileSync(join(SITE, 'index.html'), indexHtml, 'utf8');
     writeFileSync(join(SITE, 'assets', 'styles.css'), css, 'utf8');
-    writeFileSync(join(ROOT, 'robots.txt'), robots, 'utf8');
+    writeFileSync(join(SITE, 'robots.txt'), robots, 'utf8');
   }
   return { indexHtml, css, robots, hash: configHash({ ...cfg, derived: undefined }) };
 }

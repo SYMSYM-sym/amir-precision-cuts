@@ -21,3 +21,8 @@ __pycache__/
 # to report embedding-cache staleness, so an ignored cache makes that panel lie —
 # and CI re-embeds the whole corpus every run instead of reusing it. Commit it.
 # See 14-PORTING-NOTES.md §D.
+
+# ⚠ DO NOT ignore site/ or .github/workflows/ either. They are DERIVED, but
+# derived is not the same as disposable: CI builds the blog without an API key
+# and Vercel deploys straight from the repo, so both must be committed.
+# "Committed" and "hand-made" are different things (§02).

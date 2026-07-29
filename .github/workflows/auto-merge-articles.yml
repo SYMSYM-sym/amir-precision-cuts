@@ -1,0 +1,83 @@
+name: Auto-merge auto-articles
+
+# BACKSTOP ONLY. The publish workflow merges instantly (R12); this catches anything
+# that missed. It is also the safety net if you choose publish_mode: "delayed:<h>".
+#
+# ⚠ R2 — THE MOST IMPORTANT FILE IN THIS REPO TO GET RIGHT.
+# A previous version requested `statusCheckRollup` from `gh pr list --json`. That field
+# needs checks:read + statuses:read. The default GITHUB_TOKEN has them on PUBLIC repos
+# but NOT on private ones. When the repo went private the call returned
+# "Resource not accessible by integration" -> empty stdin -> Node SyntaxError INSIDE A
+# PIPE -> `xargs -r` got nothing -> THE JOB EXITED 0 AND REPORTED SUCCESS while merging
+# nothing. Articles generated for 8 days and never went live, silently.
+#
+# Fixes baked in below:
+#   1. Gate on GitHub's own verdict (mergeable / mergeStateStatus), not statusCheckRollup.
+#   2. checks/statuses read granted anyway (future-proofing).
+#   3. set -euo pipefail + capture to a var + Node exits non-zero on empty/bad JSON
+#      => a broken run goes RED, never silently green.
+#   4. Merge ONE PR per run (R8) — they all touch the same generated files.
+
+on:
+  schedule:
+    - cron: '15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+  statuses: read
+
+concurrency:
+  group: auto-merge-articles
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      # R11: gh pr merge --delete-branch runs git locally; without a checkout it fails
+      # with "fatal: not a git repository".
+      - uses: actions/checkout@v4
+
+      - name: Merge one eligible auto-article PR
+        env:
+          GH_TOKEN: $
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Capture to a variable so a failed API call fails the job (no pipe masking).
+          raw="$(gh pr list --state open --label auto-article \
+                  --json number,labels,createdAt,mergeable,mergeStateStatus)"
+          echo "Candidates: $raw"
+
+          # Oldest eligible PR. Node exits non-zero on empty/bad JSON -> job RED.
+          pr="$(printf '%s' "$raw" | node -e '
+            const fs = require("fs");
+            const t = fs.readFileSync(0, "utf8").trim();
+            if (!t) { console.error("ERROR: empty output from gh pr list"); process.exit(1); }
+            let prs;
+            try { prs = JSON.parse(t); }
+            catch (e) { console.error("ERROR: invalid JSON from gh:", e.message); process.exit(1); }
+            const MIN_AGE_MS = 60 * 60 * 1000;   // 1h backstop (instant publish is primary)
+            const cutoff = Date.now() - MIN_AGE_MS;
+            const eligible = prs.filter(p => {
+              const onHold    = (p.labels || []).some(l => l.name === "hold");
+              const oldEnough = new Date(p.createdAt).getTime() < cutoff;
+              const mergeable = p.mergeable === "MERGEABLE";      // R10: skip UNKNOWN
+              const st        = p.mergeStateStatus;               // CLEAN|UNSTABLE|DIRTY|BLOCKED|UNKNOWN
+              const good      = st === "CLEAN" || st === "UNSTABLE" || st === "HAS_HOOKS";
+              return !onHold && oldEnough && mergeable && good;
+            }).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            if (eligible.length) process.stdout.write(String(eligible[0].number));
+          ')"
+
+          if [ -z "${pr:-}" ]; then
+            echo "No eligible auto-article PR to merge this run."
+            exit 0
+          fi
+
+          echo "Merging PR #$pr"
+          gh pr merge "$pr" --squash --delete-branch

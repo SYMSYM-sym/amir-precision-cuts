@@ -32,7 +32,7 @@
  * A8 reborn. Reseeding is --append. --force on the queue is refused outright on a
  * repo with publish history.
  */
-import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { execFileSync } from 'child_process';
 import { createHash } from 'crypto';
@@ -46,7 +46,7 @@ import { findNearDuplicateTopic } from './embed-similarity.mjs';
 import { loadQueue, loadPublished, loadNeedsReview } from './pick-topic.mjs';
 
 const BRAND_TPL = join(ROOT, 'templates', 'brand');
-const ALL_STEPS = ['forbidden', 'links', 'authors', 'voice', 'queue', 'site', 'assets', 'dashboard'];
+const ALL_STEPS = ['forbidden', 'links', 'authors', 'voice', 'queue', 'site', 'assets', 'workflows', 'dashboard'];
 const JUDGMENT = new Set(['voice', 'queue']);
 
 // ---------------------------------------------------------------------------
@@ -386,6 +386,78 @@ async function dedupeTopics(topics, existing, c) {
 // 7 + dashboard mirror
 // ---------------------------------------------------------------------------
 
+const DAY_CRON = {
+  Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6,
+};
+
+/**
+ * UTC hour for a local wall-clock time in a given IANA zone, on a given date.
+ * Run for both January and July so DST is covered explicitly rather than by a
+ * comment saying it drifts.
+ */
+function utcHourFor(tz, hhmm, monthIndex) {
+  const [h, m] = hhmm.split(':').map(Number);
+  // Find the UTC instant whose local time in `tz` is h:m on that date.
+  const probe = new Date(Date.UTC(2026, monthIndex, 15, 12, 0, 0));
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, hour: 'numeric', hour12: false, timeZoneName: 'longOffset',
+  });
+  const name = fmt.formatToParts(probe).find((p) => p.type === 'timeZoneName')?.value || 'GMT+00:00';
+  const sign = name.includes('-') ? -1 : 1;
+  const [oh, om] = name.replace(/GMT[+-]?/, '').split(':').map((x) => Number(x || 0));
+  const offsetMinutes = sign * ((oh || 0) * 60 + (om || 0));
+  let total = h * 60 + m - offsetMinutes;
+  let dayShift = 0;
+  while (total < 0) { total += 1440; dayShift -= 1; }
+  while (total >= 1440) { total -= 1440; dayShift += 1; }
+  return { hour: Math.floor(total / 60), minute: total % 60, dayShift };
+}
+
+/**
+ * Emit the publish crons. A12 / §14 C1: the cadence lives in four places and
+ * hand-editing one is how "next publish" starts lying.
+ */
+export function buildCronLines(c) {
+  const tz = c.location.timezone;
+  const hhmm = c.content.publish_hour_local;
+  const lines = [];
+  const seen = new Set();
+  for (const monthIndex of [0, 6]) {          // January (standard), July (daylight)
+    const { hour, minute, dayShift } = utcHourFor(tz, hhmm, monthIndex);
+    // An odd minute keeps us out of the :00 congestion GitHub warns about.
+    const min = (minute + 23) % 60;
+    const days = c.content.cadence_days
+      .map((d) => (DAY_CRON[d] + dayShift + 7) % 7)
+      .sort((a, b) => a - b)
+      .join(',');
+    const cron = `${min} ${hour} * * ${days}`;
+    if (seen.has(cron)) continue;
+    seen.add(cron);
+    lines.push(`    - cron: '${cron}'   # ${hhmm} ${tz}, ${monthIndex === 0 ? 'standard time' : 'daylight time'}`);
+  }
+  return lines.join('\n');
+}
+
+function buildWorkflows(c) {
+  const src = join(ROOT, 'templates', 'workflows');
+  const dest = join(ROOT, '.github', 'workflows');
+  mkdirSync(dest, { recursive: true });
+  const vars = {
+    ...c,
+    CRON_LINES: buildCronLines(c),
+    // Weekly health check, deliberately offset from any publish slot.
+    HEALTH_CRON: `37 ${(utcHourFor(c.location.timezone, c.content.publish_hour_local, 6).hour + 6) % 24} * * 3`,
+  };
+  const written = [];
+  for (const f of readdirSync(src)) {
+    if (!f.endsWith('.yml')) continue;
+    const out = render(readFileSync(join(src, f), 'utf8'), vars, { name: `workflow:${f}`, strict: false });
+    writeFileSync(join(dest, f), out, 'utf8');
+    written.push(`.github/workflows/${f}`);
+  }
+  return written;
+}
+
 function buildDashboardConstants(c) {
   const j = (v) => JSON.stringify(v, null, 2);
   return `/* ${BANNER}
@@ -499,11 +571,15 @@ export async function derive(argv = process.argv.slice(2)) {
 
       case 'site':
         await renderSite(c);
-        console.log('WRITE site/index.html\nWRITE site/assets/styles.css\nWRITE robots.txt');
+        console.log('WRITE site/index.html\nWRITE site/assets/styles.css\nWRITE site/robots.txt');
         break;
 
       case 'assets':
         runAssets(c, dryRun);
+        break;
+
+      case 'workflows':
+        for (const f of buildWorkflows(c)) console.log(`WRITE ${f}`);
         break;
 
       case 'dashboard': {

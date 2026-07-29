@@ -392,3 +392,78 @@ describe('Ledger invariant — every topic in exactly one of queue/published/nee
     assert.deepEqual(good, []);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Derived workflow schedule — A12 / R23
+// ---------------------------------------------------------------------------
+
+describe('publish crons are derived, and cover DST [NEW]', () => {
+  it('converts local publish time to the right UTC hours', async () => {
+    const { buildCronLines } = await import('./derive.mjs');
+    const lines = buildCronLines({
+      location: { timezone: 'America/New_York' },
+      content: { publish_hour_local: '09:00', cadence_days: ['Monday', 'Thursday'] },
+    });
+    // EST is UTC-5 -> 14:00Z; EDT is UTC-4 -> 13:00Z.
+    assert.match(lines, /cron: '23 14 \* \* 1,4'/);
+    assert.match(lines, /cron: '23 13 \* \* 1,4'/);
+  });
+
+  it('emits BOTH offsets, so the schedule does not drift across DST', async () => {
+    const { buildCronLines } = await import('./derive.mjs');
+    const lines = buildCronLines({
+      location: { timezone: 'America/Boise' },
+      content: { publish_hour_local: '08:30', cadence_days: ['Tuesday', 'Friday', 'Sunday'] },
+    });
+    assert.equal(lines.split('\n').length, 2, 'a single cron line publishes an hour off for half the year');
+    assert.match(lines, /cron: '53 15 \* \* 0,2,5'/);   // MST
+    assert.match(lines, /cron: '53 14 \* \* 0,2,5'/);   // MDT
+  });
+
+  it('collapses to one line where the zone has no DST', async () => {
+    const { buildCronLines } = await import('./derive.mjs');
+    const lines = buildCronLines({
+      location: { timezone: 'America/Phoenix' },
+      content: { publish_hour_local: '09:00', cadence_days: ['Monday'] },
+    });
+    assert.equal(lines.split('\n').length, 1, 'Arizona does not observe DST — one cron is correct');
+  });
+
+  it('shifts the weekday when the UTC conversion crosses midnight', async () => {
+    const { buildCronLines } = await import('./derive.mjs');
+    // 21:00 in Sydney (UTC+10/+11) is the PREVIOUS day in UTC.
+    const lines = buildCronLines({
+      location: { timezone: 'Australia/Sydney' },
+      content: { publish_hour_local: '09:00', cadence_days: ['Monday'] },
+    });
+    // Monday=1 local becomes Sunday=0 in UTC.
+    assert.match(lines, /\* \* 0'/, `expected a day shift, got: ${lines}`);
+  });
+
+  it('the generated workflow carries the R23 warning about schedules never firing', () => {
+    const wf = readFileSync(join(ROOT, '.github', 'workflows', 'publish-article.yml'), 'utf8');
+    assert.match(wf, /committed to the DEFAULT BRANCH/);
+    assert.match(wf, /DISABLES scheduled workflows after 60 days/);
+  });
+
+  it('health-check has both alert layers (R5)', () => {
+    const wf = readFileSync(join(ROOT, '.github', 'workflows', 'health-check.yml'), 'utf8');
+    assert.match(wf, /if: failure\(\)/, 'layer 1: say something when it breaks');
+    assert.match(wf, /Heartbeat/, 'layer 2: dead-man switch for "nothing ran at all"');
+    assert.match(wf, /if: success\(\) && env\.HEARTBEAT_URL/, 'the heartbeat must fire ONLY on success');
+  });
+
+  it('auto-merge gates on mergeable, never statusCheckRollup (R2)', () => {
+    const wf = readFileSync(join(ROOT, '.github', 'workflows', 'auto-merge-articles.yml'), 'utf8');
+    // The word appears in the comment that explains the incident — that is the
+    // point of the comment. What must not exist is a COMMAND that requests it.
+    const code = wf.split('\n').filter((l) => !l.trim().startsWith('#')).join('\n');
+    assert.ok(
+      !code.includes('statusCheckRollup'),
+      'statusCheckRollup needs checks:read + statuses:read, which the default token lacks on PRIVATE repos — '
+      + 'it returns an error, the pipe gets empty stdin, and the job exits 0 having merged nothing',
+    );
+    assert.match(wf, /mergeable/);
+    assert.match(wf, /set -euo pipefail/);
+  });
+});

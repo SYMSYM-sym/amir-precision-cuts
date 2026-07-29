@@ -10,7 +10,17 @@ import { isDarkTheme } from './layout-variants.mjs';
 import { fontsHref } from './derive-site.mjs';
 
 const ARTICLES_DIR = join(ROOT, 'content/articles');
-const BLOG_DIR = join(ROOT, 'blog');
+/**
+ * DEPLOY LAYOUT: site/ is the deployable root (vercel.json outputDirectory).
+ *
+ * The reference wrote blog pages, the sitemap and the feeds to the REPO root
+ * while index.html and styles.css lived under site/ and were referenced as
+ * /assets/styles.css. Those two facts cannot both be true at deploy time --
+ * one of them 404s. Everything the browser can reach is under site/ now, so
+ * the paths in the markup and the paths on disk agree.
+ */
+const BLOG_DIR = join(ROOT, 'site', 'blog');
+const OUT = join(ROOT, 'site');
 const TEMPLATES = join(ROOT, 'templates');
 const SITE = cfg.derived.site_url;
 
@@ -328,7 +338,7 @@ function writeSitemap(all) {
     xml += `<url><loc>${escapeHtml(u.loc)}</loc><lastmod>${u.lastmod}</lastmod></url>\n`;
   }
   xml += '</urlset>';
-  writeFileSync(join(ROOT, 'sitemap.xml'), xml, 'utf8');
+  writeFileSync(join(OUT, 'sitemap.xml'), xml, 'utf8');
 }
 
 function writeFeeds(all) {
@@ -364,7 +374,7 @@ function writeFeeds(all) {
     ${rssItems}
   </channel>
 </rss>`;
-  writeFileSync(join(ROOT, 'feed.xml'), rss, 'utf8');
+  writeFileSync(join(OUT, 'feed.xml'), rss, 'utf8');
 
   const jfeed = {
     version: 'https://jsonfeed.org/version/1.1',
@@ -373,7 +383,7 @@ function writeFeeds(all) {
     feed_url: `${SITE}/feed.json`,
     items: jsonItems,
   };
-  writeFileSync(join(ROOT, 'feed.json'), JSON.stringify(jfeed, null, 2), 'utf8');
+  writeFileSync(join(OUT, 'feed.json'), JSON.stringify(jfeed, null, 2), 'utf8');
 }
 
 function escapeXml(s) {
@@ -427,7 +437,7 @@ function writeLlmsTxt(all) {
     '## Contact',
     contactLine(),
   ];
-  writeFileSync(join(ROOT, 'llms.txt'), lines.join('\n'), 'utf8');
+  writeFileSync(join(OUT, 'llms.txt'), lines.join('\n'), 'utf8');
 }
 
 async function loadPartials() {
@@ -461,7 +471,7 @@ export async function buildBlog() {
   writeLlmsTxt(all);
   // R21: robots.txt is rendered ONCE by `npm run derive --only=site`. A build
   // that clobbers it is how a production site served a 404 robots.txt for weeks.
-  if (!existsSync(join(ROOT, 'robots.txt'))) {
+  if (!existsSync(join(OUT, 'robots.txt'))) {
     throw new Error(
       'robots.txt is missing. build-blog.mjs must never create it (R21) — ' +
       'run `npm run derive --only=site`, which renders it from business.config.yaml.',
