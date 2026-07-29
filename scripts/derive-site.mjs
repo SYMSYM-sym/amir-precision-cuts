@@ -33,7 +33,7 @@ export const BANNER =
 // Google Fonts
 // ---------------------------------------------------------------------------
 
-function fontsHref(cfg) {
+export function fontsHref(cfg) {
   const fams = [cfg.brand.fonts.display, cfg.brand.fonts.body]
     .map((f) => `family=${f.trim().replace(/\s+/g, '+')}:wght@300;400;500;600;700`)
     .join('&');

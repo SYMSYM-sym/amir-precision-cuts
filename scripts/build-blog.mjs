@@ -1,11 +1,13 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync } from 'fs';
 import { join, resolve } from 'path';
 import { pathToFileURL } from 'url';
-import matter from 'gray-matter';
+import { parseMd as matter } from './md.mjs';
 import { marked } from 'marked';
 import { render, loadPartial } from './render-templates.mjs';
 import { ROOT, cfg, contentPath } from './paths.mjs';
 import { readAuthor } from './authors.mjs';
+import { isDarkTheme } from './layout-variants.mjs';
+import { fontsHref } from './derive-site.mjs';
 
 const ARTICLES_DIR = join(ROOT, 'content/articles');
 const BLOG_DIR = join(ROOT, 'blog');
@@ -20,6 +22,23 @@ const SITE = cfg.derived.site_url;
  * check for weeks. One cap, applied to all three.
  */
 const FEED_MAX = 40;
+
+/**
+ * The partials (head/nav/footer/topbar) are config-driven now, so every render
+ * call needs the full config in scope — not just PAGE_TITLE/META_DESC. Passing
+ * a partial variable set used to render an empty <span>; the strict renderer
+ * throws instead, which is how this got caught.
+ */
+function baseVars(extra = {}) {
+  return {
+    ...cfg,
+    THEME: isDarkTheme(cfg) ? 'dark' : 'light',
+    FONTS_HREF: fontsHref(cfg),
+    HOME_HREF: '/',
+    NAV_JOURNAL_ACTIVE: true,
+    ...extra,
+  };
+}
 
 /**
  * BUG A6 (fixed): article dates were stamped `T12:00:00-08:00` — a fixed
@@ -216,27 +235,28 @@ async function renderArticlePage(article, all, partials) {
 <script type="application/ld+json">${JSON.stringify(jsonLd[1])}</script>
 <script type="application/ld+json">${JSON.stringify(jsonLd[2])}</script>`;
 
-  const headHtml = render(partials.head, {
+  const headHtml = render(partials.head, baseVars({
     PAGE_TITLE: `${data.title} — ${cfg.business.name}`,
-    META_DESC: escapeHtml(data.description),
+    META_DESC: data.description,
     EXTRA_HEAD: extraHead,
-  });
+  }), { name: 'partial:head(article)' });
 
-  const bucketEyebrow = data.bucket ? escapeHtml(String(data.bucket).replace(/-/g, ' ')) : 'Journal';
+  const bucketEyebrow = data.bucket ? String(data.bucket).replace(/-/g, ' ') : cfg.site.blog_title;
 
   const tpl = readFileSync(join(TEMPLATES, 'article.html'), 'utf8');
-  const body = render(tpl, {
+  const body = render(tpl, baseVars({
+    AUTHOR_NAME: author.name,
     HEAD: headHtml,
     TOPBAR: partials.topbar,
     NAV: partials.navJournal,
     BUCKET_EYEBROW: bucketEyebrow,
-    TITLE: escapeHtml(data.title),
+    TITLE: data.title,
     READING_TIME: String(reading),
     BODY_HTML: mainHtml,
     FAQ_HTML: faqHtml,
     RELATED_HTML: relatedHtml,
     FOOTER: partials.footer,
-  });
+  }), { name: 'article.html' });
 
   const dir = join(BLOG_DIR, slug);
   mkdirSync(dir, { recursive: true });
@@ -270,13 +290,13 @@ async function renderBlogIndex(all, partials) {
 <meta property="og:type" content="website" />
 <meta property="og:url" content="${SITE}/blog/" />`;
 
-  const headHtml = render(partials.head, {
+  const headHtml = render(partials.head, baseVars({
     PAGE_TITLE: `${cfg.site.blog_title} — ${cfg.business.name}`,
     META_DESC: cfg.site.blog_subtitle,
     EXTRA_HEAD: extraHead,
-  });
+  }), { name: 'partial:head(index)' });
 
-  const html = render(tpl, {
+  const html = render(tpl, baseVars({
     HEAD: headHtml,
     TOPBAR: partials.topbar,
     NAV: partials.navJournal,
@@ -284,7 +304,7 @@ async function renderBlogIndex(all, partials) {
     ARTICLE_CARDS: cards,
     EMPTY_STATE_HTML: all.length === 0 ? '<div class="blog-empty-state"><p><strong>The Journal is just getting started.</strong></p><p>New notes on men\'s grooming publish every Monday and Thursday.</p></div>' : '',
     FOOTER: partials.footer,
-  });
+  }), { name: 'blog-index.html' });
 
   mkdirSync(BLOG_DIR, { recursive: true });
   writeFileSync(join(BLOG_DIR, 'index.html'), html, 'utf8');
@@ -417,16 +437,14 @@ async function loadPartials() {
     loadPartial(ROOT, 'footer.html'),
     loadPartial(ROOT, 'topbar.html'),
   ]);
-  const navJournal = navHome.replaceAll(
-    '<a href="/blog/">Journal</a>',
-    '<a href="/blog/" class="nav__link--active" aria-current="page">Journal</a>',
-  );
-
+  // The reference did a string replaceAll on the literal '<a href="/blog/">Journal</a>'
+  // to mark the active nav item — which silently stopped working the moment the
+  // link text came from site.blog_title. It is a template conditional now.
   return {
     head,
-    navJournal,
-    footer,
-    topbar,
+    navJournal: render(navHome, baseVars(), { name: 'partial:nav' }),
+    footer: render(footer, baseVars(), { name: 'partial:footer' }),
+    topbar: render(topbar, baseVars(), { name: 'partial:topbar' }),
   };
 }
 

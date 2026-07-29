@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
-import matter from 'gray-matter';
+import { parseMd as matter } from './md.mjs';
+import gm from 'gray-matter';
 import yaml from 'js-yaml';
 import Anthropic from '@anthropic-ai/sdk';
 import { ROOT, cfg, ConfigError } from './paths.mjs';
@@ -224,7 +225,7 @@ export async function generateArticleFromTopic(topic) {
   const { data, content } = matter(md);
   applyAuthoritativeFrontmatter(data, topic, isoDate);
   const body = content.trim();
-  const stitched = matter.stringify(body, data);
+  const stitched = gm.stringify(body, data);
   mkdirSync(ARTICLES_DIR, { recursive: true });
   const fileName = `${isoDate}-${data.slug}.md`;
   const filePath = join(ARTICLES_DIR, fileName);

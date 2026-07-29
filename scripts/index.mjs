@@ -8,7 +8,10 @@ import {
   mkdirSync,
 } from 'fs';
 import { join } from 'path';
-import matter from 'gray-matter';
+import { parseMd as matter } from './md.mjs';
+import gm from 'gray-matter';
+import yaml from 'js-yaml';
+import { render } from './render-templates.mjs';
 import { ROOT, cfg } from './paths.mjs';
 import { generateArticleFromTopic } from './generate-article.mjs';
 import { validateArticleFile } from './validate-article.mjs';
@@ -51,7 +54,7 @@ export class ApiBudgetExceeded extends Error {
 }
 
 const ARTICLES_DIR = join(ROOT, 'content/articles');
-const FIXTURE_PATH = join(ROOT, 'scripts/fixtures/dry-run-sample.md');
+const FIXTURE_TPL = join(ROOT, 'templates/dry-run-sample.md');
 
 function parseArgs() {
   const dryRun = process.argv.includes('--dry-run');
@@ -92,16 +95,53 @@ function safeUnlink(path) {
   }
 }
 
+/**
+ * The dry-run fixture is RENDERED FROM CONFIG, not read from disk.
+ *
+ * The vendored fixture carried ten of the reference business's facts — its
+ * city, its practitioner, its services — and `npm run dry` wrote it straight
+ * into content/articles/, where build-blog rendered it AND it entered the
+ * originality corpus that every future article is scored against. That leak
+ * path is not in 14 §C2's table of 56 welds; it turned up when the validator
+ * started reading location anchors from config and scored the fixture 0/3.
+ *
+ * Rendering it keeps `--dry-run` at ZERO API calls (invariant 5) while making
+ * it valid for whichever business owns the config.
+ */
 async function runDryRunFixture() {
   removePriorDryRunArtifacts();
   mkdirSync(ARTICLES_DIR, { recursive: true });
   const iso = localDateString();
-  const raw = readFileSync(FIXTURE_PATH, 'utf8');
-  const { data, content } = matter(raw);
+  const anchors = cfg.location.location_anchors;
+  const links = yaml.load(readFileSync(join(ROOT, 'content/brand/internal-links.yaml'), 'utf8'));
+  const anchorFor = (kind, key) => {
+    const def = (links[kind] || {})[key];
+    if (!def) throw new Error(`internal-links.yaml has no ${kind}.${key} — run \`npm run derive --only=links\``);
+    return `[${def.variants[0]}](${def.href})`;
+  };
+  const firstService = cfg.services[0];
+
+  const rendered = render(readFileSync(FIXTURE_TPL, 'utf8'), {
+    ...cfg,
+    DRY_DATE: iso,
+    DRY_TITLE: `What to Expect at a ${cfg.business.type} in ${cfg.location.address_city}`,
+    DRY_KEYWORD: `${cfg.business.type} ${cfg.location.address_city} what to expect`,
+    DRY_DESC:
+      `What happens at a first ${cfg.business.type} appointment in ${cfg.location.address_city} ` +
+      '— how the visit is structured, what to bring, and what to ask before you book.',
+    DRY_FAQ: cfg.homepage.faq.slice(0, cfg.content.faq_questions),
+    ANCHOR_1: anchors[0],
+    ANCHOR_2: anchors[1],
+    ANCHOR_3: anchors[2] || anchors[0],
+    SERVICE_ANCHOR: anchorFor('services', firstService.key),
+    AFTERCARE_ANCHOR: anchorFor('pages', 'aftercare'),
+    VISIT_ANCHOR: anchorFor('pages', 'visit'),
+  }, { name: 'dry-run-sample' });
+
+  const { data, content } = matter(rendered);
   data.date = iso;
-  const stitched = matter.stringify(content.trim(), data);
   const dest = join(ARTICLES_DIR, `${iso}-dry-run-sample.md`);
-  writeFileSync(dest, stitched, 'utf8');
+  writeFileSync(dest, gm.stringify(content.trim(), data), 'utf8');
   return dest;
 }
 

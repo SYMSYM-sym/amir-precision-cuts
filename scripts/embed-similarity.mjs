@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
-import matter from 'gray-matter';
+import { parseMd as matter } from './md.mjs';
 import { createHash } from 'crypto';
 import { ROOT } from './paths.mjs';
 import { cfg } from './paths.mjs';

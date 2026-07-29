@@ -1,5 +1,5 @@
 import { readFileSync, existsSync, readdirSync } from 'fs';
-import matter from 'gray-matter';
+import { parseMd as matter } from './md.mjs';
 import yaml from 'js-yaml';
 import { marked } from 'marked';
 import { join, resolve } from 'path';
