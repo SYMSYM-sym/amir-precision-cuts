@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "derive": "node scripts/derive.mjs",
     "publish": "node scripts/index.mjs",
@@ -12,7 +14,8 @@
     "test": "node --test scripts/*.test.mjs",
     "verify": "node scripts/verify-live.mjs",
     "assets": "python3 scripts/generate-assets.py",
-    "invariants": "node scripts/assert-invariants.mjs"
+    "invariants": "node scripts/assert-invariants.mjs",
+    "portal": "node scripts/build-portal.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.0",
@@ -20,6 +23,7 @@
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.0",
-    "marked": "^14.1.0"
+    "marked": "^14.1.0",
+    "playwright": "^1.62.0"
   }
 }

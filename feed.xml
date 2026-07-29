@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>From the Table — Sweetwater Nail Lounge</title>
-    <link>https://sweetwaternails.com/blog/</link>
-    <description>Natural-nail care, written in a south-facing room on Vista Avenue.</description>
+    <title>The Studio Notes — Ledgerwood Lash Atelier</title>
+    <link>https://ledgerwoodlash.com/blog/</link>
+    <description>Lash and brow craft, written from two chairs on Wickenden Street.</description>
     <language>en-US</language>
     
     <item>
-      <title>What to Expect at a nail lounge in Boise</title>
-      <link>https://sweetwaternails.com/blog/dry-run-sample</link>
-      <guid>https://sweetwaternails.com/blog/dry-run-sample</guid>
-      <pubDate>Wed, 29 Jul 2026 18:00:00 GMT</pubDate>
-      <description>A first visit to a nail lounge in Boise is straightforward once you know how the appointment is structured, what the room is like, and what you should do beforehand. Expect a clear conversation about what you want, an honest answer about what is achievable today, and a pace that leaves room for questions. Preparation matters more than nerves do. Most of the uncertainty people carry into a first a…</description>
+      <title>What to Expect at a lash and brow studio in Providence</title>
+      <link>https://ledgerwoodlash.com/blog/dry-run-sample</link>
+      <guid>https://ledgerwoodlash.com/blog/dry-run-sample</guid>
+      <pubDate>Wed, 29 Jul 2026 16:00:00 GMT</pubDate>
+      <description>A first visit to a lash and brow studio in Providence is straightforward once you know how the appointment is structured, what the room is like, and what you should do beforehand. Expect a clear conversation about what you want, an honest answer about what is achievable today, and a pace that leaves room for questions. Preparation matters more than nerves do. Most of the uncertainty people carry …</description>
     </item>
   </channel>
 </rss>

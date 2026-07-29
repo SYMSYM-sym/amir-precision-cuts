@@ -34,6 +34,13 @@
       <ul class="visit__anchors">
         {{#each NEARBY}}<li>{{this}}</li>{{/each}}
       </ul>
+      {{#if derived.has_getting_here}}
+      <dl class="visit__notes">
+        {{#if location.transit_notes}}<dt>Transit</dt><dd>{{location.transit_notes}}</dd>{{/if}}
+        {{#if location.parking_notes}}<dt>Parking</dt><dd>{{location.parking_notes}}</dd>{{/if}}
+        {{#if location.accessibility_notes}}<dt>Access</dt><dd>{{location.accessibility_notes}}</dd>{{/if}}
+      </dl>
+      {{/if}}
     </aside>
   </div>
 </section>

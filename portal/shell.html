@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Site Intake — Personal Services Factory</title>
+<meta name="description" content="Everything the factory needs to build a marketing site and a self-publishing SEO blog for a personal-services business." />
+<style>/* @@CSS@@ */</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="top__brand">
+      <strong>Site Intake</strong>
+      <span>fill this in once — the build takes it from here</span>
+    </div>
+    <div class="top__actions">
+      <button class="btn" id="loadBtn" type="button">Load draft</button>
+      <input type="file" id="loadFile" accept="application/json" hidden />
+      <button class="btn" id="saveBtn" type="button">Save draft</button>
+      <button class="btn" id="exportBtn" type="button" disabled>Download config</button>
+      <button class="btn btn--accent" id="buildBtn" type="button" disabled>Build the site</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <nav class="steps" id="steps" aria-label="Sections"></nav>
+    <main class="panel" id="panel"></main>
+    <aside class="side--preview">
+      <div class="status" id="status"></div>
+      <div class="previewbar">
+        <label for="previewVariant">Preview as</label>
+        <select id="previewVariant">
+          <option value="">chosen layout</option>
+          <option value="editorial">editorial</option>
+          <option value="compact">compact</option>
+          <option value="gallery">gallery</option>
+          <option value="classic">classic</option>
+        </select>
+        <div class="devices" id="deviceBtns">
+          <button type="button" data-w="100%" class="is-on">Desktop</button>
+          <button type="button" data-w="420px">Phone</button>
+        </div>
+      </div>
+      <div class="previewwrap" id="previewWrap">
+        <iframe id="preview" title="Live preview of the site this config produces"></iframe>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<dialog id="handoff">
+  <div class="dlg__head">
+    <h2>Your config is ready</h2>
+    <p>This one file is the entire input. Everything else — the brand voice, the banned-word list, the internal-link map, the byline, the topic queue, the brand assets, and the site itself — is generated from it.</p>
+  </div>
+  <div class="dlg__body">
+    <ol>
+      <li>Save <code>business.config.yaml</code> to the root of the site repo.</li>
+      <li>Set <code>ANTHROPIC_API_KEY</code> in the repo's Actions secrets. Nothing that writes prose runs without it.</li>
+      <li>Run <code>npm run derive</code>. This writes all seven artifacts. It is the only build step.</li>
+      <li><strong>Read <code>content/brand/voice.md</code> and the first ten topics before anything publishes.</strong> That review is the one step no amount of automation replaces — everything downstream inherits whatever the voice file says.</li>
+      <li>Run <code>npm run dry</code> to confirm the site builds without spending anything, then dispatch the publish workflow once by hand and watch it go live.</li>
+      <li>Run <code>npm run verify</code> against the live domain. It must pass 100%.</li>
+    </ol>
+    <p style="margin-top:14px;color:#6b6f76;font-size:13.5px">
+      Re-running <code>npm run derive</code> later is safe: hand-edits to the voice file and the topic queue are detected and left alone unless you pass <code>--force</code>. To add topics once the queue runs low, use <code>--only=queue --append</code> — never <code>--force</code>, which would re-add everything already published.
+    </p>
+    <pre class="dlg__yaml" id="handoffYaml"></pre>
+  </div>
+  <div class="dlg__foot">
+    <button class="btn" id="copyYaml" type="button">Copy</button>
+    <button class="btn" id="dlYaml" type="button">Download</button>
+    <span class="spacer"></span>
+    <button class="btn btn--accent" type="button" onclick="document.getElementById('handoff').close()">Done</button>
+  </div>
+</dialog>
+
+<script>/* @@ENGINE@@ */</script>
+<script type="module">/* @@APP@@ */</script>
+</body>
+</html>

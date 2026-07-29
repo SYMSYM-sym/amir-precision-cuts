@@ -9,7 +9,7 @@
       <div class="service-list__item" id="service-{{key}}">
         <dt class="service-list__term">
           <span class="service-list__name">{{label}}</span>
-          {{#if price_from}}<span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">{{price_from}}</span>{{/if}}
+          {{#if price_from}}<span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">{{price_display}}</span>{{/if}}
         </dt>
         <dd class="service-list__desc">{{description}}{{#if duration}} <span class="service-list__duration">({{duration}})</span>{{/if}}</dd>
       </div>
