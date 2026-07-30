@@ -8,6 +8,7 @@ import { ROOT, cfg, contentPath } from './paths.mjs';
 import { readAuthor } from './authors.mjs';
 import { isDarkTheme } from './layout-variants.mjs';
 import { fontsHref } from './derive-site.mjs';
+import { FEED_MAX } from './constants.mjs';
 
 const ARTICLES_DIR = join(ROOT, 'content/articles');
 /**
@@ -31,7 +32,6 @@ const SITE = cfg.derived.site_url;
  * 41. Nobody notices until the site has been quietly failing its own health
  * check for weeks. One cap, applied to all three.
  */
-const FEED_MAX = 40;
 
 /**
  * The partials (head/nav/footer/topbar) are config-driven now, so every render

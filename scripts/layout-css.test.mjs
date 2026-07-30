@@ -43,7 +43,7 @@ const UNSTYLED_BY_DESIGN = new Set([
   'layout-editorial', 'layout-compact', 'layout-gallery', 'layout-classic',
   // section identity hooks, for anchors and for downstream per-client overrides
   'section--about', 'section--services', 'section--aftercare', 'section--faq',
-  'section--visit', 'section--hero',
+  'section--visit', 'section--hero', 'section--gallery',
   // pure grid/flow wrappers: they hold children, they carry no appearance
   'about__copy', 'about__card-top', 'visit__copy', 'service-row__body',
   'hero__inner', 'footer__meta',

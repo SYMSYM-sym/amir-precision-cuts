@@ -59,11 +59,21 @@ scripts/layout-variants.mjs ← design tokens + section order per layout variant
 To see your changes:
 
 ```bash
-npm install
+npm install                            # needed once; requires network
 npm run derive -- --only=assets,site   # regenerates site/ from templates/
 npm run build                          # regenerates the blog pages
 npx http-server site -p 8080           # or any static server
 ```
+
+**Always pass `--only=assets,site`. Never run a bare `npm run derive`** — that
+also regenerates the brand voice and the topic queue, which need a model provider
+and will hard-stop without one. `--only=assets,site` is the design loop and needs
+nothing but the repo.
+
+`npm install` pulls ~300MB, most of it a local embeddings model and Playwright
+that the content pipeline uses and the design work does not. If the install is
+painful, the design and build path itself only needs three packages:
+`js-yaml`, `marked`, `gray-matter`.
 
 ---
 
@@ -138,7 +148,10 @@ above the partition.
 
 ## Hard constraints — the build enforces all of these
 
-Run `npm test` before you finish. 85 tests, currently all passing.
+Run `npm test` before you finish. **85 tests, 85 passing, 0 skipped.** If you see
+9 skipped, `fixtures/` has gone missing — those 9 are the per-variant CSS checks,
+and without them nothing stops a rule in the wrong partition block from silently
+breaking three of the four layouts.
 
 - **WCAG AA contrast is gated at build time.** `assertContrast()` fails the build on
   a bad palette pair. Text over imagery also has to hold up — the hero currently
@@ -179,13 +192,18 @@ npm run build                              # rebuild blog pages
 node scripts/verify-live.mjs http://localhost:8080   # 38 checks
 ```
 
-Then look at all four variants, not just Amir's. The quickest way:
+Then look at all four variants, not just Amir's. `npm test` catches missing CSS
+per variant, but only your eyes catch a layout that is merely ugly:
 
 ```bash
-# temporarily switch the variant to see the others
-sed -i 's/layout_variant: "classic"/layout_variant: "editorial"/' business.config.yaml
+cp business.config.yaml /tmp/cfg.bak
+for v in editorial compact gallery classic; do
+  sed -i "s/layout_variant: \"[a-z]*\"/layout_variant: \"$v\"/" business.config.yaml
+  npm run derive -- --only=site && npm run build
+  # ...look at site/index.html, then continue
+done
+cp /tmp/cfg.bak business.config.yaml   # Amir is "classic" — put it back
 npm run derive -- --only=site && npm run build
-# ...and change it back to "classic" when you're done
 ```
 
 **Please also check `/blog/` and one article page.** They share the palette and
