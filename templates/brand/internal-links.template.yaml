@@ -14,7 +14,7 @@ services:
       - "natural anchor phrase three"
 
 pages:
-  about:     { href: "/#about",     variants: ["about {{brand}}", "our studio", "our {{city}} salon"] }
+  about:     { href: "/#about",     variants: ["about {{brand}}", "our {{business.type}}", "{{brand}} in {{city}}"] }
   faq:       { href: "/#faq",       variants: ["common questions", "frequently asked questions"] }
   aftercare: { href: "/#aftercare", variants: ["aftercare guide", "post-visit care"] }
   visit:     { href: "/#visit",     variants: ["our location", "directions and hours", "visit {{brand}}"] }

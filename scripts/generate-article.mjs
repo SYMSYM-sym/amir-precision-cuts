@@ -3,10 +3,9 @@ import { join } from 'path';
 import { parseMd as matter } from './md.mjs';
 import gm from 'gray-matter';
 import yaml from 'js-yaml';
-import Anthropic from '@anthropic-ai/sdk';
 import { ROOT, cfg, ConfigError } from './paths.mjs';
 import { localDateString } from './pick-topic.mjs';
-import { readAuthor } from './authors.mjs';
+import { complete, provider } from './model.mjs';
 import { applyAuthoritativeFrontmatter } from './frontmatter.mjs';
 
 const VOICE_PATH = join(ROOT, 'content/brand/voice.md');
@@ -63,20 +62,55 @@ function buildSystemPrompt(topic, isoDate) {
     ? recent.map((r) => `- ${r.title}: ${r.excerpt.replace(/\s+/g, ' ')}`).join('\n')
     : '(none yet — first article in repo)';
 
-  const secKw = yaml.dump(topic.secondary_keywords || [], { lineWidth: 120 });
+  // `yaml.dump(['a','b'])` returns "- a\n- b\n", which spliced onto
+  // `secondary_keywords: ` produces `secondary_keywords: - a` — invalid YAML on
+  // the first line and a valid-but-orphaned list item on the second. The model
+  // copies the example it is shown, so a malformed example is a malformed
+  // article every time. Indent it as a proper block sequence.
+  const secKw = (topic.secondary_keywords || []).length
+    ? `\n${(topic.secondary_keywords || []).map((k) => `  - ${JSON.stringify(String(k))}`).join('\n')}`
+    : ' []';
 
   const b = cfg.business;
   const loc = cfg.location;
+
+  // years_experience is OPTIONAL. Interpolating it unguarded printed
+  // "Amir, undefined years experience" into the reference data block and
+  // "the practitioner, undefined years of experience" into the quote rule —
+  // which is worse than useless: it hands the model a blank and invites it to
+  // fill in a number about someone's career. When we do not know, say so, and
+  // say what to do instead.
+  const practitionerLine = cfg.derived.has_experience
+    ? `${b.practitioner_name}, ${cfg.derived.experience_years} years experience`
+    : `${b.practitioner_name}. NO length of experience has been supplied — never state, imply `
+      + 'or gesture at how long they have been working (no "years of experience", no '
+      + '"decades", no "seasoned", no "since starting out"). Build authority from craft '
+      + 'specifics instead.';
+  const quoteTenureRule = cfg.derived.has_experience
+    ? `The quote may reference ${cfg.derived.experience_years} years of experience`
+    : 'The quote must NOT reference any length of experience — none has been supplied';
+
   const wc = cfg.content.word_count;
   const il = cfg.content.internal_links;
-  const author = readAuthor();
 
   // Prices: ONLY what services[].price_from actually says. R20 / compliance —
   // "no prices unless they appear here" is enforced by the validator too, so a
   // model that invents one fails the build rather than publishing it.
-  const priceLines = cfg.services
-    .map((sv) => (sv.price_from ? `${sv.label} from ${sv.price_from}` : `${sv.label} (price on request — DO NOT state a price)`))
+  //
+  // The reference wrote "<label> from <price>" unconditionally and headed the
+  // block "Service prices (start at)". For a business whose prices are FIXED
+  // that is the prompt instructing the model to hedge every number — the exact
+  // "from $50" phrasing the voice file bans. `price_note` (e.g. "+") is where a
+  // business says the price is a floor; absent it, the price is the price.
+  const priceLines = cfg.derived.services_display
+    .map((sv) => (sv.price_display
+      ? `${sv.label} ${sv.price_display}`
+      : `${sv.label} (price on request — DO NOT state a price)`))
     .join(', ');
+  const anyOpenEnded = cfg.derived.services_display.some((sv) => sv.price_note);
+  const priceHeading = anyOpenEnded
+    ? 'Service prices — a trailing "+" means that price is a starting point; without one it is the price'
+    : 'Service prices — these are the prices, NOT starting points. Never write "from $X" or "$X+"';
 
   // The contact rule is stated as a prohibition, not an omission. A prompt that
   // simply fails to mention a phone number is not the same as one that forbids it.
@@ -119,7 +153,7 @@ ${recentBlock}
 - Word count: ${wc.target_min}–${wc.target_max} (hard limits ${wc.min}–${wc.max}, excluding the FAQ).
 - 3–5 H2 sections. H3 sparingly.
 - Open with a 40–60 word "answer paragraph" that directly answers the article's keyword query. No preamble.
-- Include exactly ONE blockquote. Voice it as ${b.practitioner_name} (the practitioner, ${b.years_experience} years of experience). No first person plural in the quote.
+- Include exactly ONE blockquote. Voice it as ${b.practitioner_name}. ${quoteTenureRule}. No first person plural in the quote.
 - Include exactly ONE FAQ section at the end with ${cfg.content.faq_questions} Q&As. Each Q must be a real long-tail query someone would type.
 - Internal links: minimum ${il.min}, maximum ${il.max}.
 - Location mentions: minimum ${cfg.content.location_mentions_min} (neighborhood, cross street, or landmark).
@@ -130,10 +164,10 @@ ${complianceRules}
 - Business: ${b.name} (${b.short_name}), ${b.type}
 - Address: ${cfg.derived.address_one_line}
 - Neighborhood: ${loc.neighborhood}
-- Hours: ${cfg.derived.hours_days_short}, ${cfg.derived.hours_times_long}
-- Practitioner: ${b.practitioner_name}, ${b.years_experience} years experience
+- Hours: ${cfg.derived.hours_line}${cfg.hours.notes ? ` (${cfg.hours.notes})` : ''}
+- Practitioner: ${practitionerLine}
 - Booking: ${cfg.derived.booking_line}
-- Service prices (start at): ${priceLines}
+- ${priceHeading}: ${priceLines}
 ${contactRules}
 
 # Output format — STRICT
@@ -144,7 +178,7 @@ Return a single fenced markdown block. No prose before or after. Frontmatter is 
 title: "${topic.title.replace(/"/g, '\\"')}"
 slug: "${topic.slug}"
 target_keyword: "${topic.target_keyword.replace(/"/g, '\\"')}"
-secondary_keywords: ${secKw.trimEnd()}
+secondary_keywords:${secKw}
 description: "<70-160 character meta description, no quotes around it>"
 date: "${isoDate}"
 author: "${b.author_id}"
@@ -169,7 +203,7 @@ self_check:
 <body>
 
 > "<${b.practitioner_name} quote, 1-3 sentences>"
-> — ${b.practitioner_name}, practitioner
+> — ${cfg.derived.quote_attribution}
 
 ## <H2 #3>
 <body>
@@ -200,27 +234,24 @@ function extractFencedMarkdown(text) {
  * @returns {{ filePath: string, frontmatter: object }}
  */
 export async function generateArticleFromTopic(topic) {
-  // R15 — a missing key / retired model / exhausted credit is an ENVIRONMENT
-  // problem. It must hard-stop, never quarantine, or one bad secret silently
-  // burns the entire backlog.
-  const model = process.env.ANTHROPIC_MODEL || cfg.integrations.anthropic_model;
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new ConfigError('ANTHROPIC_API_KEY is not set');
-  if (!model) throw new ConfigError('No model configured (integrations.anthropic_model)');
+  // R15 — a missing provider is an ENVIRONMENT problem. It must hard-stop,
+  // never quarantine, or one bad secret silently burns the entire backlog.
+  if (!provider()) {
+    throw new ConfigError(
+      'No model provider: set ANTHROPIC_API_KEY, or MODEL_OFFLINE_DIR to publish '
+      + 'from supplied completions.',
+    );
+  }
 
   const isoDate = localDateString();
   const system = buildSystemPrompt(topic, isoDate);
-  const client = new Anthropic({ apiKey });
-
-  const res = await client.messages.create({
-    model,
-    max_tokens: 4096,
-    temperature: 0.7,
+  const text = await complete({
     system,
-    messages: [{ role: 'user', content: 'Write the article now. Output the markdown block only.' }],
+    user: 'Write the article now. Output the markdown block only.',
+    tag: `article-${topic.slug}`,
+    maxTokens: 4096,
+    temperature: 0.7,
   });
-
-  const text = res.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
   const md = extractFencedMarkdown(text);
   const { data, content } = matter(md);
   applyAuthoritativeFrontmatter(data, topic, isoDate);

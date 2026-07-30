@@ -2,7 +2,7 @@
   <div class="container footer__inner">
     <div class="footer__brand">
       <span class="nav__mark">{{business.initials}}</span>
-      <p>{{business.tagline}}. {{location.address_city}}.</p>
+      <p>{{derived.footer_tagline}}</p>
     </div>
     <div class="footer__cols">
       <div>
@@ -11,14 +11,14 @@
       </div>
       <div>
         <p class="footer__col-title">Hours</p>
-        <p>{{derived.hours_line}}</p>
+        <p>{{#each derived.hours_runs}}<span class="nowrap">{{this}}</span>{{#unless @last}} &middot; {{/unless}}{{/each}}</p>
       </div>
       <div>
         <p class="footer__col-title">Booking</p>
         <p>{{derived.booking_line}}</p>
-        {{#if booking.publish_phone}}<p><a class="js-tel" href="tel:{{booking.phone}}" aria-label="Call {{business.name}}">{{booking.phone}}</a></p>{{/if}}
-        {{#if booking.publish_email}}<p><a href="mailto:{{booking.email}}">{{booking.email}}</a></p>{{/if}}
-        {{#if booking.url}}<p><a href="{{booking.url}}">Book online</a></p>{{/if}}
+        {{#if ?booking.publish_phone}}<p><a href="tel:{{booking.phone}}" aria-label="Call {{business.name}}">{{derived.phone_display}}</a></p>{{/if}}
+        {{#if ?booking.publish_email}}<p><a href="mailto:{{booking.email}}">{{booking.email}}</a></p>{{/if}}
+        {{#if ?booking.url}}<p><a href="{{booking.url}}">Book online</a></p>{{/if}}
       </div>
     </div>
   </div>

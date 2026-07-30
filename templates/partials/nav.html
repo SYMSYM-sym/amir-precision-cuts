@@ -7,12 +7,12 @@
     <nav class="nav__links" aria-label="Primary">
       <a href="{{HOME_HREF}}#about">About</a>
       <a href="{{HOME_HREF}}#services">Services</a>
-      <a href="/blog/"{{#if NAV_JOURNAL_ACTIVE}} class="nav__link--active" aria-current="page"{{/if}}>{{site.blog_title}}</a>
+      <a href="/blog/"{{#if ?NAV_JOURNAL_ACTIVE}} class="nav__link--active" aria-current="page"{{/if}}>{{site.blog_title}}</a>
       <a href="{{HOME_HREF}}#aftercare">Aftercare</a>
       <a href="{{HOME_HREF}}#faq">FAQ</a>
       <a href="{{HOME_HREF}}#visit">Visit</a>
     </nav>
-    {{#if booking.url}}<a class="btn btn--accent nav__cta" href="{{booking.url}}">Book</a>{{/if}}
+    {{#if ?booking.url}}<a class="btn btn--accent nav__cta" href="{{booking.url}}">Book</a>{{/if}}
     <button class="nav__toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navMobile" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
@@ -24,6 +24,6 @@
     <a href="{{HOME_HREF}}#aftercare">Aftercare</a>
     <a href="{{HOME_HREF}}#faq">FAQ</a>
     <a href="{{HOME_HREF}}#visit">Visit</a>
-    {{#if booking.url}}<a class="btn btn--accent" href="{{booking.url}}">Book an appointment</a>{{/if}}
+    {{#if ?booking.url}}<a class="btn btn--accent" href="{{booking.url}}">Book an appointment</a>{{/if}}
   </div>
 </header>

@@ -7,9 +7,9 @@
     <p class="lead about__lead">{{business.positioning}}</p>
     <p class="about__body">{{homepage.about_body}}</p>
     <ul class="about__strip">
-      <li><strong>{{business.years_experience}}</strong><span>years in practice</span></li>
-      <li><strong>{{location.neighborhood}}</strong><span>{{location.address_city}}, {{location.address_region}}</span></li>
-      <li><strong>{{derived.hours_days_short}}</strong><span>{{derived.hours_times_long}}</span></li>
+      {{#if derived.has_experience}}<li><strong>{{derived.experience_years}}</strong><span>years in practice</span></li>{{else}}<li><strong>{{business.practitioner_name}}</strong><span>every appointment</span></li>{{/if}}
+      <li><strong>{{derived.place_primary}}</strong><span>{{derived.place_secondary}}</span></li>
+      {{#if derived.hours_uniform}}<li><strong>{{derived.hours_days_short}}</strong><span>{{derived.hours_times_long}}</span></li>{{else}}<li><strong>{{derived.hours_days_short}}</strong><span>hours vary by day</span></li>{{/if}}
     </ul>
     <p class="about__cta"><a class="btn btn--ghost" href="{{derived.address_maps_url}}" rel="noopener" target="_blank">Get directions</a></p>
   </div>

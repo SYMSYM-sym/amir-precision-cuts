@@ -1,7 +1,7 @@
-# Ledgerwood Lash Atelier — https://ledgerwoodlash.com
+# Amir Precision Cuts — https://amirprecisioncuts.com
 # Public marketing site + Journal. Crawling is welcome, including AI answer engines.
 # Keep this file STATIC — build-blog.mjs regenerates sitemap/feeds/llms.txt, not robots.
 User-agent: *
 Allow: /
 
-Sitemap: https://ledgerwoodlash.com/sitemap.xml
+Sitemap: https://amirprecisioncuts.com/sitemap.xml

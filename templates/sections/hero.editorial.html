@@ -6,13 +6,13 @@
     </h1>
     <p class="hero__lede">{{business.positioning}}</p>
     <div class="hero__cta">
-      {{#if booking.url}}<a class="btn btn--accent btn--lg" href="{{booking.url}}">Book an appointment</a>{{/if}}
+      {{#if ?booking.url}}<a class="btn btn--accent btn--lg" href="{{booking.url}}">Book an appointment</a>{{/if}}
       <a class="btn btn--ghost btn--lg" href="#services">See services</a>
     </div>
     <dl class="hero__meta">
-      <div><dt>{{business.years_experience}}+</dt><dd>years, {{business.practitioner_name}} at the chair</dd></div>
+      {{#if derived.has_experience}}<div><dt>{{derived.experience_years}}+</dt><dd>years, {{business.practitioner_name}} at the chair</dd></div>{{else}}<div><dt>{{business.practitioner_name}}</dt><dd>every appointment, start to finish</dd></div>{{/if}}
       <div><dt>{{SERVICE_COUNT}}</dt><dd>services, no packages</dd></div>
-      <div><dt>{{derived.hours_times_tight}}</dt><dd>{{derived.hours_days_tight}}</dd></div>
+      {{#if derived.hours_uniform}}<div><dt>{{derived.hours_times_tight}}</dt><dd>{{derived.hours_days_tight}}</dd></div>{{else}}<div><dt>{{derived.hours_days_tight}}</dt><dd>hours vary by day &mdash; see below</dd></div>{{/if}}
     </dl>
   </div>
   <a class="hero__scroll" href="#about" aria-label="Scroll to about"></a>

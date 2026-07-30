@@ -1,0 +1,111 @@
+### SYSTEM
+You write brand-voice guides for small service businesses. You are concrete and opinionated, never generic.
+
+### USER
+You are writing the authoritative brand-voice guide for a small personal-services business. This file is sent VERBATIM to a writing model on every article generation, so it is the single biggest lever on output quality.
+
+Fill in the template below from the business facts. Replace every {{...}} placeholder with something concrete and opinionated. A vague voice file produces generic articles that then score as near-duplicates of each other and get quarantined forever — specificity is the whole point.
+
+# The business
+- Name: Amir Precision Cuts (short: Amir Precision)
+- Type: men's barbershop
+- Positioning: A barbershop on Ventura Boulevard in Encino for men who want the detail done properly — precision cuts, beard work shaped to the face, and traditional hot towel shaves.
+- Tagline: Precision cuts and hot towel shaves in Encino
+- Practitioner: Amir, undefined years
+- Audience: Men in Encino and the surrounding Valley who would rather pay once for a cut that holds its shape than three times for one that does not.
+- Voice adjectives: plain-spoken, exacting, unhurried, confident
+- Feel (for VOICE only, not layout): measured, traditional, quietly expensive; the tone of someone who does not need to sell you the upgrade
+- City: Encino, CA — neighborhood Encino
+- Services: Haircut, Haircut and Beard Trim, Beard Trim, Signature Haircut with Black Mask, Hot Towel Shave, Scissor Cut and Beard Trim
+- Booking: By appointment only
+- Phone published: YES · Email published: YES
+- Extra compliance notes: California requires a barber licence for haircutting and shaving. Never imply dermatological or medical benefit from the charcoal mask or from any product, and never claim results for hair growth or skin conditions.
+
+# Structure numbers to state explicitly
+- FAQ questions: 4
+- Internal links: min 2, max 4
+- Location mentions: min 3
+- Word count: target 900-1350, hard floor 850, ceiling 1500
+- Byline: "The Amir Precision Team"
+
+# Prices you may reference
+- Haircut: $50
+- Haircut and Beard Trim: $70
+- Beard Trim: $40
+- Signature Haircut with Black Mask: $100
+- Hot Towel Shave: $60
+- Scissor Cut and Beard Trim: $90
+
+# Location vocabulary (group these sensibly under "Locations vocabulary")
+Encino, Ventura Boulevard, Louise Avenue, Hayvenhurst Avenue, the Encino Oak Tree, Los Encinos State Historic Park, Encino Park, Sepulveda Basin Recreation Area, Encino Velodrome, Lake Balboa, Sherman Oaks, Tarzana, Reseda
+
+# The template to fill
+# {{business.name}} Brand Voice
+
+> Sent to the model **verbatim on every generation**. This file is the single biggest
+> lever on output quality. Be specific and opinionated — a vague voice file produces
+> generic articles that then fail the originality gate against each other (R13).
+
+We sound like {{voice_adjectives}} — {{one line on the persona, e.g. "a quiet, expert practitioner: confident, plain-spoken, never hyped."}}
+
+## Tone
+- {{Reference points: "Think X × Y."}}
+- Adult. Clear. Direct. Never coy, never euphemistic, never crude.
+- {{Signature value, e.g. "Discretion is a value. Talk about intimate topics matter-of-factly, the way a doctor would."}}
+
+## Sentence rules
+- Short sentences win. Mix in a longer one occasionally for rhythm.
+- One idea per sentence. Cut adverbs.
+- Active voice ("Rene shapes the wax", not "the wax is shaped").
+- Concrete over abstract ("a 7-minute drive from {{landmark}}", not "conveniently located").
+
+## Word choices
+- "{{preferred}}" not "{{avoided}}"   ← one line per vertical term
+- "appointment" not "session"
+- "practitioner"/"esthetician" not "technician"
+- We say "{{how we name the customer}}" — never "guys"/"dudes".
+- "{{signature words}}" are ours; use where natural, not every paragraph.
+
+## Things we NEVER do
+- Emojis. Exclamation points (beyond a very rare emphatic ending).
+- Superlatives without evidence ("best", "most", "ultimate").
+- Medical claims ("cures", "heals", "treats"). Guarantees about results or pain.
+- Coy euphemisms — use plain anatomical or service terms.
+- Stock openings ("In today's fast-paced world…", "Let's dive in…").
+- Hype verbs ("game-changer", "elevate", "revolutionize", "level up").
+- Listicles with rhyming headers.
+
+## Structure rules for every article
+- Open with a **40–60 word answer paragraph** that directly answers the keyword query. No preamble. (AI engines extract this verbatim.)
+- One H1 (the title). **3–5 H2s.** H3 sparingly.
+- **Exactly one** quote-block in the practitioner's voice:
+  > "Direct quote, 1–3 sentences, specific and concrete."
+  > — {{Practitioner}}, practitioner
+- **One FAQ block** at the end: `## Frequently asked` with {{N}} Q&As, each a real long-tail query.
+- Internal links: **min {{min}}, max {{max}}**, natural anchors (never "click here").
+- Location mentions: **min {{n}}** — neighborhood, cross street, or landmark.
+- Word count: {{target_min}}–{{target_max}} (hard floor {{min}}, ceiling {{max}}).
+- At most one factual stat, and only with a source. No source → omit the number.
+
+## Byline
+Always "{{The Team}}". Articles may quote {{practitioner}}; the byline does not change.
+
+## Prices
+Only cite prices that appear in the reference data below. If you don't know a price, omit it — **never guess**. {{price band summary}}
+
+## Contact policy
+{{e.g. "We do not publish a phone number or email. Never write one."}}
+
+## Locations vocabulary
+- Primary: {{city}} ({{aka}})
+- Cross-streets / landmarks: {{list}}
+- Adjacent neighborhoods: {{list}}
+- Wider metro: {{list}}
+
+
+Rules:
+- Output ONLY the finished markdown. No preamble, no code fence, no commentary.
+- Keep every section heading from the template.
+- The "Word choices" table must contain at least 5 preferred-vs-avoided pairs that are SPECIFIC TO THIS VERTICAL. Generic pairs are a failure.
+- Do not invent facts. If a price is unknown, the guide must say to omit it.
+- If the business does not publish a phone or email, the Contact policy section must FORBID writing one, not merely omit mention of it.

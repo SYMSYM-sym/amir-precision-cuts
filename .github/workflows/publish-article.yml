@@ -22,8 +22,8 @@ on:
   # runs under load. R23 -- never treat "the cron is configured" as evidence it
   # ran. The heartbeat is what actually proves it.
   schedule:
-    - cron: '23 14 * * 1,4'   # 09:00 America/New_York, standard time
-    - cron: '23 13 * * 1,4'   # 09:00 America/New_York, daylight time
+    - cron: '23 17 * * 2,5'   # 09:00 America/Los_Angeles, standard time
+    - cron: '23 16 * * 2,5'   # 09:00 America/Los_Angeles, daylight time
   workflow_dispatch:
     inputs:
       slug:

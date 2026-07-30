@@ -9,10 +9,10 @@
       <li><span class="hero__fact-k">Where</span><span class="hero__fact-v">{{location.neighborhood}}, {{location.address_city}}</span></li>
       <li><span class="hero__fact-k">Hours</span><span class="hero__fact-v">{{derived.hours_line}}</span></li>
       <li><span class="hero__fact-k">Booking</span><span class="hero__fact-v">{{derived.booking_line}}</span></li>
-      <li><span class="hero__fact-k">Since</span><span class="hero__fact-v">{{business.years_experience}} years in practice</span></li>
+      {{#if derived.has_experience}}<li><span class="hero__fact-k">Since</span><span class="hero__fact-v">{{derived.experience_years}} years in practice</span></li>{{/if}}
     </ul>
     <div class="hero__cta">
-      {{#if booking.url}}<a class="btn btn--accent" href="{{booking.url}}">Book</a>{{/if}}
+      {{#if ?booking.url}}<a class="btn btn--accent" href="{{booking.url}}">Book</a>{{/if}}
       <a class="btn btn--ghost" href="#services">Prices</a>
     </div>
   </div>

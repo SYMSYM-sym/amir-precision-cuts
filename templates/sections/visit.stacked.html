@@ -13,25 +13,25 @@
       </div>
       <div class="visit__panel">
         <h3 class="h3 visit__panel-title">Hours</h3>
-        <p>{{derived.hours_days_long}}<br />{{derived.hours_times_long}}</p>
+        <p>{{#if derived.hours_uniform}}{{derived.hours_days_long}}<br />{{derived.hours_times_long}}{{else}}{{derived.hours_line}}{{/if}}</p>
         <p class="visit__panel-note">{{derived.booking_line_period}}</p>
       </div>
       {{#if derived.has_contact}}
       <div class="visit__panel">
         <h3 class="h3 visit__panel-title">Contact</h3>
-        {{#if booking.publish_phone}}<p><a class="js-tel" href="tel:{{booking.phone}}">Call {{business.short_name}}</a></p>{{/if}}
-        {{#if booking.publish_email}}<p><a href="mailto:{{booking.email}}">{{booking.email}}</a></p>{{/if}}
+        {{#if ?booking.publish_phone}}<p><a href="tel:{{booking.phone}}">Call {{business.short_name}}</a></p>{{/if}}
+        {{#if ?booking.publish_email}}<p><a href="mailto:{{booking.email}}">{{booking.email}}</a></p>{{/if}}
       </div>
       {{/if}}
     </div>
     {{#if derived.has_getting_here}}
     <dl class="visit__notes visit__notes--center">
-      {{#if location.transit_notes}}<dt>Transit</dt><dd>{{location.transit_notes}}</dd>{{/if}}
-      {{#if location.parking_notes}}<dt>Parking</dt><dd>{{location.parking_notes}}</dd>{{/if}}
-      {{#if location.accessibility_notes}}<dt>Access</dt><dd>{{location.accessibility_notes}}</dd>{{/if}}
+      {{#if ?location.transit_notes}}<dt>Transit</dt><dd>{{location.transit_notes}}</dd>{{/if}}
+      {{#if ?location.parking_notes}}<dt>Parking</dt><dd>{{location.parking_notes}}</dd>{{/if}}
+      {{#if ?location.accessibility_notes}}<dt>Access</dt><dd>{{location.accessibility_notes}}</dd>{{/if}}
     </dl>
     {{/if}}
-    {{#if booking.url}}
+    {{#if ?booking.url}}
     <p class="visit__cta visit__cta--center"><a class="btn btn--accent btn--lg" href="{{booking.url}}">Book an appointment</a></p>
     {{/if}}
   </div>

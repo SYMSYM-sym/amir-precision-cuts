@@ -24,7 +24,7 @@ A first visit to a {{business.type}} in {{location.address_city}} is straightfor
 
 ## What happens before you arrive
 
-Most of the uncertainty people carry into a first appointment comes from not knowing the shape of the visit rather than from the work itself. The shape is simple. You arrive, you talk through what you are after, the practitioner tells you what the material in front of them will actually allow, and then the work begins. Nothing is decided on your behalf and nothing is added while you are in the chair without being discussed first.
+Most of the uncertainty people carry into a first appointment comes from not knowing the shape of the visit rather than from the work itself. The shape is simple. You arrive, you talk through what you are after, the practitioner tells you what the material in front of them will actually allow, and then the work begins. Nothing is decided on your behalf and nothing is added mid-appointment without being discussed first.
 
 Arrive a few minutes early if you can. That margin is not about paperwork; it is about not starting a considered piece of work while you are still catching your breath from the walk in. Wear something comfortable that you will not mind sitting in for the length of the appointment. If you are coming from somewhere near {{ANCHOR_1}} or {{ANCHOR_2}}, factor in the time it takes to park and walk rather than the time the map gives you door to door.
 

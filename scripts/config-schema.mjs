@@ -145,7 +145,6 @@ export function validateConfig(c, { allowPlaceholders = false } = {}) {
   }
   req(c, 'business.positioning', errors);
   req(c, 'business.practitioner_name', errors);
-  req(c, 'business.years_experience', errors);
   req(c, 'business.author_id', errors);
 
   // --- location ---
@@ -309,6 +308,19 @@ export function validateConfig(c, { allowPlaceholders = false } = {}) {
 
   opt('business.founded_year', (v) => /^\d{4}$/.test(String(v)) && Number(v) <= new Date().getFullYear(),
     'must be a 4-digit year not in the future');
+  // OPTIONAL on purpose. A real intake often does not have it, and the only
+  // alternative to omitting it is inventing a number about someone's career --
+  // which is the exact class of fabrication the validator exists to stop.
+  // Everything downstream (hero stat, about list, author bio, the eeat topic
+  // bucket, the article prompt) is conditional on it.
+  opt('business.years_experience', (v) => /^\d{1,2}$/.test(String(v).replace(/\+$/, '')),
+    'should be a plain number of years (e.g. "14"), or omitted entirely');
+  // OPTIONAL. Attributes pull-quotes ("— Amir, barber"). The reference hardcoded
+  // the word "practitioner", which reads as placeholder text in every vertical;
+  // omitting the role yields a bare "— Amir", correct everywhere. A vertical
+  // noun may only ever come from config.
+  opt('business.practitioner_role', (v) => typeof v === 'string' && v.length <= 40 && !/[.!?]/.test(v),
+    'should be a short role noun with no trailing punctuation (e.g. "barber", "esthetician")');
   opt('location.latitude', (v) => Math.abs(Number(v)) <= 90, 'must be between -90 and 90');
   opt('location.longitude', (v) => Math.abs(Number(v)) <= 180, 'must be between -180 and 180');
   opt('location.service_area', (v) => Array.isArray(v), 'must be a list');
@@ -381,6 +393,30 @@ function contiguousRange(days) {
   return [DAYS[idx[0]], DAYS[idx[idx.length - 1]]];
 }
 
+/**
+ * Group consecutive open days that share the same hours into runs.
+ * ["Tue 9-8","Wed 9-8","Thu 9-8","Fri 9-8","Sat 9-7"]  ->  ["Tue–Fri 9 AM–8 PM", "Sat 9 AM–7 PM"]
+ */
+function groupHoursRuns(rows) {
+  const out = [];
+  let run = null;
+  for (const r of rows) {
+    const idx = DAYS.indexOf(r.day);
+    const label = `${to12h(r.opens, { padded: false })}–${to12h(r.closes, { padded: false })}`;
+    if (run && run.label === label && idx === run.lastIdx + 1) {
+      run.lastShort = r.day_short;
+      run.lastIdx = idx;
+    } else {
+      if (run) out.push(run);
+      run = { firstShort: r.day_short, lastShort: r.day_short, lastIdx: idx, label };
+    }
+  }
+  if (run) out.push(run);
+  return out.map((g) => (g.firstShort === g.lastShort
+    ? `${g.firstShort} ${g.label}`
+    : `${g.firstShort}–${g.lastShort} ${g.label}`));
+}
+
 export function buildDerived(c) {
   const { hours, location: loc, site, business, booking } = c;
   const range = contiguousRange(hours.days);
@@ -428,6 +464,27 @@ export function buildDerived(c) {
 
   const socialUrls = Object.values(booking.social || {}).filter(Boolean);
 
+  const taglineNamesCity = new RegExp(
+    `\\b${loc.address_city.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i',
+  ).test(business.tagline || '');
+
+  // booking.phone is stored in E.164 because that is what `tel:` and schema.org
+  // want. Printing it as-is put "+18188183945" in the topbar and the footer —
+  // technically the number, and not how anyone reads a phone number. The link
+  // target stays E.164; only the visible text changes.
+  const phoneDisplay = (() => {
+    const raw = String(booking.phone || '');
+    if (!raw) return '';
+    const m = raw.match(/^\+1(\d{3})(\d{3})(\d{4})$/);
+    if (m) return `(${m[1]}) ${m[2]}-${m[3]}`;
+    // Any other country: group the national part in threes rather than guess a
+    // national convention we do not know. Never invent formatting that implies
+    // a locale.
+    const intl = raw.match(/^\+(\d{1,3})(\d+)$/);
+    if (intl) return `+${intl[1]} ${intl[2].replace(/(\d{3})(?=\d)/g, '$1 ').trim()}`;
+    return raw;
+  })();
+
   return {
     // hours — the five renderings plus the per-day table, all one source
     hours_rows: hoursRows,
@@ -436,14 +493,46 @@ export function buildDerived(c) {
     hours_days_long: daysLong,                    // "Tuesday – Saturday"
     hours_days_short: daysShort,                  // "Tue – Sat"
     hours_days_tight: daysTight,                  // "Tue–Sat"
-    hours_times_long: timesLong,                  // "8:00 AM – 6:00 PM"
-    hours_times_tight: timesTight,                // "8 AM–6 PM"
+
+    // A SINGLE times string is only true when every open day shares the same
+    // pair. Amir Precision Cuts is 9-8 Tuesday to Friday and 9-7 on Saturday;
+    // rendering "Tuesday – Saturday / 9:00 AM – 8:00 PM" put a lie on the
+    // client's homepage and told men the door was open an hour after it shut.
+    //
+    // These are therefore UNDEFINED when hours are not uniform, which makes the
+    // strict template engine THROW on any template that reaches for them. That
+    // is deliberate: fixing the six templates that used them is not enough on
+    // its own, because the seventh template written next month would reintroduce
+    // the same wrong sentence and nothing would notice. Use `hours_line` (which
+    // groups runs of days) or branch on `hours_uniform`.
+    hours_times_long: uniformHours ? timesLong : undefined,      // "8:00 AM – 6:00 PM"
+    hours_times_tight: uniformHours ? timesTight : undefined,    // "8 AM–6 PM"
+    // Collapse consecutive days that share hours. A shop open 9-8 Tue-Fri and
+    // 9-7 Saturday should read "Tue–Fri 9 AM–8 PM · Sat 9 AM–7 PM", not list
+    // all five days -- the naive version produced a 96-character footer line
+    // that wrapped onto three rows on a phone.
     hours_line: uniformHours
       ? `${daysShort} · ${timesTight}`
-      : hoursRows.map((r) => `${r.day_short} ${r.times}`).join(' · '),
+      : groupHoursRuns(hoursRows).join(' · '),
+    // The same runs as a LIST, so a narrow column can wrap between them instead
+    // of inside one. Rendered as a flat string in the footer, "Tue–Fri 9 AM–8 PM
+    // · Sat 9 AM–7 PM" broke after "Sat 9" and left "AM–7 PM" alone on the next
+    // line, which reads as a different piece of information than it is.
+    hours_runs: uniformHours ? [`${daysShort} · ${timesTight}`] : groupHoursRuns(hoursRows),
 
     // address — the three renderings plus the encoded one
     address_city_region_postal: cityRegionPostal,
+
+    // A two-line place label for stat strips. Naively that is neighbourhood over
+    // "city, region" — which renders "Encino / Encino, CA" for the very common
+    // case of a business whose neighbourhood IS its city. Same defect as the
+    // duplicated city in meta_title; same fix, one place.
+    place_primary: loc.neighborhood && loc.neighborhood.toLowerCase() !== loc.address_city.toLowerCase()
+      ? loc.neighborhood
+      : loc.address_city,
+    place_secondary: loc.neighborhood && loc.neighborhood.toLowerCase() !== loc.address_city.toLowerCase()
+      ? `${loc.address_city}, ${loc.address_region}`
+      : `${loc.address_region} ${loc.address_postal}`,
     address_one_line: addressOneLine,
     address_maps_url: `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`,
 
@@ -455,6 +544,12 @@ export function buildDerived(c) {
 
     // extras
     social_urls: socialUrls,
+    has_experience: Boolean(business.years_experience),
+    // "— Amir, barber" when a role is configured, "— Amir" when it is not.
+    quote_attribution: business.practitioner_role
+      ? `${business.practitioner_name}, ${business.practitioner_role}`
+      : business.practitioner_name,
+    experience_years: business.years_experience ? String(business.years_experience).replace(/\+$/, '') : '',
     has_geo: loc.latitude !== undefined && loc.latitude !== '' && loc.longitude !== undefined && loc.longitude !== '',
     has_getting_here: Boolean(loc.parking_notes || loc.transit_notes || loc.accessibility_notes),
     has_testimonials: Boolean((c.homepage.testimonials || []).length),
@@ -465,11 +560,25 @@ export function buildDerived(c) {
 
     // booking
     booking_line: bookingLine,
+    phone_display: phoneDisplay,
     booking_line_period: `${bookingLine}.`,
     has_contact: booking.publish_phone === true || booking.publish_email === true,
 
     // seo copy formulas (07 §B)
-    meta_title: site.meta_title_override || `${business.name} — ${business.tagline} | ${loc.address_city}`,
+    // Only append the city when the tagline has not already said it. The naive
+    // formula produced "Amir Precision Cuts — Precision cuts and hot towel
+    // shaves in Encino | Encino", which is what a title tag looks like when a
+    // template never met a real tagline.
+    meta_title: site.meta_title_override
+      || (taglineNamesCity
+        ? `${business.name} — ${business.tagline}`
+        : `${business.name} — ${business.tagline} | ${loc.address_city}`),
+
+    // Same defect, second location: the footer read "<tagline>. <city>." and
+    // printed "…hot towel shaves in Encino. Encino."
+    footer_tagline: taglineNamesCity
+      ? `${business.tagline}.`
+      : `${business.tagline}. ${loc.address_city}.`,
     meta_description: site.meta_description_override
       || `${business.name} — ${business.type} in ${loc.address_city}. ` +
       `${(c.services || []).slice(0, 3).map((s) => s.label).join(', ')}. ` +

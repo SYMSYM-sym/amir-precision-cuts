@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>The Studio Notes — Ledgerwood Lash Atelier</title>
-    <link>https://ledgerwoodlash.com/blog/</link>
-    <description>Lash and brow craft, written from two chairs on Wickenden Street.</description>
+    <title>From the Chair — Amir Precision Cuts</title>
+    <link>https://amirprecisioncuts.com/blog/</link>
+    <description>Notes on cuts, beards and shaves, written on Ventura Boulevard in Encino.</description>
     <language>en-US</language>
     
     <item>
-      <title>What to Expect at a lash and brow studio in Providence</title>
-      <link>https://ledgerwoodlash.com/blog/dry-run-sample</link>
-      <guid>https://ledgerwoodlash.com/blog/dry-run-sample</guid>
-      <pubDate>Wed, 29 Jul 2026 16:00:00 GMT</pubDate>
-      <description>A first visit to a lash and brow studio in Providence is straightforward once you know how the appointment is structured, what the room is like, and what you should do beforehand. Expect a clear conversation about what you want, an honest answer about what is achievable today, and a pace that leaves room for questions. Preparation matters more than nerves do. Most of the uncertainty people carry …</description>
+      <title>Coming From Sherman Oaks for a Haircut</title>
+      <link>https://amirprecisioncuts.com/blog/barbershop-near-sherman-oaks</link>
+      <guid>https://amirprecisioncuts.com/blog/barbershop-near-sherman-oaks</guid>
+      <pubDate>Fri, 31 Jul 2026 19:00:00 GMT</pubDate>
+      <description>A barbershop near Sherman Oaks does not have to be in Sherman Oaks. Amir Precision Cuts is a short hop west along Ventura Boulevard, at 17388 in Encino. For most men on the Sherman Oaks side the drive is under ten minutes, and it buys a single-barber chair instead of whoever is free. Ventura Boulevard is the whole route. It runs continuously from Sherman Oaks into Encino, so there is no clever wa…</description>
+    </item>
+    <item>
+      <title>Men&apos;s Haircuts in Encino: What $50 Actually Buys</title>
+      <link>https://amirprecisioncuts.com/blog/mens-haircut-encino</link>
+      <guid>https://amirprecisioncuts.com/blog/mens-haircut-encino</guid>
+      <pubDate>Thu, 30 Jul 2026 19:00:00 GMT</pubDate>
+      <description>A men&apos;s haircut in Encino is $50 at Amir Precision Cuts. That covers the consultation, the cut itself shaped to how your hair grows, and the neckline and edges finished by hand at the end. It is one price rather than a starting point, and it is the same on a Tuesday as it is on a Saturday. Price pages tend to describe a haircut with adjectives. Here is the itemised version instead. **The consulta…</description>
+    </item>
+    <item>
+      <title>A Barber a Short Walk From the Encino Oak Tree</title>
+      <link>https://amirprecisioncuts.com/blog/barber-near-encino-oak-tree</link>
+      <guid>https://amirprecisioncuts.com/blog/barber-near-encino-oak-tree</guid>
+      <pubDate>Wed, 29 Jul 2026 19:00:00 GMT</pubDate>
+      <description>Amir Precision Cuts sits on Ventura Boulevard in Encino, a few minutes on foot from the Encino Oak Tree and just west of Louise Avenue. Anyone already on that stretch — working there, running errands, walking back from Encino Park — can reach the chair without getting into a car. Appointments run Tuesday to Saturday. This barbershop on Ventura Boulevard in Encino sits on a stretch that changes ch…</description>
     </item>
   </channel>
 </rss>

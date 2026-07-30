@@ -1,0 +1,637 @@
+- slug: barber-near-encino-oak-tree
+  title: "A Barber a Short Walk From the Encino Oak Tree"
+  target_keyword: barber near encino oak tree
+  secondary_keywords: ["barbershop ventura boulevard encino", "walkable barber encino"]
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links: [{ page: visit }, { service: haircut }]
+  notes: >-
+    WALKABILITY angle, and it must not overlap the drive-in or lunch-break pieces.
+    Lead with the fact that the shop sits on Ventura Boulevard within a short walk of
+    the Encino Oak Tree and Louise Avenue, so people already on that stretch can come
+    on foot. Cover metered street parking honestly. Do NOT reuse "three to four weeks"
+    cadence framing or any price list.
+
+- slug: mens-haircut-encino
+  title: "Men's Haircuts in Encino: What $50 Actually Buys"
+  target_keyword: mens haircut encino
+  secondary_keywords: ["barber encino ca", "haircut encino 91316"]
+  intent: BOF / transactional
+  bucket: hyperlocal
+  internal_links: [{ service: haircut }, { page: faq }]
+  notes: >-
+    The primary money page. Anchor on what is included at $50 -- consultation, cut
+    shaped to growth pattern, neckline and edges -- rather than on adjectives. This is
+    the ONLY hyperlocal piece allowed to lead with price. Others must not.
+
+- slug: barbershop-near-sherman-oaks
+  title: "Coming From Sherman Oaks for a Haircut"
+  target_keyword: barbershop near sherman oaks
+  secondary_keywords: ["barber sherman oaks border", "encino barber for sherman oaks"]
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links: [{ page: visit }, { service: haircut-beard-trim }]
+  notes: >-
+    CROSS-BORDER angle for readers east of the shop. Frame around the short hop west
+    along Ventura Boulevard and why people leave a closer chain for a single-barber
+    shop. Do NOT mention walkability -- that belongs to the Oak Tree piece -- and do
+    not name any competing shop.
+
+- slug: barber-tarzana-reseda-side
+  title: "For Men in Tarzana and Reseda: Worth the Ten Minutes"
+  target_keyword: barber near tarzana
+  secondary_keywords: ["barbershop reseda area", "barber near lake balboa"]
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links: [{ page: visit }, { service: scissor-cut-beard-trim }]
+  notes: >-
+    DRIVE-IN angle from the west and north -- Tarzana, Reseda, Lake Balboa. The trade
+    is a slightly longer drive for a chair that is not double-booked. Distinct from the
+    Sherman Oaks piece, which comes from the other direction and leads on chains.
+    Mention appointment timing so a drive is never wasted.
+
+- slug: saturday-barber-appointment-encino
+  title: "Getting a Saturday Barber Appointment in Encino"
+  target_keyword: saturday barber appointment encino
+  secondary_keywords: ["weekend barber encino", "saturday haircut encino"]
+  intent: BOF / transactional
+  bucket: hyperlocal
+  internal_links: [{ page: visit }, { page: faq }]
+  notes: >-
+    SCHEDULING-PRESSURE angle. Saturday is 9 to 7 rather than 9 to 8 and fills first;
+    booking a day or two ahead midweek is usually enough. Practical, not promotional.
+    Do NOT restate the whole opening-hours table -- one clean mention only.
+
+- slug: barber-encino-walk-ins-appointment-only
+  title: "Why This Encino Barbershop Runs by Appointment"
+  target_keyword: barber encino walk ins
+  secondary_keywords: ["appointment only barber encino", "do barbers take walk ins"]
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links: [{ page: visit }, { page: about }]
+  notes: >-
+    Answers the WALK-IN search, which is a different query from availability pressure:
+    this reader wants to know whether they can turn up, not when to book. Say plainly
+    that the shop is appointment-only and why -- one man, one chair, not
+    double-booked -- and that the trade-off is no queue and no rushed finish. Do NOT
+    frame it around Saturdays filling up, and do NOT restate the hours table.
+
+- slug: hot-towel-shave-encino
+  title: "Where to Get a Hot Towel Shave in Encino"
+  target_keyword: hot towel shave encino
+  secondary_keywords: ["straight razor shave encino", "barber shave near me encino"]
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links: [{ service: hot-towel-shave }, { page: visit }]
+  notes: >-
+    Hyperlocal piece for a service most shops on the boulevard no longer do properly.
+    Lead with scarcity of the real thing, not with the shop. Describe the appointment
+    as its own booking at $60. Keep the step-by-step out of it -- that is the
+    service-detail article's job.
+
+- slug: beard-trim-encino
+  title: "Beard Trims in Encino: Shaped to the Face, Not a Template"
+  target_keyword: beard trim encino
+  secondary_keywords: ["beard shaping encino", "beard barber encino ca"]
+  intent: BOF / transactional
+  bucket: hyperlocal
+  internal_links: [{ service: beard-trim }, { service: haircut-beard-trim }]
+  notes: >-
+    Local intent for beard work specifically. The angle is that a beard shaped to the
+    jaw and cheek beats one shaped to a guard number. State $40 alone and $70 combined
+    once. Do NOT cover growing-out or maintenance timing -- separate articles own those.
+
+- slug: barber-near-los-encinos-park
+  title: "A Barber Near Los Encinos State Historic Park"
+  target_keyword: barber near los encinos state historic park
+  secondary_keywords: ["barbershop near encino park", "barber near sepulveda basin"]
+  intent: TOF / informational
+  bucket: hyperlocal
+  internal_links: [{ page: visit }, { service: haircut }]
+  notes: >-
+    LANDMARK-ORIENTATION angle for people who navigate by park rather than address --
+    Los Encinos State Historic Park, Encino Park, Sepulveda Basin. Genuinely useful
+    geography, no price list, no service walkthrough. Must not repeat the Oak Tree
+    piece's walkability argument.
+
+- slug: barber-for-cyclists-encino-velodrome
+  title: "Short Cuts That Survive a Helmet"
+  target_keyword: haircut for cyclists encino
+  secondary_keywords: ["short haircut helmet hair", "barber near encino velodrome"]
+  intent: TOF / informational
+  bucket: hyperlocal
+  internal_links: [{ service: haircut }, { page: aftercare }]
+  notes: >-
+    NICHE-AUDIENCE hyperlocal built on the Encino Velodrome and Sepulveda Basin riding
+    routes. What to ask for when a helmet flattens the crown daily, and why very short
+    on top is not the only answer. Real cut advice, not a location page in disguise.
+
+- slug: first-barber-new-to-encino
+  title: "New to Encino and Looking for a Barber"
+  target_keyword: finding a barber new to encino
+  secondary_keywords: ["how to find a good barber encino", "new in town barber valley"]
+  intent: TOF / informational
+  bucket: hyperlocal
+  internal_links: [{ page: about }, { page: faq }]
+  notes: >-
+    RELOCATION angle. How to judge a barber in one appointment -- what they ask before
+    touching your hair, whether they check the shape in daylight, whether the neckline
+    holds at week three. Honest enough to be useful even to someone who books elsewhere.
+
+- slug: barber-before-event-encino
+  title: "Timing a Haircut Before a Wedding or Shoot"
+  target_keyword: haircut before wedding how many days
+  secondary_keywords: ["haircut before event timing", "barber before photos encino"]
+  intent: MOF / informational
+  bucket: hyperlocal
+  internal_links: [{ service: signature-haircut-black-mask }, { page: visit }]
+  notes: >-
+    EVENT-PREP angle. The real answer is three to five days before, not the morning of,
+    and why. Tie to the signature haircut with the charcoal mask as the pre-event
+    option at $100. No medical or skin claims about the mask -- it cleans and lifts
+    before detail work, nothing more.
+
+- slug: what-is-a-precision-haircut
+  title: "What a Precision Haircut Actually Means"
+  target_keyword: what is a precision haircut
+  secondary_keywords: ["precision cut vs regular haircut", "detailed mens haircut"]
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links: [{ service: haircut }, { page: about }]
+  notes: >-
+    Define the term concretely or do not use it: cutting to growth pattern, checking
+    the shape from behind, a neckline that still reads deliberate at week three.
+    Debunk the idea that it means "slower". No comparison to other shops.
+
+- slug: signature-haircut-black-mask-explained
+  title: "The Signature Haircut With the Black Mask, Explained"
+  target_keyword: haircut with charcoal mask what is it
+  secondary_keywords: ["black mask haircut barber", "signature haircut encino"]
+  intent: MOF / commercial
+  bucket: service-detail
+  internal_links: [{ service: signature-haircut-black-mask }, { page: faq }]
+  notes: >-
+    The highest-margin service and the least understood. Walk the appointment in order,
+    state $100 and roughly ninety minutes, and be explicit that the charcoal mask is a
+    cleansing step before detail work. HARD RULE: no claim about acne, pores, detoxing
+    or skin conditions. If the reader has a skin concern, that is a doctor's question.
+
+- slug: hot-towel-shave-what-to-expect
+  title: "Your First Hot Towel Shave: What Actually Happens"
+  target_keyword: hot towel shave what to expect
+  secondary_keywords: ["straight razor shave first time", "barber shave steps"]
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links: [{ service: hot-towel-shave }, { page: aftercare }]
+  notes: >-
+    Step-by-step of the appointment: towels, lather, the two passes, the cool finish.
+    Written for someone slightly nervous about a straight razor. Never promise it is
+    painless or irritation-free -- describe what reduces irritation instead. Distinct
+    from the hyperlocal shave piece, which is about finding one at all.
+
+- slug: scissor-cut-vs-clipper-cut
+  title: "Scissor Cut or Clippers: Which Your Hair Wants"
+  target_keyword: scissor cut vs clipper cut
+  secondary_keywords: ["scissor over comb haircut", "all scissor mens haircut"]
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links: [{ service: scissor-cut-beard-trim }, { service: haircut }]
+  notes: >-
+    Mechanics, not preference: what scissor work does for movement and length that
+    clippers cannot, and where clippers are genuinely better. State $90 for the scissor
+    cut with beard trim once. This is the technical piece -- the comparison bucket
+    handles the decision framing.
+
+- slug: haircut-and-beard-trim-together
+  title: "Why the Cut and the Beard Should Be Done Together"
+  target_keyword: haircut and beard trim same appointment
+  secondary_keywords: ["beard and haircut together", "combined cut and beard trim"]
+  intent: MOF / commercial
+  bucket: service-detail
+  internal_links: [{ service: haircut-beard-trim }, { service: beard-trim }]
+  notes: >-
+    The argument is geometric: the hairline and the beard line frame the same face, and
+    matching them in one sitting is why the combined service exists. $70 together
+    versus $50 and $40 apart -- state the arithmetic plainly once. Do not moralise
+    about people who split them.
+
+- slug: neckline-that-holds
+  title: "The Neckline Is Where a Haircut Goes Wrong First"
+  target_keyword: haircut neckline grows out badly
+  secondary_keywords: ["barber neckline types", "tapered vs blocked neckline"]
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links: [{ service: haircut }, { page: aftercare }]
+  notes: >-
+    Single-detail deep dive: blocked, rounded and tapered necklines and how each looks
+    at week three. This is the article that proves the shop knows what it is doing.
+    Concrete and slightly technical. No prices, no location padding.
+
+- slug: what-to-ask-your-barber
+  title: "What to Say When the Barber Asks What You Want"
+  target_keyword: how to tell barber what haircut you want
+  secondary_keywords: ["what to ask barber for", "describing a haircut to a barber"]
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links: [{ page: faq }, { service: haircut }]
+  notes: >-
+    Practical vocabulary: length on top in inches rather than guard numbers, how you
+    want the neckline, where you part, what you hated last time. Frame photos as a
+    starting point, not an instruction. Useful to anyone anywhere -- which is the point.
+
+- slug: beard-trim-what-happens
+  title: "What a Beard Trim Involves When It Is Done Properly"
+  target_keyword: what does a beard trim include
+  secondary_keywords: ["beard trim steps barber", "beard shaping vs trimming"]
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links: [{ service: beard-trim }, { page: aftercare }]
+  notes: >-
+    Break the appointment down: assessing growth, setting the cheek line, the neckline
+    below the jaw, length through the middle. The distinction between trimming and
+    shaping is the whole article. Keep growing-out advice out of it.
+
+- slug: mask-before-detail-work
+  title: "Why the Mask Comes Before the Detail Work"
+  target_keyword: charcoal mask before haircut why
+  secondary_keywords: ["face mask barber service", "skin prep before beard line"]
+  intent: TOF / informational
+  bucket: service-detail
+  internal_links: [{ service: signature-haircut-black-mask }, { service: hot-towel-shave }]
+  notes: >-
+    SEQUENCE angle, deliberately narrow: why cleansing and lifting the skin first makes
+    a cheek line and neckline cleaner. Mechanical explanation only. Absolutely no
+    dermatological claim -- and say plainly that skin conditions are a doctor's
+    territory. Must not duplicate the signature-service walkthrough.
+
+- slug: barbershop-vs-chain-salon
+  title: "A Single-Barber Shop or a Chain: What Changes"
+  target_keyword: barbershop vs chain haircut
+  secondary_keywords: ["independent barber vs franchise", "why barbershops cost more"]
+  intent: MOF / commercial
+  bucket: comparison
+  internal_links: [{ page: about }, { service: haircut }]
+  notes: >-
+    Honest trade-offs, not a hit piece: chains win on walk-in availability and price,
+    a single chair wins on continuity and time per head. Never name a competitor and
+    never imply anyone does bad work. The reader should trust us more for the fairness.
+
+- slug: barber-vs-hair-stylist-for-men
+  title: "Barber or Stylist: Which One Should Cut Your Hair"
+  target_keyword: barber vs stylist for men
+  secondary_keywords: ["should men go to a barber or salon", "mens haircut barber or salon"]
+  intent: TOF / informational
+  bucket: comparison
+  internal_links: [{ service: haircut }, { service: scissor-cut-beard-trim }]
+  notes: >-
+    Training and tooling differences -- clipper work and neckline detail versus longer
+    layered scissor work. Genuinely two-sided: some men are better served in a salon
+    chair, and saying so is what makes the rest credible.
+
+- slug: hot-towel-shave-vs-home-shave
+  title: "Hot Towel Shave or Shaving at Home"
+  target_keyword: barber shave vs shaving at home
+  secondary_keywords: ["is a barber shave worth it", "straight razor vs cartridge"]
+  intent: MOF / commercial
+  bucket: comparison
+  internal_links: [{ service: hot-towel-shave }, { page: aftercare }]
+  notes: >-
+    Compare on outcome and skin response, not on ceremony. Be straight that a $60
+    shave is not a weekly purchase for most men and say what occasions justify it.
+    No claims about eliminating irritation or ingrown hairs.
+
+- slug: beard-trim-vs-growing-out
+  title: "Trim It or Let It Grow: The Awkward Middle"
+  target_keyword: should i trim my beard while growing it
+  secondary_keywords: ["beard growing out stage trim", "beard trim during growth"]
+  intent: TOF / informational
+  bucket: comparison
+  internal_links: [{ service: beard-trim }, { page: faq }]
+  notes: >-
+    Counter-intuitive answer: trimming the neck and cheek line while leaving length
+    alone is how a beard grows out without looking unkempt. Concrete week-by-week
+    guidance. Do NOT reuse the beard-trim service walkthrough.
+
+- slug: clipper-fade-vs-taper
+  title: "Fade or Taper: They Are Not the Same Thing"
+  target_keyword: fade vs taper haircut
+  secondary_keywords: ["taper vs fade difference", "which is better fade or taper"]
+  intent: TOF / informational
+  bucket: comparison
+  internal_links: [{ service: haircut }, { page: faq }]
+  notes: >-
+    Definitional piece with a real payoff: a taper grows out gracefully and a fade
+    does not, which decides how often you sit in the chair. Tie the answer to
+    maintenance interval rather than to fashion.
+
+- slug: cheap-haircut-true-cost
+  title: "What a Cheap Haircut Costs Over a Year"
+  target_keyword: are expensive haircuts worth it
+  secondary_keywords: ["cheap haircut vs expensive", "cost of haircuts per year"]
+  intent: MOF / commercial
+  bucket: comparison
+  internal_links: [{ service: haircut }, { page: about }]
+  notes: >-
+    Arithmetic, not attitude: a cut that holds four weeks against one that needs
+    fixing at two. Use the real $50 figure and show the maths honestly, including the
+    case where the cheaper option genuinely wins. No competitor pricing -- we do not
+    know it.
+
+- slug: does-a-beard-trim-make-it-look-thinner
+  title: "Does Trimming Make a Patchy Beard Look Thinner?"
+  target_keyword: does trimming a beard make it look thinner
+  secondary_keywords: ["patchy beard trim advice", "beard looks thin after trim"]
+  intent: TOF / informational
+  bucket: question
+  internal_links: [{ service: beard-trim }, { page: aftercare }]
+  notes: >-
+    Common fear, real answer: shaping the edges usually makes a patchy beard read
+    fuller because the outline is defined. Explain why. Absolutely no growth claims and
+    nothing that sounds like treating a condition.
+
+- slug: how-often-should-men-get-haircuts
+  title: "How Often Should You Actually Get a Haircut?"
+  target_keyword: how often should men get a haircut
+  secondary_keywords: ["haircut frequency men", "how many weeks between haircuts"]
+  intent: TOF / informational
+  bucket: question
+  internal_links: [{ service: haircut }, { page: aftercare }]
+  notes: >-
+    Three to four weeks for most, with the real variable being how short the back is.
+    Give the reader a test they can run in a mirror rather than a rule. This is the
+    canonical cadence article -- other pieces must reference the interval, not
+    re-argue it.
+
+- slug: does-a-straight-razor-shave-hurt
+  title: "Does a Straight Razor Shave Hurt?"
+  target_keyword: does a straight razor shave hurt
+  secondary_keywords: ["is a barber shave painful", "straight razor shave nervous"]
+  intent: TOF / informational
+  bucket: question
+  internal_links: [{ service: hot-towel-shave }, { page: faq }]
+  notes: >-
+    Answer honestly: it should not, and here is what makes the difference -- towel
+    temperature, lather time, blade angle, two passes rather than one aggressive one.
+    Never write "painless" or "pain-free"; those are banned and they are also a
+    promise nobody can make.
+
+- slug: fixing-a-bad-haircut
+  title: "Can a Barber Fix a Bad Haircut?"
+  target_keyword: can a barber fix a bad haircut
+  secondary_keywords: ["fix a bad fade", "bad haircut what to do"]
+  intent: BOF / transactional
+  bucket: question
+  internal_links: [{ service: haircut }, { page: faq }]
+  notes: >-
+    REPAIR angle, and it must be honest about the limit: length can be taken off but
+    never put back, so some cuts can be rebalanced this week and others have to grow
+    for two weeks first. Say which is which. No blame aimed at whoever did it. This is
+    about triage, NOT about the neckline mechanism or about switching barbers
+    long-term -- do not reuse either of those framings.
+
+- slug: can-i-bring-a-photo-to-the-barber
+  title: "Should You Bring a Photo to the Barber?"
+  target_keyword: bringing a photo to the barber
+  secondary_keywords: ["haircut reference photo", "showing barber a picture"]
+  intent: TOF / informational
+  bucket: question
+  internal_links: [{ page: faq }, { service: haircut }]
+  notes: >-
+    Yes, with a caveat worth 900 words: a photo communicates shape, not feasibility,
+    because hair type and growth pattern decide what is reachable. How to use one well.
+    Distinct from the what-to-ask piece, which is about vocabulary.
+
+- slug: how-long-does-a-haircut-take
+  title: "How Long Should a Men's Haircut Take?"
+  target_keyword: how long does a mens haircut take
+  secondary_keywords: ["haircut appointment length", "how long beard trim takes"]
+  intent: TOF / informational
+  bucket: question
+  internal_links: [{ page: visit }, { service: haircut-beard-trim }]
+  notes: >-
+    Use the real durations -- 45 minutes for a cut, about an hour and a quarter with
+    the beard, 90 minutes for the signature or the scissor cut. The angle is that
+    fifteen rushed minutes is where mistakes live. Practical scheduling piece.
+
+- slug: hair-product-after-a-haircut
+  title: "What to Put on Your Hair, and When Not To"
+  target_keyword: hair product after haircut
+  secondary_keywords: ["should i use product after a haircut", "mens hair product basics"]
+  intent: TOF / informational
+  bucket: question
+  internal_links: [{ page: aftercare }, { service: haircut }]
+  notes: >-
+    Restrained, anti-upsell piece: leave a fresh cut alone the first day, then the
+    minimum that holds the shape. We are not selling product, which is exactly why
+    this is worth reading. No claims about scalp or hair health.
+
+- slug: washing-hair-every-day
+  title: "Does Washing Your Hair Every Day Actually Hurt It?"
+  target_keyword: should men wash hair every day
+  secondary_keywords: ["how often to wash mens hair", "washing hair daily barber advice"]
+  intent: TOF / informational
+  bucket: question
+  internal_links: [{ page: aftercare }, { page: faq }]
+  notes: >-
+    Answer from what a barber observes at the chair, not from trichology. Frame around
+    the scalp feeling stripped and the cut sitting differently. Stay well clear of
+    medical framing -- hair loss and scalp conditions get one sentence pointing at a
+    doctor.
+
+- slug: after-a-hot-towel-shave
+  title: "The Day After a Hot Towel Shave"
+  target_keyword: hot towel shave aftercare
+  secondary_keywords: ["after straight razor shave care", "skin after barber shave"]
+  intent: TOF / informational
+  bucket: aftercare
+  internal_links: [{ service: hot-towel-shave }, { page: aftercare }]
+  notes: >-
+    First 24 hours specifically: nothing with alcohol in it, no gym the same afternoon
+    if you can help it, no fresh blade over the same skin. Describe what normal
+    settling looks like versus what warrants a doctor. Do not restate the shave
+    walkthrough.
+
+- slug: making-a-haircut-last
+  title: "Making a Haircut Hold Its Shape for Four Weeks"
+  target_keyword: how to make a haircut last longer
+  secondary_keywords: ["keep haircut looking fresh", "haircut maintenance between visits"]
+  intent: TOF / informational
+  bucket: aftercare
+  internal_links: [{ page: aftercare }, { service: haircut }]
+  notes: >-
+    Between-visits maintenance: towel drying rather than rubbing, not flattening the
+    crown under a cap all day, and leaving the neckline alone rather than attacking it
+    with a home trimmer. Tell them why DIY neck cleanup usually backfires.
+
+- slug: beard-oil-timing
+  title: "Beard Oil Works Better on Slightly Damp Skin"
+  target_keyword: when to apply beard oil
+  secondary_keywords: ["beard oil after shower", "beard oil how much to use"]
+  intent: TOF / informational
+  bucket: aftercare
+  internal_links: [{ service: beard-trim }, { page: aftercare }]
+  notes: >-
+    One narrow, genuinely useful mechanism: oil applied to slightly damp skin spreads
+    and sits differently than on dry. Include how little is enough and how to comb it
+    through. No growth or thickness claims of any kind.
+
+- slug: sun-and-sweat-after-a-cut
+  title: "Sweat, Sun and a Fresh Cut in the Valley"
+  target_keyword: sweating after a haircut
+  secondary_keywords: ["gym after haircut", "sun exposure fresh haircut"]
+  intent: TOF / informational
+  bucket: aftercare
+  internal_links: [{ page: aftercare }, { service: haircut }]
+  notes: >-
+    Valley-specific aftercare: heat, a newly exposed scalp line, and gym sweat on
+    freshly cut skin. Reference Sepulveda Basin or Encino Park for outdoor context
+    naturally, once. Distinct from the shave aftercare piece.
+
+- slug: home-trimmer-between-visits
+  title: "Should You Own a Trimmer for Between Visits?"
+  target_keyword: using a trimmer between haircuts
+  secondary_keywords: ["home neckline trimmer", "diy beard neckline between trims"]
+  intent: TOF / informational
+  bucket: aftercare
+  internal_links: [{ page: aftercare }, { service: beard-trim }]
+  notes: >-
+    Balanced and slightly against our own interest: yes for the beard neck, no for the
+    hairline. Explain what goes wrong when someone chases their own neckline upward.
+    That honesty is the reason to publish it.
+
+- slug: paying-for-chair-time
+  title: "What You Are Paying For Is Chair Time"
+  target_keyword: why do haircuts cost different amounts
+  secondary_keywords: ["what makes a haircut more expensive", "how long barbers spend per cut"]
+  intent: MOF / commercial
+  bucket: pricing
+  internal_links: [{ service: scissor-cut-beard-trim }, { service: haircut }]
+  notes: >-
+    Reframes price as MINUTES rather than as quality: 45 minutes for a cut, an hour and
+    a half for scissor work with a beard, and that gap is the whole explanation for the
+    gap between $50 and $90. Use only listed prices. Do NOT argue that expensive is
+    better, do NOT run the cost-per-year arithmetic, and do NOT answer "how much is a
+    haircut in Encino" -- those are other pieces.
+
+- slug: beard-trim-cost
+  title: "What a Beard Trim Costs, and When It Is Cheaper"
+  target_keyword: beard trim cost
+  secondary_keywords: ["beard trim price barber", "beard trim with haircut price"]
+  intent: BOF / transactional
+  bucket: pricing
+  internal_links: [{ service: beard-trim }, { service: haircut-beard-trim }]
+  notes: >-
+    $40 alone, or included in the $70 combined service -- the practical point is that
+    combining saves $20 if you were coming in anyway. Short, useful, no padding.
+
+- slug: when-a-barber-says-no
+  title: "When a Barber Should Talk You Out of It"
+  target_keyword: barber said my haircut wont work
+  secondary_keywords: ["haircut wont suit my hair", "barber advice against a style"]
+  intent: TOF / informational
+  bucket: eeat
+  internal_links: [{ page: about }, { service: haircut }]
+  notes: >-
+    CRAFT-JUDGEMENT piece: the cases where the right answer is to argue against the
+    request -- a tight skin fade over a scar or an uneven hairline, a heavy fringe on
+    hair that grows straight back, a cheek line pushed higher than the beard can carry.
+    Authority comes from naming the trade-off, never from tenure. Do NOT overlap the
+    growth-pattern piece or the what-to-say-to-your-barber piece.
+
+- slug: tipping-your-barber
+  title: "Tipping a Barber: What Is Normal"
+  target_keyword: how much to tip a barber
+  secondary_keywords: ["barber tipping etiquette", "do you tip a barber shop owner"]
+  intent: TOF / informational
+  bucket: pricing
+  internal_links: [{ page: faq }, { service: haircut }]
+  notes: >-
+    Answer the awkward question plainly, including the shop-owner case people
+    genuinely wonder about. Give ranges rather than a demand, and make clear nobody is
+    judged for the lower end. Never pressure the reader.
+
+- slug: first-time-at-a-barbershop
+  title: "Your First Time at a Proper Barbershop"
+  target_keyword: first time at a barbershop what to expect
+  secondary_keywords: ["nervous first barbershop visit", "barbershop etiquette first time"]
+  intent: MOF / informational
+  bucket: first-timer
+  internal_links: [{ page: visit }, { page: faq }]
+  notes: >-
+    Anxiety-aware and concrete: arriving, the consultation, how much you are expected
+    to talk, what happens if you dislike it mid-cut. Say explicitly that speaking up
+    in the chair is normal and free. No pain or outcome promises.
+
+- slug: how-to-prepare-for-a-barber-appointment
+  title: "How to Turn Up Prepared for a Barber Appointment"
+  target_keyword: how to prepare for a barber appointment
+  secondary_keywords: ["before barber appointment tips", "wash hair before haircut"]
+  intent: MOF / informational
+  bucket: first-timer
+  internal_links: [{ page: visit }, { service: haircut }]
+  notes: >-
+    Practical prep: come with clean dry hair styled how you normally wear it, do not
+    trim anything yourself first, arrive a few minutes early rather than flustered.
+    Explain WHY each one changes the result. Distinct from the what-to-ask piece.
+
+- slug: first-beard-trim-what-to-know
+  title: "Booking Your First Beard Trim"
+  target_keyword: first beard trim what to expect
+  secondary_keywords: ["never had a beard trim", "first time beard shaping"]
+  intent: MOF / informational
+  bucket: first-timer
+  internal_links: [{ service: beard-trim }, { page: aftercare }]
+  notes: >-
+    For men who have only ever trimmed their own: what a barber will ask, how much
+    length actually comes off, and why the cheek and neck lines are the decision that
+    matters. Reassure without promising a specific look.
+
+- slug: switching-barbers-without-starting-over
+  title: "Switching Barbers Without Starting From Scratch"
+  target_keyword: changing barbers
+  secondary_keywords: ["new barber first appointment", "switching barbershops advice"]
+  intent: MOF / commercial
+  bucket: first-timer
+  internal_links: [{ page: about }, { page: faq }]
+  notes: >-
+    For someone whose barber moved or let them down. How to hand over the shape you
+    already have -- what to describe, what to bring, and why the first cut with a new
+    barber is conservative on purpose. Reassuring rather than salesy.
+
+- slug: how-a-barber-reads-a-growth-pattern
+  title: "How a Barber Reads the Way Your Hair Grows"
+  target_keyword: hair growth pattern haircut
+  secondary_keywords: ["cowlick haircut", "crown growth pattern barber"]
+  intent: MOF / commercial
+  bucket: eeat
+  internal_links: [{ service: haircut }, { page: about }]
+  notes: >-
+    Craft authority WITHOUT any tenure claim -- never state or imply how long Amir has
+    been cutting. Build credibility from what gets assessed before the first cut:
+    crown direction, cowlicks, density change at the temples, how the front falls dry
+    rather than wet. Quote Amir on one specific judgement call.
+
+- slug: why-barbers-check-the-cut-in-daylight
+  title: "Why the Last Five Minutes of a Cut Matter Most"
+  target_keyword: barber checking haircut at the end
+  secondary_keywords: ["why barbers check symmetry", "final check haircut"]
+  intent: MOF / commercial
+  bucket: eeat
+  internal_links: [{ page: about }, { service: haircut }]
+  notes: >-
+    Authority through process, not tenure. The final pass -- dry, in daylight, from
+    behind -- is where asymmetry shows and where rushed cuts fail. Explain what is
+    being looked for. One Amir quote on catching something at the end. No claim about
+    years worked.
+
+- slug: what-decides-a-cheek-line
+  title: "Where a Beard's Cheek Line Should Actually Sit"
+  target_keyword: where should a beard cheek line be
+  secondary_keywords: ["beard cheek line too low", "natural vs shaped cheek line"]
+  intent: MOF / commercial
+  bucket: eeat
+  internal_links: [{ service: beard-trim }, { service: haircut-beard-trim }]
+  notes: >-
+    The single most consequential judgement call in beard work, explained properly:
+    following the natural line versus setting one, and how face shape and density
+    decide. Technical enough to demonstrate competence. No tenure references anywhere.

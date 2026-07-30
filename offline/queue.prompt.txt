@@ -1,0 +1,125 @@
+### SYSTEM
+You are an SEO editorial planner for small local service businesses. You produce topics with genuinely distinct angles, never interchangeable ones.
+
+### USER
+Seed the editorial backlog for a men's barbershop in Encino, CA.
+
+Produce EXACTLY 50 topics as a YAML array. Each topic:
+
+- slug: kebab-case-unique
+  title: "Human title, <= 65 chars where possible"
+  target_keyword: the exact search phrase someone types
+  secondary_keywords: ["variant 1", "variant 2"]
+  intent: "TOF / informational" | "MOF / commercial" | "BOF / transactional"
+  bucket: one of hyperlocal, service-detail, comparison, question, aftercare, pricing, first-timer, eeat
+  internal_links: [{ service: <key> }, { page: visit }]
+  notes: "Angle guidance. THE MOST IMPORTANT FIELD."
+
+# The business
+- Amir Precision Cuts, men's barbershop, Encino
+- Practitioner: Amir
+- Positioning: A barbershop on Ventura Boulevard in Encino for men who want the detail done properly — precision cuts, beard work shaped to the face, and traditional hot towel shaves.
+- Audience: Men in Encino and the surrounding Valley who would rather pay once for a cut that holds its shape than three times for one that does not.
+- NO length of experience has been supplied for Amir. Never state, imply or gesture at how long they have been working -- no "years of experience", no "decades", no "since starting out", no "seasoned". Build authority from craft specifics instead.
+
+# Service keys you may use in internal_links
+- haircut (Haircut)
+- haircut-beard-trim (Haircut and Beard Trim)
+- beard-trim (Beard Trim)
+- signature-haircut-black-mask (Signature Haircut with Black Mask)
+- hot-towel-shave (Hot Towel Shave)
+- scissor-cut-beard-trim (Scissor Cut and Beard Trim)
+Page keys: about, faq, aftercare, visit
+
+# Real local anchors (use ONLY these — do not invent places)
+Encino, Ventura Boulevard, Louise Avenue, Hayvenhurst Avenue, the Encino Oak Tree, Los Encinos State Historic Park, Encino Park, Sepulveda Basin Recreation Area, Encino Velodrome, Lake Balboa, Sherman Oaks, Tarzana, Reseda
+
+# Keyword sourcing patterns
+- hyperlocal: "[service] near [anchor]", "[service] in Encino"
+- service-detail: "what is [service]", "[service] what to expect"
+- comparison: "[service] vs [alternative]"
+- question: "does [service] hurt", "how long does [service] last", "how often should I..."
+- aftercare: "after [service] care", "[problem] after [service]"
+- pricing: "how much is [service] in Encino"
+- first-timer: "first [service] what to expect"
+- eeat: "why [technique] matters", "how a barber decides [judgement call]" — craft authority WITHOUT any claim about tenure
+
+# THE ORIGINALITY TRAP — this is the part that usually fails
+Hyperlocal topics are near-clones of each other. "[service] near A" and "[service] near B"
+produce ~0.85+ similar articles and get quarantined forever. So:
+1. Cap the hyperlocal bucket at 15 of the 50 topics. Spread the rest across the other buckets.
+2. Every near-neighbour topic needs a genuinely DIFFERENT REASON TO EXIST in `notes` — not a
+   different noun. "Local guide for [neighborhood]" is a failed note. State explicitly what
+   framing the article must NOT reuse.
+3. Put the strongest, most distinct topics FIRST — the queue publishes in order.
+
+# Annotated GOOD vs BAD notes, read this before writing
+# Topic queue — the editorial backlog. Published in order; queue[0] is next.
+# Seed ~50, deduped at < 0.80 (R13), hyperlocal <= ~30%.
+# `notes` is THE most important field: it's the article's reason to exist.
+
+# --- GOOD: a distinct angle. This is what makes near-neighbor topics survive the
+#     0.85 originality gate.
+- slug: male-waxing-near-sunset-strip
+  title: "Male Waxing Near the Sunset Strip: The Walk-In Option"
+  target_keyword: male waxing near sunset strip
+  secondary_keywords:
+    - walkable men's waxing sunset strip
+    - waxing near sunset strip hotels
+  intent: MOF / commercial
+  bucket: hyperlocal
+  internal_links:
+    - page: visit
+    - service: chest
+  notes: >-
+    DISTINCT ANGLE — must NOT overlap the "drive in from [suburb]" hyperlocal articles.
+    We sit half a block off the Strip: lead with WALKABILITY — guests at Strip hotels,
+    people who work or perform nearby, appearance/on-camera prep before a shoot or stage
+    night. Reference specific landmarks. Do NOT reuse "3-4 week cadence", "single-room
+    suite", or "drive time" phrasing. Use 2-3 internal links. Target 1000-1300 words.
+
+# --- BAD (do not ship): interchangeable with every other hyperlocal topic.
+#     This is exactly what scores 0.85+ and gets quarantined forever.
+# - slug: mens-waxing-near-city-x
+#   title: "Men's Waxing Near City X"
+#   notes: Local guide for City X.        # <-- no reason to exist
+
+- slug: how-long-does-service-last
+  title: How Long Does {{service}} Last?
+  target_keyword: how long does {{service}} last
+  secondary_keywords: ["how often should i book {{service}}", "{{service}} regrowth"]
+  intent: TOF / informational
+  bucket: question
+  internal_links: [{ page: aftercare }, { service: example_service }]
+  notes: "Hair/growth cycle mechanics; the 4-6 week rhythm; tie to aftercare. Distinct from the aftercare timeline article: this is about DURATION, not care steps."
+
+- slug: prepare-for-first-service
+  title: How to Prepare for Your First {{service}}
+  target_keyword: how to prepare for {{service}}
+  secondary_keywords: ["first {{service}} tips", "before {{service}} checklist"]
+  intent: MOF / informational
+  bucket: first-timer
+  internal_links: [{ service: example_service }, { page: visit }]
+  notes: "Concrete prep steps + what to wear + timing. Anxiety-aware but never coy. No pain promises."
+
+- slug: service-a-vs-service-b
+  title: "{{Service A}} vs {{Service B}}: Which Is Right for You?"
+  target_keyword: "{{service a}} vs {{service b}}"
+  secondary_keywords: ["is {{a}} better than {{b}}", "{{a}} or {{b}}"]
+  intent: TOF / informational
+  bucket: comparison
+  internal_links: [{ service: example_service }, { page: faq }]
+  notes: "Neutral, evidence-based comparison. No trash talk about alternatives or competitors."
+
+- slug: practitioner-years-experience
+  title: What {{N}} Years of {{craft}} Has Taught {{Practitioner}}
+  target_keyword: experienced {{craft}} {{city}}
+  secondary_keywords: ["best {{craft}} {{city}}", "{{craft}} expert {{city}}"]
+  intent: MOF / commercial
+  bucket: eeat
+  internal_links: [{ page: about }, { service: example_service }]
+  notes: "E-E-A-T piece. Specific, concrete lessons — not a resume. Quote the practitioner heavily."
+
+
+
+Output ONLY the YAML array. No preamble, no code fence, no commentary.

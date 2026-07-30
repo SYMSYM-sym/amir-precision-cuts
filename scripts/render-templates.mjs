@@ -240,14 +240,25 @@ function evalNodes(nodes, scopes, opts, out) {
       }
 
       case 'block': {
-        const v = lookup(scopes, n.arg);
+        // `{{#if ?path}}` marks a GENUINELY OPTIONAL key: absent is a legitimate
+        // answer, not a typo. Without it, strict mode forces every template that
+        // touches an optional config key to be edited whenever a client leaves
+        // that key blank — which is most clients, most keys. The distinction
+        // matters: a missing REQUIRED key must still throw, because a condition
+        // that silently takes the false branch is how a contact block disappears
+        // without anyone noticing.
+        let arg = n.arg;
+        let optional = false;
+        if (arg.startsWith('?')) { optional = true; arg = arg.slice(1); }
+        const v = lookup(scopes, arg);
 
         if (n.kw === 'if' || n.kw === 'unless') {
-          if (v === MISSING && opts.strict) {
+          if (v === MISSING && opts.strict && !optional) {
             throw new TemplateError(
               `unresolved path "{{#${n.kw} ${n.arg}}}" in ${opts.name}. ` +
                 'A missing condition silently takes the false branch — which is how a ' +
-                'contact block disappears without anyone noticing. Fix the path.',
+                'contact block disappears without anyone noticing. ' +
+                `Fix the path, or write {{#${n.kw} ?${arg}}} if it is genuinely optional.`,
             );
           }
           const test = n.kw === 'if' ? truthy(v) : !truthy(v);
@@ -257,8 +268,11 @@ function evalNodes(nodes, scopes, opts, out) {
 
         // each
         if (v === MISSING) {
-          if (opts.strict) {
-            throw new TemplateError(`unresolved path "{{#each ${n.arg}}}" in ${opts.name}`);
+          if (opts.strict && !optional) {
+            throw new TemplateError(
+              `unresolved path "{{#each ${n.arg}}}" in ${opts.name}`
+              + ` — write {{#each ?${arg}}} if the list is genuinely optional.`,
+            );
           }
           break;
         }

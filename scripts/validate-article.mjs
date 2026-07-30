@@ -24,6 +24,55 @@ function wordCount(text) {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+/**
+ * Words a keyword phrase is allowed to gain when it is written as English.
+ * "mens haircut encino" is typed by a searcher; "a men's haircut in Encino" is
+ * how it appears in a sentence. Matching the raw phrase as a substring scored
+ * every well-written article at 0.00% and the warning became noise nobody read.
+ */
+const FILLER = new Set(['a', 'an', 'the', 'in', 'at', 'on', 'of', 'for', 'to', 'near', 'and', 'ca', 'usa']);
+
+/** Crude singularise. "mens" and "men's" and "men" must all count as one term. */
+const stem = (w) => (w.length > 3 && w.endsWith('s') && !w.endsWith('ss') ? w.slice(0, -1) : w);
+
+function normaliseWords(text) {
+  return String(text)
+    .toLowerCase()
+    .replace(/['’]s\b/g, 's')    // men's → mens, then stemmed to men
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(stem);
+}
+
+function keywordTerms(phrase) {
+  return normaliseWords(phrase).filter((t) => !FILLER.has(t));
+}
+
+/**
+ * Count occurrences of a keyword phrase, tolerating filler words and possessive
+ * apostrophes between its terms. A match is all of the phrase's significant
+ * terms appearing IN ORDER inside a window no wider than twice their count —
+ * tight enough that unrelated mentions scattered across a paragraph do not
+ * count, loose enough that natural prose does.
+ */
+function countKeywordPhrase(text, phrase) {
+  const terms = keywordTerms(phrase);
+  if (!terms.length) return 0;
+  const words = normaliseWords(text);
+  const window = terms.length * 2 + 1;
+  let count = 0;
+  for (let i = 0; i < words.length; i++) {
+    if (words[i] !== terms[0]) continue;
+    let ti = 1;
+    for (let j = i + 1; j < Math.min(words.length, i + window); j++) {
+      if (words[j] === terms[ti]) { ti++; if (ti === terms.length) break; }
+    }
+    if (ti === terms.length) { count++; i += terms.length - 1; }
+  }
+  return count;
+}
+
 function splitMainAndFaq(body) {
   const re = /^##\s+Frequently asked\s*$/im;
   const m = body.match(re);
@@ -290,16 +339,49 @@ export async function validateArticleFile(mdPath, options = {}) {
   }
 
   const kw = String(data.target_keyword || '').toLowerCase();
-  const mainLower = main.toLowerCase();
   if (kw) {
-    const occurrences = mainLower.split(kw).length - 1;
-    const density = occurrences / Math.max(wcMain, 1);
-    const pct = density * 100;
-    if (pct < 0.5 || pct > 2.5) warnings.push(`Keyword density ${pct.toFixed(2)}% (soft band 0.5–2.5%)`);
+    const occurrences = countKeywordPhrase(main, kw);
+    const pct = (occurrences / Math.max(wcMain, 1)) * 100;
+    // A flat 0.5% floor is right for a one- or two-word keyword and absurd for a
+    // long-tail phrase: "barbershop near sherman oaks" five times in 900 words is
+    // stuffing, not optimisation, and warning about it pushes the writer the wrong
+    // way. Long phrases get an occurrence floor instead of a percentage floor.
+    // The 2.5% CEILING still applies to everything — that one is about stuffing.
+    const terms = keywordTerms(kw).length;
+    const floor = terms <= 2 ? Math.max(2, Math.ceil(0.005 * wcMain)) : 2;
+    if (occurrences < floor) {
+      warnings.push(`Target keyword appears ${occurrences}× (want >=${floor} for "${kw}")`);
+    } else if (pct > 2.5) {
+      warnings.push(`Keyword density ${pct.toFixed(2)}% — over the 2.5% stuffing ceiling`);
+    }
   }
   const secs = data.secondary_keywords || [];
-  const anySec = secs.some((s) => mainLower.includes(String(s).toLowerCase()));
+  const anySec = secs.some((s) => countKeywordPhrase(main, String(s)) > 0);
   if (secs.length && !anySec) warnings.push('No secondary keyword detected in main body (soft check)');
+
+  // The frontmatter carries a self_check block. Nothing verified it, so it was
+  // decoration: a model could claim 1100 words in a 700-word article and the
+  // number sat in the file looking authoritative. Warn on a real mismatch —
+  // not an error, because the numbers the validator computes itself are the
+  // ones that gate publication, and a wrong self-report is a signal about the
+  // generation rather than a defect in the article.
+  const sc = data.self_check;
+  if (sc && typeof sc === 'object') {
+    const claims = [
+      ['word_count', sc.word_count, wcMain, 60],
+      ['h2_count', sc.h2_count, h2Main, 0],
+      ['internal_links', sc.internal_links, il, 0],
+      ['location_mentions', sc.location_mentions, loc, 0],
+    ];
+    for (const [name, claimed, actual, tolerance] of claims) {
+      if (claimed === undefined || claimed === null) continue;
+      if (Math.abs(Number(claimed) - actual) > tolerance) {
+        warnings.push(`self_check.${name} says ${claimed}, actual is ${actual} (soft check)`);
+      }
+    }
+    if (sc.has_blockquote === false && quotes > 0) warnings.push('self_check.has_blockquote is false but a blockquote is present');
+    if (sc.has_faq_block === false && faq) warnings.push('self_check.has_faq_block is false but an FAQ section is present');
+  }
 
   return { ok: errors.length === 0, errors, warnings };
 }

@@ -1,157 +1,206 @@
 # ============================================================================
-# DEV FIXTURE A — NOT a real business, NOT the shipping config.
+# business.config.yaml — Amir Precision Cuts
 #
-# This exists so the factory is exercised against TWO businesses from the first
-# commit onward. The kit puts the swap test at Phase 11; that is the phase an
-# experienced builder skips because "it would obviously work." Rendering both
-# fixtures on every derive turns the swap test into a smoke test: a weld I fail
-# to cut shows up as a diff against itself in minutes, not in three sessions.
+# THE SINGLE INPUT. The brand voice, banned-word list, internal-link map,
+# byline, topic queue, brand assets and the site itself all derive from this.
 #
-# Deliberately maximally UNLIKE fixture B: different vertical, schema type,
-# region, timezone, palette temperature, font pairing, layout_variant, cadence,
-# booking model, and contact policy.
+# PROVENANCE — every value is either supplied by the client, verified, or an
+# explicitly-flagged assumption. Nothing here is invented quietly.
+#   SUPPLIED : name/domain, phone, Instagram, email, street address, hours,
+#              services and prices
+#   VERIFIED : city + region + postcode (that block of Ventura Blvd is Encino,
+#              CA 91316), timezone, and every entry in location_anchors
+#   ASSUMED  : booking.model, brand palette/fonts/layout, and all prose.
+#              Flagged individually below.
+#   OMITTED  : years_experience — not supplied, and inventing a number about
+#              someone's career is not something a config should do. The hero
+#              stat, about list, author bio and eeat topics all adapt.
 # ============================================================================
 
 business:
-  name: "Ledgerwood Lash Atelier"
-  short_name: "Ledgerwood"
-  initials: "LLA"
-  type: "lash and brow studio"
-  category_schema: "BeautySalon"
-  tagline: "Quiet work, held to the millimetre"
-  positioning: "A two-chair lash and brow studio for people who want the work to be invisible. No packages, no upsells, no music you have to talk over."
-  practitioner_name: "Tova"
-  years_experience: "14"
-  author_id: "ledgerwood-studio"
+  name: "Amir Precision Cuts"
+  short_name: "Amir Precision"
+  initials: "APC"
+  type: "men's barbershop"
+  category_schema: "BarberShop"
+  tagline: "Precision cuts and hot towel shaves in Encino"
+  positioning: "A barbershop on Ventura Boulevard in Encino for men who want the detail done properly — precision cuts, beard work shaped to the face, and traditional hot towel shaves."
+  practitioner_name: "Amir"
+  practitioner_role: "barber"
+  author_id: "amir-precision-team"
 
 location:
-  address_street: "88 Wickenden Street, Studio 3"
-  address_city: "Providence"
-  address_region: "RI"
-  address_postal: "02903"
+  address_street: "17388 Ventura Blvd"
+  address_city: "Encino"
+  address_region: "CA"
+  address_postal: "91316"
   address_country: "US"
-  timezone: "America/New_York"
-  neighborhood: "Fox Point"
+  timezone: "America/Los_Angeles"
+  neighborhood: "Encino"
+  # VERIFIED against the Encino, Los Angeles reference — bordering
+  # neighbourhoods, named parks, real cross streets and landmarks. Nothing here
+  # is guessed; a landmark that does not exist is the one error on a local site
+  # that costs trust rather than ranking.
   location_anchors:
-    - "Fox Point"
-    - "Wickenden Street"
-    - "College Hill"
-    - "India Point Park"
-    - "Brown University"
-    - "RISD"
-    - "Benefit Street"
-    - "Wayland Square"
-    - "Downcity"
-    - "Point Street Bridge"
-    - "Federal Hill"
-    - "East Side"
+    - "Encino"
+    - "Ventura Boulevard"
+    - "Louise Avenue"
+    - "Hayvenhurst Avenue"
+    - "the Encino Oak Tree"
+    - "Los Encinos State Historic Park"
+    - "Encino Park"
+    - "Sepulveda Basin Recreation Area"
+    - "Encino Velodrome"
+    - "Lake Balboa"
+    - "Sherman Oaks"
+    - "Tarzana"
+    - "Reseda"
+  service_area:
+    - "Sherman Oaks"
+    - "Tarzana"
+    - "Reseda"
+    - "Lake Balboa"
+    - "Van Nuys"
+    - "Studio City"
+  parking_notes: "Street parking along Ventura Boulevard, metered nearest the shop. Leave a few extra minutes on Saturdays."
+  transit_notes: "Metro runs along Ventura Boulevard; the nearest stops are a short walk either side of Louise Avenue."
 
 hours:
+  # SUPPLIED. Saturday closes an hour earlier, which is exactly the case a
+  # single opens/closes pair cannot express — per_day carries it rather than
+  # rounding Saturday up to 8pm and telling someone the door is open when it
+  # is not.
   days: ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-  opens: "09:30"
-  closes: "18:30"
+  opens: "09:00"
+  closes: "20:00"
+  per_day:
+    Tuesday: { opens: "09:00", closes: "20:00" }
+    Wednesday: { opens: "09:00", closes: "20:00" }
+    Thursday: { opens: "09:00", closes: "20:00" }
+    Friday: { opens: "09:00", closes: "20:00" }
+    Saturday: { opens: "09:00", closes: "19:00" }
+  notes: "Closed Sunday and Monday."
 
 booking:
+  # ASSUMED: appointment-only. No booking system was supplied, and this is the
+  # conservative reading — "walk-ins welcome" would be a promise about
+  # availability the site makes on Amir's behalf. Calling is the CTA.
   model: "appointment-only"
-  url: "https://book.ledgerwoodlash.com"
-  publish_phone: false
-  phone: ""
-  publish_email: false
-  email: ""
+  url: ""
+  publish_phone: true
+  phone: "+18188183945"
+  publish_email: true
+  email: "amirarsang86@gmail.com"
+  lead_time_note: "Saturdays fill first. A day or two ahead is usually enough midweek."
+  social:
+    instagram: "https://www.instagram.com/amirprecisioncuts"
 
 homepage:
   about_body: >-
-    Ledgerwood is two chairs on the second floor of a Wickenden Street walk-up.
-    Tova has been mapping lash lines for fourteen years and still does every set
-    herself. Appointments run long on purpose — a full set takes two hours and
-    the last twenty minutes are for checking the work in daylight.
+    Amir Precision Cuts is a barbershop on Ventura Boulevard, a short walk from
+    the Encino Oak Tree. The work is the kind that only shows up in the details
+    — a neckline that still looks deliberate three weeks later, a beard shaped
+    to the face rather than to a template, a hot towel shave taken at the pace
+    it needs. Every appointment is with Amir, and the chair is not
+    double-booked.
   aftercare_body: >-
-    Keep the set dry for the first twenty-four hours: no steam, no swimming, no
-    hot yoga. After that, wash them daily with a lash-safe foaming cleanser and
-    a soft brush — clean lashes hold retention far longer than dry ones. Sleep
-    on your back or side if you can, skip oil-based removers entirely, and never
-    pick at a lash that feels loose. Come back every two to three weeks.
+    Leave a fresh cut alone for the first day — no product, and no cap pulled
+    down hard over the shape. After that, wash with something that does not
+    strip the scalp and towel dry rather than rubbing. A beard holds its shape
+    far longer if you comb it out after every wash and oil it while the skin is
+    still slightly damp. After a hot towel shave, skip anything with alcohol in
+    it for a day. Most cuts here sit right for three to four weeks; come back
+    when the neckline starts to blur rather than when the length starts to
+    bother you, and the shape never has to be rebuilt from scratch.
   faq:
-    - q: "How long does a full set take?"
-      a: "Two hours for a classic set, closer to two and a half for volume. We book the room for the full window so nobody is rushed."
-    - q: "Will extensions damage my natural lashes?"
-      a: "Not when they are mapped and weighted correctly. Damage comes from extensions that are too long or too heavy for the natural lash carrying them, which is why we map every set to your own lash line rather than to a picture."
-    - q: "How often do I need a fill?"
-      a: "Every two to three weeks for most people. Past four weeks a fill becomes a new set, and we price it as one."
-    - q: "Can I wear mascara?"
-      a: "On a classic set, a lash-safe water-based mascara on the tips only. On volume, no — it collapses the fans and takes the set with it when you remove it."
-    - q: "I have sensitive eyes. Is there an option?"
-      a: "Yes. We keep a low-fume adhesive for reactive clients. Tell us when you book so we can patch test at least forty-eight hours ahead."
-    - q: "What if I do not like them?"
-      a: "Say so in the chair. Adjusting curl or length while you are still here costs nothing. Removal within seven days is free."
-    - q: "Do you do brows as well?"
-      a: "Lamination, tint, and shaping. Brows are a separate appointment — we do not stack them behind a full set."
+    - q: "Do I need an appointment?"
+      a: "Yes — the shop runs by appointment so the chair is not double-booked. Call or message on Instagram and we will find you a slot."
+    - q: "How much is a haircut?"
+      a: "A haircut is $50. A haircut with a beard trim is $70, and a scissor cut with a beard trim is $90. The full list is on this page."
+    - q: "How long does an appointment take?"
+      a: "About 45 minutes for a haircut, and closer to an hour and a quarter if the beard is being done as well. A hot towel shave is its own appointment."
+    - q: "What is the signature haircut with the black mask?"
+      a: "A haircut finished with a charcoal mask over the face and neck. It lifts the skin before the detail work and leaves the edges looking cleaner. It runs $100 and takes longer than a standard cut, so mention it when you book."
+    - q: "Do you do beard trims on their own?"
+      a: "Yes, $40 on its own. If you are coming in for a cut anyway, the combined service works out cheaper."
+    - q: "How often should I come back?"
+      a: "Three to four weeks for most cuts. Sooner if you wear it short at the back, since that is where regrowth shows first."
+    - q: "Which days are you open?"
+      a: "Tuesday to Friday, 9 to 8, and Saturday 9 to 7. Closed Sunday and Monday."
+    - q: "Where do I park?"
+      a: "Street parking along Ventura Boulevard, metered nearest the shop. Saturdays are busier, so leave a few extra minutes."
 
 services:
-  - key: "classic-set"
-    label: "Classic Full Set"
-    price_from: "$180"
-    duration: "2 hr"
-    description: "One extension per natural lash, mapped to your own lash line. The set people do not notice you are wearing."
-  - key: "volume-set"
-    label: "Volume Full Set"
-    price_from: "$225"
-    duration: "2 hr 30 min"
-    description: "Hand-made fans for density without weight. Built lighter than it looks."
-  - key: "fill"
-    label: "Fill"
-    price_from: "$85"
-    duration: "75 min"
-    description: "Replaces grown-out extensions and rebalances the map. Book within three weeks of your last visit."
-  - key: "lash-removal"
-    label: "Removal"
+  # SUPPLIED prices, exactly as given, with no "+" suffix — these are the
+  # prices rather than starting points. The validator rejects any article that
+  # states a number not on this list.
+  - key: "haircut"
+    label: "Haircut"
+    price_from: "$50"
+    duration: "45 min"
+    description: "A cut shaped to how your hair actually grows, finished with a clean neckline and edges."
+  - key: "haircut-beard-trim"
+    label: "Haircut and Beard Trim"
+    price_from: "$70"
+    duration: "1 hr 15 min"
+    description: "The full reset — cut and beard in one sitting, with the two lines shaped to work together."
+  - key: "beard-trim"
+    label: "Beard Trim"
     price_from: "$40"
     duration: "30 min"
-    description: "Gel-based removal that leaves the natural lash intact. Free within seven days of a set we placed."
-  - key: "brow-lamination"
-    label: "Brow Lamination"
-    price_from: "$95"
-    duration: "60 min"
-    description: "Restructures the brow hair to sit where it grows best, then shapes to it. Lasts six to eight weeks."
-  - key: "brow-tint"
-    label: "Brow Tint and Shape"
-    price_from: "$65"
+    description: "Shaped to the jaw and cheek rather than to a template, with the neckline taken down clean."
+  - key: "signature-haircut-black-mask"
+    label: "Signature Haircut with Black Mask"
+    price_from: "$100"
+    duration: "1 hr 30 min"
+    description: "A haircut finished with a charcoal mask over the face and neck. Lifts the skin before the detail work and leaves the edges sharper."
+  - key: "hot-towel-shave"
+    label: "Hot Towel Shave"
+    price_from: "$60"
     duration: "45 min"
-    description: "Colour matched half a shade under your hair, then shaped with wax and tweezers."
+    description: "A traditional straight razor shave, taken at the pace it needs, with hot towels either side."
+  - key: "scissor-cut-beard-trim"
+    label: "Scissor Cut and Beard Trim"
+    price_from: "$90"
+    duration: "1 hr 30 min"
+    description: "Scissor work over the whole head for length and movement, with the beard shaped to match."
 
 brand:
-  voice_adjectives: ["precise", "unhurried", "plain-spoken", "quietly expert"]
-  audience: "People who want considered work and no performance around it — professionals, artists, and anyone who has been oversold somewhere else."
+  # ASSUMED. A barbershop with a $100 signature service reads dark and
+  # traditional rather than bright and modern. The classic layout variant is
+  # symmetric and serif-forward, and its dotted-leader service list is what a
+  # barbershop price board already looks like.
+  voice_adjectives: ["plain-spoken", "exacting", "unhurried", "confident"]
+  audience: "Men in Encino and the surrounding Valley who would rather pay once for a cut that holds its shape than three times for one that does not."
   banned_extra:
-    - "bombshell"
-    - "glam"
-    - "wispy"
-    - "insta-ready"
-    - "flutter"
+    - "fresh cut fade life"
+    - "grooming journey"
+    - "snatched"
+    - "elevate your look"
   palette:
-    bg: "#12100e"
-    surface: "#1c1917"
-    accent: "#b08d57"
-    text: "#f4efe7"
-    muted: "#a89e91"
+    bg: "#121212"
+    surface: "#1b1b1b"
+    accent: "#c9a227"
+    text: "#f5f2ec"
+    muted: "#a8a29a"
   fonts:
-    display: "Fraunces"
-    body: "Inter"
-  layout_variant: "editorial"
-  feel: "calm, exacting, unhurried; the tone of someone who measures twice"
+    display: "Playfair Display"
+    body: "Work Sans"
+  layout_variant: "classic"
+  feel: "measured, traditional, quietly expensive; the tone of someone who does not need to sell you the upgrade"
 
 site:
-  domain: "ledgerwoodlash.com"
+  domain: "amirprecisioncuts.com"
   blog_path: "/blog"
-  blog_title: "The Studio Notes"
-  blog_subtitle: "Lash and brow craft, written from two chairs on Wickenden Street."
+  blog_title: "From the Chair"
+  blog_subtitle: "Notes on cuts, beards and shaves, written on Ventura Boulevard in Encino."
 
 content:
-  cadence_days: ["Monday", "Thursday"]
+  cadence_days: ["Tuesday", "Friday"]
   publish_hour_local: "09:00"
   articles_per_day_max: 1
   publish_mode: "instant"
-  word_count: { min: 850, max: 1500, target_min: 900, target_max: 1400 }
+  word_count: { min: 850, max: 1500, target_min: 900, target_max: 1350 }
   originality_max_similarity: 0.85
   queue_dedupe_max_similarity: 0.80
   internal_links: { min: 2, max: 4 }
@@ -178,11 +227,11 @@ compliance:
   no_guarantees: true
   no_superlatives_without_evidence: true
   no_invented_prices: true
-  extra_notes: "Rhode Island requires an esthetician licence for lash extensions; never imply medical or ophthalmic expertise."
+  extra_notes: "California requires a barber licence for haircutting and shaving. Never imply dermatological or medical benefit from the charcoal mask or from any product, and never claim results for hair growth or skin conditions."
 
 integrations:
   anthropic_model: "claude-sonnet-4-5-20250929"
-  vercel_project: ""
+  vercel_project: "amir-precision-cuts"
   github_repo: ""
   sentry_dsn: ""
   analytics: ""

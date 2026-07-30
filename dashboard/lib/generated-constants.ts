@@ -24,12 +24,12 @@ export const INTENTS = [
   "BOF / transactional"
 ];
 export const SERVICE_KEYS = [
-  "classic-set",
-  "volume-set",
-  "fill",
-  "lash-removal",
-  "brow-lamination",
-  "brow-tint"
+  "haircut",
+  "haircut-beard-trim",
+  "beard-trim",
+  "signature-haircut-black-mask",
+  "hot-towel-shave",
+  "scissor-cut-beard-trim"
 ];
 export const PAGE_KEYS = [
   "about",
@@ -38,11 +38,11 @@ export const PAGE_KEYS = [
   "visit"
 ];
 export const CADENCE_DAYS = [
-  "Monday",
-  "Thursday"
+  "Tuesday",
+  "Friday"
 ];
 export const PUBLISH_HOUR_LOCAL = "09:00";
-export const TIMEZONE = "America/New_York";
-export const LIVE_URL = "https://ledgerwoodlash.com";
-export const BUSINESS_NAME = "Ledgerwood Lash Atelier";
-export const AUTHOR_ID = "ledgerwood-studio";
+export const TIMEZONE = "America/Los_Angeles";
+export const LIVE_URL = "https://amirprecisioncuts.com";
+export const BUSINESS_NAME = "Amir Precision Cuts";
+export const AUTHOR_ID = "amir-precision-team";

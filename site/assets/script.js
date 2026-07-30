@@ -18,7 +18,9 @@
  *     the business actually publishes.
  *
  * DOM CONTRACT (04 §C) — renaming any of these fails SILENTLY:
- *   #year · .js-tel · .faq__item · #nav · #navToggle · #navMobile · .reveal
+ *   #year · .faq__item · #nav · #navToggle · #navMobile · .reveal
+ * (.js-tel was in this list until the XOR phone obfuscation came out. No code
+ *  reads it now, so listing it here was a contract nothing honoured.)
  * The bucket filter and Load-more are NOT here; they are an inline IIFE in
  * templates/blog-index.html. Look in the wrong file and you'll conclude the
  * filter doesn't exist.

@@ -35,9 +35,13 @@ export function buildAuthor(c = cfg) {
   return {
     slug: b.author_id,
     name: `The ${b.short_name} Team`,
-    short_bio:
-      `${b.positioning} ${b.practitioner_name} has ${b.years_experience} years of ` +
-      `practitioner experience in ${c.location.address_city}, ${c.location.address_region}.`,
+    // The experience sentence appears only when there IS one. The reference bio
+    // asserted "21+ years of practitioner experience" as a fixed string; for a
+    // business that never told us, the honest bio simply does not claim it.
+    short_bio: b.years_experience
+      ? `${b.positioning} ${b.practitioner_name} has ${String(b.years_experience).replace(/\+$/, '')} years of `
+        + `practitioner experience in ${c.location.address_city}, ${c.location.address_region}.`
+      : `${b.positioning} Written in ${c.location.address_city}, ${c.location.address_region}.`,
     url: c.derived.author_url,
     image: null,
   };

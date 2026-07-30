@@ -178,6 +178,40 @@ a.topbar__item:hover { color: var(--accent); }
    different stylesheet — not the same skeleton in new hex codes (04 §D).
    ========================================================================== */
 
+
+/* ---------- shared: rules every layout variant needs ---------- */
+/* These live ABOVE the IS_<VARIANT> partition on purpose. A rule placed inside a
+   variant block only ships for that variant, which is how the Transit/Parking
+   list ended up with browser-default styling on a centred page. */
+.care.care--two { grid-template-columns: repeat(2, 1fr); }
+.care__lead { max-width: var(--measure); margin-inline: auto; margin-bottom: calc(var(--space) * 2.2); }
+.nowrap { white-space: nowrap; }
+.visit__cta { display: flex; flex-wrap: wrap; gap: var(--space); }
+.visit__panel-link { margin-top: .6em; }
+.visit__panel-note { margin-top: .4em; font-size: var(--step--1); color: var(--muted); }
+/* A modifier with no rule is dead intent: the editorial hero asked for a lighter
+   eyebrow and got the accent one, because nothing ever defined it. */
+.eyebrow--light { color: var(--text); opacity: .72; }
+
+.visit__notes {
+  display: grid; grid-template-columns: 7rem 1fr;
+  gap: .35em var(--space);
+  max-width: 46rem; margin: calc(var(--space) * 2) auto 0;
+  padding-top: calc(var(--space) * 1.2);
+  border-top: var(--rule) solid var(--line);
+  text-align: left;
+}
+.visit__notes dt {
+  font-size: var(--step--1); text-transform: uppercase;
+  letter-spacing: var(--eyebrow-tracking); color: var(--accent); margin: 0;
+}
+.visit__notes dd { margin: 0; color: var(--muted); font-size: var(--step--1); }
+@media (max-width: 40em) {
+  .care.care--two { grid-template-columns: 1fr; }
+  .visit__notes { grid-template-columns: 1fr; gap: .15em; }
+  .visit__notes dd { margin-bottom: .8em; }
+}
+
 {{#if IS_EDITORIAL}}
 /* --- editorial: type-led, asymmetric, no radius --- */
 .hero--editorial { padding-block: calc(var(--section-y) * 1.15) var(--section-y); border-bottom: var(--rule) solid var(--line); }
@@ -280,6 +314,7 @@ a.topbar__item:hover { color: var(--accent); }
 .hero--gallery { padding-block: calc(var(--section-y) * .9); text-align: center; }
 .hero__band { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; height: clamp(160px, 26vw, 320px); margin-bottom: calc(var(--space) * 2.5); }
 .hero__band-tile { display: block; border-radius: var(--radius); background: linear-gradient(140deg, var(--accent-deep), var(--surface)); }
+.hero__band-tile--1 { background: linear-gradient(140deg, var(--accent-deep), var(--surface)); }
 .hero__band-tile--2 { background: linear-gradient(140deg, var(--accent), var(--accent-deep)); }
 .hero__band-tile--3 { background: linear-gradient(140deg, var(--surface), var(--accent-deep)); }
 .hero--gallery .hero__title { font-size: var(--step-4); max-width: 20ch; margin-inline: auto; }

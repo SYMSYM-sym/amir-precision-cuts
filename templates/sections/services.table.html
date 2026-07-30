@@ -16,8 +16,8 @@
             <span class="service-table__name">{{label}}</span>
             <span class="service-table__desc">{{description}}</span>
           </th>
-          <td class="service-table__duration">{{#if duration}}{{duration}}{{else}}&mdash;{{/if}}</td>
-          <td class="service-table__price">{{#if price_from}}{{price_display}}{{else}}<span class="service-table__ask">ask</span>{{/if}}</td>
+          <td class="service-table__duration">{{#if ?duration}}{{duration}}{{else}}&mdash;{{/if}}</td>
+          <td class="service-table__price">{{#if ?price_from}}{{price_display}}{{else}}<span class="service-table__ask">ask</span>{{/if}}</td>
         </tr>
         {{/each}}
       </tbody>

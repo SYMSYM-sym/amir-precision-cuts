@@ -180,7 +180,21 @@ function headAlign(variant) {
 export function renderSiteFrom(cfg, templates) {
   const variant = getVariant(cfg.brand.layout_variant);
   const partials = pickPartials(templates);
-  const anchors = cfg.location.location_anchors;
+  // ANCHOR_* fill "Close to {{ANCHOR_1}} and {{ANCHOR_2}}." under a heading that
+  // already says "Find us in <neighbourhood>". When the anchor list starts with
+  // the city — which it does for every business whose neighbourhood IS its city,
+  // because that is the obvious first thing to write in location_anchors — the
+  // page said "Find us in Encino / Close to Encino and Ventura Boulevard."
+  // A business is not close to the place it is in. Drop the self-references.
+  const selfNames = new Set(
+    [cfg.location.address_city, cfg.location.neighborhood, cfg.location.address_region]
+      .filter(Boolean).map((s) => s.toLowerCase()),
+  );
+  const nearby = cfg.location.location_anchors.filter((a) => !selfNames.has(String(a).toLowerCase()));
+  // Fall back to the raw list rather than render an empty sentence: a config
+  // whose anchors are ALL self-references is a config problem, and the honest
+  // failure is a slightly redundant sentence rather than "Close to  and .".
+  const anchors = nearby.length >= 2 ? nearby : cfg.location.location_anchors;
 
   const baseVars = {
     ...cfg,

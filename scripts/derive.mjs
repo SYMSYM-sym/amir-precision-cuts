@@ -43,6 +43,7 @@ import { render } from './render-templates.mjs';
 import { buildAuthor, authorPath } from './authors.mjs';
 import { QUEUE_HEADER, YAML_OPTS, MAX_DERIVE_API_CALLS, BUCKETS } from './constants.mjs';
 import { findNearDuplicateTopic } from './embed-similarity.mjs';
+import { complete, stripFence, provider } from './model.mjs';
 import { loadQueue, loadPublished, loadNeedsReview } from './pick-topic.mjs';
 
 const BRAND_TPL = join(ROOT, 'templates', 'brand');
@@ -111,6 +112,17 @@ function writeGuarded(path, body, { kind = 'yaml', step, force, cfgSlice }) {
 }
 
 const rel = (p) => p.replace(`${ROOT}/`, '');
+
+/** Topic count of an existing queue file, for error messages only. */
+function existsCountSafe(path) {
+  try {
+    const v = yaml.load(readFileSync(path, 'utf8'));
+    return Array.isArray(v) ? v.length : 0;
+  } catch {
+    return 0;
+  }
+}
+const existingCount = existsCountSafe;
 
 // ---------------------------------------------------------------------------
 // 2. forbidden.yaml — deterministic
@@ -186,7 +198,11 @@ export function buildInternalLinks(c) {
   const brand = c.business.short_name;
   const city = c.location.address_city;
   const pages = {
-    about: { href: '/#about', variants: [`about ${brand}`, `our ${c.business.type}`, `our ${city} studio`] },
+    // "our <city> studio" was the reference's third variant. A barbershop is not
+    // a studio and a nail bar is not a salon — a vertical-specific noun in a
+    // generated anchor is a weld with extra steps. business.type is the only
+    // place that word may come from.
+    about: { href: '/#about', variants: [`about ${brand}`, `our ${c.business.type}`, `${brand} in ${city}`] },
     faq: { href: '/#faq', variants: ['common questions', 'frequently asked questions'] },
     aftercare: { href: '/#aftercare', variants: ['aftercare guide', 'post-visit care'] },
     visit: { href: '/#visit', variants: ['our location', 'directions and hours', `visit ${brand}`] },
@@ -197,6 +213,30 @@ export function buildInternalLinks(c) {
 // ---------------------------------------------------------------------------
 // 1. voice.md — JUDGMENT (one model call)
 // ---------------------------------------------------------------------------
+
+/**
+ * "Encino, Encino" is what you get when neighbourhood and city are the same
+ * word and the template concatenates them anyway. Real single-neighbourhood
+ * cities hit this constantly.
+ */
+function placeLine(c) {
+  const n = c.location.neighborhood;
+  const city = c.location.address_city;
+  return n && n.toLowerCase() !== city.toLowerCase() ? `${n}, ${city}` : city;
+}
+
+/**
+ * When no tenure was supplied, the prompt must FORBID inventing one rather than
+ * simply omitting the fact. A model handed "Practitioner: Amir" and an eeat
+ * topic bucket will reach for "years of experience" unless told not to.
+ */
+function tenureRule(c) {
+  return c.derived.has_experience
+    ? `- ${c.business.practitioner_name} has ${c.derived.experience_years} years of experience; you may reference it.`
+    : `- NO length of experience has been supplied for ${c.business.practitioner_name}. Never state, imply or `
+      + 'gesture at how long they have been working -- no "years of experience", no "decades", no '
+      + '"since starting out", no "seasoned". Build authority from craft specifics instead.';
+}
 
 function voicePrompt(c) {
   const tpl = readFileSync(join(BRAND_TPL, 'voice.template.md'), 'utf8');
@@ -210,15 +250,16 @@ Fill in the template below from the business facts. Replace every {{...}} placeh
 - Type: ${c.business.type}
 - Positioning: ${c.business.positioning}
 - Tagline: ${c.business.tagline}
-- Practitioner: ${c.business.practitioner_name}, ${c.business.years_experience} years
+- Practitioner: ${c.business.practitioner_name}${c.derived.has_experience ? `, ${c.derived.experience_years} years` : ''}
 - Audience: ${c.brand.audience}
 - Voice adjectives: ${c.brand.voice_adjectives.join(', ')}
 - Feel (for VOICE only, not layout): ${c.brand.feel || '(none given)'}
-- City: ${c.location.address_city}, ${c.location.address_region} — neighborhood ${c.location.neighborhood}
+- Where: ${placeLine(c)}, ${c.location.address_region}
 - Services: ${c.services.map((s) => s.label).join(', ')}
 - Booking: ${c.derived.booking_line}
 - Phone published: ${c.booking.publish_phone === true ? 'YES' : 'NO'} · Email published: ${c.booking.publish_email === true ? 'YES' : 'NO'}
 - Extra compliance notes: ${c.compliance?.extra_notes || '(none)'}
+${tenureRule(c)}
 
 # Structure numbers to state explicitly
 - FAQ questions: ${c.content.faq_questions}
@@ -265,10 +306,11 @@ Produce EXACTLY ${count} topics as a YAML array. Each topic:
   notes: "Angle guidance. THE MOST IMPORTANT FIELD."
 
 # The business
-- ${c.business.name}, ${c.business.type}, ${c.location.neighborhood}, ${c.location.address_city}
-- Practitioner: ${c.business.practitioner_name}, ${c.business.years_experience} years
+- ${c.business.name}, ${c.business.type}, ${placeLine(c)}
+- Practitioner: ${c.business.practitioner_name}${c.derived.has_experience ? `, ${c.derived.experience_years} years` : ''}
 - Positioning: ${c.business.positioning}
 - Audience: ${c.brand.audience}
+${tenureRule(c)}
 
 # Service keys you may use in internal_links
 ${c.services.map((s) => `- ${s.key} (${s.label})`).join('\n')}
@@ -285,7 +327,9 @@ ${c.location.location_anchors.join(', ')}
 - aftercare: "after [service] care", "[problem] after [service]"
 - pricing: "how much is [service] in ${c.location.address_city}"
 - first-timer: "first [service] what to expect"
-- eeat: "what ${c.business.years_experience} years of [craft] taught ${c.business.practitioner_name}"
+- eeat: ${c.derived.has_experience
+    ? `"what ${c.derived.experience_years} years of [craft] taught ${c.business.practitioner_name}"`
+    : '"why [technique] matters", "how a barber decides [judgement call]" — craft authority WITHOUT any claim about tenure'}
 
 # THE ORIGINALITY TRAP — this is the part that usually fails
 Hyperlocal topics are near-clones of each other. "[service] near A" and "[service] near B"
@@ -305,30 +349,9 @@ Output ONLY the YAML array. No preamble, no code fence, no commentary.`;
 
 async function callModel(system, userMsg, what) {
   chargeApiCall(what);
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    throw new ConfigError(
-      `ANTHROPIC_API_KEY is not set — needed to derive "${what}" (a JUDGMENT artifact).\n` +
-        'Deterministic artifacts (forbidden, links, authors, site, assets) need no key: ' +
-        'try `npm run derive --only=site`.',
-    );
-  }
-  const { default: Anthropic } = await import('@anthropic-ai/sdk');
-  const client = new Anthropic({ apiKey });
-  const res = await client.messages.create({
-    model: process.env.ANTHROPIC_MODEL || cfg.integrations.anthropic_model,
-    max_tokens: 8192,
-    temperature: 0.6,
-    system,
-    messages: [{ role: 'user', content: userMsg }],
-  });
-  return res.content.map((b) => (b.type === 'text' ? b.text : '')).join('').trim();
+  return complete({ system, user: userMsg, tag: what.replace(/\.(md|yaml)$/, '') });
 }
 
-function stripFence(t) {
-  const m = t.match(/^```(?:ya?ml|markdown|md)?\s*([\s\S]*?)```\s*$/);
-  return (m ? m[1] : t).trim();
-}
 
 /** Validate a model-produced topic list before it can reach the queue. */
 export function validateTopics(topics, c) {
@@ -527,7 +550,8 @@ export async function derive(argv = process.argv.slice(2)) {
   console.log(`derive: ${c.business.name} — steps: ${steps.join(', ')}`);
   if (dryRun) {
     console.log(`DRY RUN — no files written, no API calls made.`);
-    console.log(`Estimated API calls: ${willCallApi.length} (cap ${MAX_DERIVE_API_CALLS})`);
+    console.log(`Model provider: ${provider() || 'NONE — judgment artifacts will fail'}`);
+    console.log(`Estimated model calls: ${willCallApi.length} (cap ${MAX_DERIVE_API_CALLS})`);
     for (const s of steps) {
       const j = JUDGMENT.has(s);
       console.log(`  ${j ? 'API ' : 'PURE'}  ${s}${j ? ' (judgment — model call + human review)' : ''}`);
@@ -621,6 +645,21 @@ async function deriveQueue(c, { force, append, count, slice }) {
     );
   }
 
+  // The queue is a LEDGER, not a rendered artifact: `publish-article.mjs`
+  // removes a slug from it on success, so an overwrite is not idempotent — it
+  // silently resurrects work already done. Every other JUDGMENT artifact is
+  // protected by the derive-hash banner; the queue cannot carry one (its own
+  // consumers rewrite it), so the protection has to be an explicit gate.
+  if (exists && !force && !append) {
+    throw new Error(
+      `REFUSING to overwrite an existing queue.yaml (${existingCount(path)} topics).\n`
+        + 'The queue is a ledger that publish-article.mjs mutates, so a plain rewrite is\n'
+        + 'destructive rather than idempotent.\n'
+        + '  --only=queue --append --count=N   add runway to the end (the normal operation)\n'
+        + '  --only=queue --force              reseed from scratch (new business only)',
+    );
+  }
+
   const existingQueue = exists ? loadQueue() : [];
   const existingTitles = [
     ...existingQueue.map((t) => t.title),
@@ -651,6 +690,12 @@ async function deriveQueue(c, { force, append, count, slice }) {
     console.log(`      deduped out ${dropped.length} topic(s) at >${c.content.queue_dedupe_max_similarity}:`);
     for (const d of dropped) console.log(`        - ${d.slug} (near ${d.near})`);
   }
+
+  // content/topics/ does not exist in a fresh clone — the template ships
+  // content/{articles,authors,brand} because those have committed files, and a
+  // queue is by definition generated. Without this, EVERY new business dies on
+  // ENOENT after the model call has already been spent.
+  mkdirSync(dirname(path), { recursive: true });
 
   if (append) {
     // NEVER rewrite an existing entry (§02.4).
