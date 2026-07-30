@@ -208,7 +208,7 @@ function articleJsonLd(article, faqBlocks, url, author) {
 function buildRelatedHtml(related) {
   if (!related.length) return '';
   let h =
-    '<section class="section section--dark continue-reading"><div class="container"><p class="eyebrow">Continue reading</p><h2 class="h2">More from the <span class="accent">Journal</span></h2><div class="continue-reading__grid">';
+    `<section class="section section--dark continue-reading"><div class="container"><p class="eyebrow">Continue reading</p><h2 class="h2">More from <span class="accent">${escapeHtml(cfg.site.blog_title)}</span></h2><div class="continue-reading__grid">`;
   for (const a of related) {
     const url = `/blog/${a.slug}`;
     h += `<article class="continue-reading__card"><a href="${url}"><h3 class="h3">${escapeHtml(a.data.title)}</h3><p class="muted">${escapeHtml(excerpt(a.mainMd, 140))}</p></a></article>`;
@@ -312,7 +312,13 @@ async function renderBlogIndex(all, partials) {
     NAV: partials.navJournal,
     FILTER_BUTTONS: filterHtml || '',
     ARTICLE_CARDS: cards,
-    EMPTY_STATE_HTML: all.length === 0 ? '<div class="blog-empty-state"><p><strong>The Journal is just getting started.</strong></p><p>New notes on men\'s grooming publish every Monday and Thursday.</p></div>' : '',
+    // Three welds lived in this one string: the blog's name, the vertical
+    // ("men's grooming"), and a publish cadence that contradicted
+    // content.cadence_days. All three come from config now.
+    EMPTY_STATE_HTML: all.length === 0
+      ? `<div class="blog-empty-state"><p><strong>${escapeHtml(cfg.site.blog_title)} is just getting started.</strong></p>`
+        + `<p>New notes publish ${escapeHtml(cfg.derived.cadence_line)}.</p></div>`
+      : '',
     FOOTER: partials.footer,
   }), { name: 'blog-index.html' });
 

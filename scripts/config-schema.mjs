@@ -561,6 +561,16 @@ export function buildDerived(c) {
     // booking
     booking_line: bookingLine,
     phone_display: phoneDisplay,
+
+    // "publish every Monday and Thursday" was a literal in build-blog.mjs while
+    // content.cadence_days said Tuesday and Friday. Two sources for the same
+    // fact, and the wrong one was the one visitors read.
+    cadence_line: (() => {
+      const d = c.content?.cadence_days || [];
+      if (d.length === 0) return '';
+      if (d.length === 1) return `every ${d[0]}`;
+      return `every ${d.slice(0, -1).join(', ')} and ${d[d.length - 1]}`;
+    })(),
     booking_line_period: `${bookingLine}.`,
     has_contact: booking.publish_phone === true || booking.publish_email === true,
 
