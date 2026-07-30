@@ -1,4 +1,5 @@
-<section class="hero hero--classic" id="home">
+<section class="hero hero--classic{{#if derived.has_hero_image}} hero--has-image{{/if}}" id="home">
+  {{> hero-media}}
   <div class="hero__inner container hero__inner--center">
     <p class="eyebrow">{{business.type}} &middot; {{location.address_city}}</p>
     <h1 class="hero__title">{{business.name}}</h1>

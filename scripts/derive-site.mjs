@@ -4,7 +4,7 @@
  * All rendering logic lives in site-render.mjs (pure), so the intake portal can
  * import it in a browser and preview exactly what this writes to disk.
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'fs';
 import { join, basename } from 'path';
 import { ROOT, configHash } from './paths.mjs';
 import { renderSiteFrom, BANNER } from './site-render.mjs';
@@ -38,8 +38,26 @@ export function loadTemplateSet(root = ROOT) {
   return out;
 }
 
+/**
+ * Final pixel dimensions of every processed image, keyed by source stem.
+ *
+ * site-render.mjs is PURE (no fs) so the intake portal can run it in a browser,
+ * which means it cannot read this itself — it arrives as an argument. Missing or
+ * unbuilt is fine and returns {}: the templates mark width/height optional, and
+ * a site with no imagery is a supported configuration.
+ */
+function loadMediaManifest() {
+  const p = join(SITE, 'assets', 'img', 'media', 'manifest.json');
+  if (!existsSync(p)) return {};
+  try {
+    return JSON.parse(readFileSync(p, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
 export async function renderSite(cfg, { write = true } = {}) {
-  const { indexHtml, css, robots, script } = renderSiteFrom(cfg, loadTemplateSet());
+  const { indexHtml, css, robots, script } = renderSiteFrom(cfg, loadTemplateSet(), loadMediaManifest());
   if (write) {
     mkdirSync(join(SITE, 'assets'), { recursive: true });
     writeFileSync(join(SITE, 'index.html'), indexHtml, 'utf8');

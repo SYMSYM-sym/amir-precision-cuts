@@ -219,9 +219,44 @@ def monogram(size):
     return img
 
 
+def og_backdrop(W, H):
+    """
+    Use the hero artwork behind the share card when the business has some.
+
+    og.jpg is the single most-seen image a site has — it is what appears in every
+    Slack paste, iMessage preview and social share, often instead of the site
+    itself. A typographic card is a fine default and stays the default for a
+    business with no imagery, but if the art direction exists it should be the
+    thing people see first.
+
+    Darkened hard (35%) and blurred, because this is a BACKDROP: the name has to
+    stay legible at thumbnail size against whatever the artwork is doing, and a
+    share card whose text competes with its own background reads as neither.
+    """
+    src = os.path.join(ROOT, "assets-src", "media", "hero.png")
+    if not os.path.exists(src):
+        return None
+    try:
+        from PIL import ImageEnhance, ImageFilter
+        art = Image.open(src).convert("RGB")
+        # Cover-crop to the card's aspect rather than squashing it.
+        scale = max(W / art.width, H / art.height)
+        art = art.resize((round(art.width * scale), round(art.height * scale)), Image.LANCZOS)
+        left = (art.width - W) // 2
+        top = (art.height - H) // 2
+        art = art.crop((left, top, left + W, top + H))
+        art = art.filter(ImageFilter.GaussianBlur(2))
+        return ImageEnhance.Brightness(art).enhance(0.35)
+    except Exception as e:
+        # Never let decoration break the build, but never fail silently either:
+        # a missing og backdrop is cosmetic, a missing og.jpg is bug A2.
+        print(f"        og backdrop skipped ({e}); falling back to the typographic card")
+        return None
+
+
 def og_card():
     W, H = 1200, 630
-    img = Image.new("RGB", (W, H), BG)
+    img = og_backdrop(W, H) or Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
     d.rectangle([0, 0, W - 1, H - 1], outline=BORDER, width=2)
 

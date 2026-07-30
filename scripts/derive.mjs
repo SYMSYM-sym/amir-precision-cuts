@@ -47,7 +47,18 @@ import { complete, stripFence, provider } from './model.mjs';
 import { loadQueue, loadPublished, loadNeedsReview } from './pick-topic.mjs';
 
 const BRAND_TPL = join(ROOT, 'templates', 'brand');
-const ALL_STEPS = ['forbidden', 'links', 'authors', 'voice', 'queue', 'site', 'assets', 'workflows', 'dashboard'];
+/**
+ * Canonical step order. This is a DEPENDENCY order, not a list.
+ *
+ * `assets` runs before `site` because the media step writes the manifest that
+ * carries every processed image's final width, height and srcset — and `site`
+ * renders those into the markup. Run the other way round on a clean tree and
+ * index.html comes out with no dimensions on any image: it looks fine, it
+ * validates, and it silently reintroduces layout shift. The delete-and-rebuild
+ * test (AF5) is what caught it, because that is the only run where the manifest
+ * genuinely does not exist yet.
+ */
+const ALL_STEPS = ['forbidden', 'links', 'authors', 'voice', 'queue', 'assets', 'site', 'workflows', 'dashboard'];
 const JUDGMENT = new Set(['voice', 'queue']);
 
 // ---------------------------------------------------------------------------
@@ -539,20 +550,30 @@ export const AUTHOR_ID = ${j(c.business.author_id)};
 `;
 }
 
-function runAssets(c, dryRun) {
-  if (dryRun) { console.log('DRY   assets (python3 scripts/generate-assets.py)'); return; }
+function runPython(script, label, dryRun) {
+  if (dryRun) { console.log(`DRY   ${label} (python3 scripts/${script})`); return; }
   try {
-    const out = execFileSync('python3', [join(ROOT, 'scripts', 'generate-assets.py')], {
+    const out = execFileSync('python3', [join(ROOT, 'scripts', script)], {
       cwd: ROOT, encoding: 'utf8', env: { ...process.env },
     });
-    console.log(out.trim().split('\n').map((l) => `      ${l}`).join('\n'));
+    const text = out.trim();
+    if (text) console.log(text.split('\n').map((l) => `      ${l}`).join('\n'));
   } catch (e) {
     throw new Error(
-      `Asset generation failed. The generator is Python + Pillow, not Node — a machine ` +
+      `${label} failed. The generator is Python + Pillow, not Node — a machine ` +
         `without them is a silent failure inside an otherwise-npm workflow (§02.5).\n` +
         `Install with: pip install Pillow\n${e.stderr || e.message}`,
     );
   }
+}
+
+function runAssets(c, dryRun) {
+  // Brand marks (favicon / icon / apple-touch / og) are drawn from the palette.
+  runPython('generate-assets.py', 'assets', dryRun);
+  // Photography and artwork, if the business supplied any. Derives
+  // site/assets/img/media/ from assets-src/media/ — so `rm -rf site` still
+  // reproduces every byte (AF5), which shipping finished JPEGs would not.
+  runPython('process-media.py', 'media', dryRun);
 }
 
 // ---------------------------------------------------------------------------
@@ -572,7 +593,11 @@ function parseArgs(argv) {
   }
   const bad = only.filter((s) => !ALL_STEPS.includes(s));
   if (bad.length) throw new Error(`Unknown --only step(s): ${bad.join(', ')}. Known: ${ALL_STEPS.join(', ')}`);
-  return { steps: only.length ? only : ALL_STEPS, force, append, dryRun, count, config };
+  // Always run in canonical order, whatever order they were typed in.
+  // `--only=site,assets` must not mean "render the page, then build the images
+  // it needed".
+  const steps = only.length ? ALL_STEPS.filter((s) => only.includes(s)) : ALL_STEPS;
+  return { steps, force, append, dryRun, count, config };
 }
 
 export async function derive(argv = process.argv.slice(2)) {

@@ -1,0 +1,12 @@
+{{#if derived.has_hero_image}}
+    <div class="hero__media">
+      <picture>
+        <source type="image/webp" srcset="{{?media.hero_srcset_webp}}" sizes="100vw" />
+        <img src="{{media.hero_image}}" srcset="{{?media.hero_srcset_jpg}}" sizes="100vw"
+             alt="{{media.hero_image_alt}}"
+             width="{{?media.hero_image_width}}" height="{{?media.hero_image_height}}"
+             fetchpriority="high" decoding="async" />
+      </picture>
+    </div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+{{/if}}

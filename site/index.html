@@ -88,7 +88,20 @@
 </header>
 
 <main id="main" tabindex="-1">
-<section class="hero hero--classic" id="home">
+<section class="hero hero--classic hero--has-image" id="home">
+  
+    <div class="hero__media">
+      <picture>
+        <source type="image/webp" srcset="/assets/img/media/hero-800.webp 800w, /assets/img/media/hero-1376.webp 1376w" sizes="100vw" />
+        <img src="/assets/img/media/hero-1376.jpg" srcset="/assets/img/media/hero-800.jpg 800w, /assets/img/media/hero-1376.jpg 1376w" sizes="100vw"
+             alt="A shaft of warm light crossing a dark room, catching dust, with the silhouette of a barber&#39;s chair at its edge."
+             width="1376" height="768"
+             fetchpriority="high" decoding="async" />
+      </picture>
+    </div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+
+
   <div class="hero__inner container hero__inner--center">
     <p class="eyebrow">men&#39;s barbershop &middot; Encino</p>
     <h1 class="hero__title">Amir Precision Cuts</h1>
@@ -116,6 +129,99 @@
       <li><strong>Tue – Sat</strong><span>hours vary by day</span></li>
     </ul>
     <p class="about__cta"><a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&amp;query=17388%20Ventura%20Blvd%20Encino%20CA%2091316" rel="noopener" target="_blank">Get directions</a></p>
+  </div>
+</section>
+
+<section class="section  section--gallery" id="gallery">
+  <div class="container">
+    <div class="section__head section__head--center">
+      <p class="eyebrow">Gallery</p>
+      <h2 class="h2">The work, in shadow</h2>
+    </div>
+    <ul class="gallery">
+      
+      <li class="gallery__item">
+        <figure class="gallery__figure">
+          <picture>
+            <source type="image/webp" srcset="/assets/img/media/01-shears-800.webp 800w, /assets/img/media/01-shears-1200.webp 1200w" sizes="(max-width: 46em) 100vw, 33vw" />
+            <img class="gallery__img" src="/assets/img/media/01-shears-1200.jpg" srcset="/assets/img/media/01-shears-800.jpg 800w, /assets/img/media/01-shears-1200.jpg 1200w"
+                 sizes="(max-width: 46em) 100vw, 33vw"
+                 alt="Barber&#39;s shears in silhouette, edges caught by a thin line of gold light." width="1200" height="896"
+                 loading="eager" decoding="async" />
+          </picture>
+          <figcaption class="gallery__caption">Scissor work, where the length and movement come from.</figcaption>
+        </figure>
+      </li>
+      
+      <li class="gallery__item">
+        <figure class="gallery__figure">
+          <picture>
+            <source type="image/webp" srcset="/assets/img/media/02-profile-800.webp 800w, /assets/img/media/02-profile-1200.webp 1200w" sizes="(max-width: 46em) 100vw, 33vw" />
+            <img class="gallery__img" src="/assets/img/media/02-profile-1200.jpg" srcset="/assets/img/media/02-profile-800.jpg 800w, /assets/img/media/02-profile-1200.jpg 1200w"
+                 sizes="(max-width: 46em) 100vw, 33vw"
+                 alt="Featureless profile silhouette of a head, the tapered neckline reading as pure geometry." width="1200" height="896"
+                 loading="eager" decoding="async" />
+          </picture>
+          <figcaption class="gallery__caption">The neckline is the part that dates first.</figcaption>
+        </figure>
+      </li>
+      
+      <li class="gallery__item">
+        <figure class="gallery__figure">
+          <picture>
+            <source type="image/webp" srcset="/assets/img/media/03-steam-800.webp 800w, /assets/img/media/03-steam-1200.webp 1200w" sizes="(max-width: 46em) 100vw, 33vw" />
+            <img class="gallery__img" src="/assets/img/media/03-steam-1200.jpg" srcset="/assets/img/media/03-steam-800.jpg 800w, /assets/img/media/03-steam-1200.jpg 1200w"
+                 sizes="(max-width: 46em) 100vw, 33vw"
+                 alt="Ribbons of steam curling through darkness, lit from the side." width="1200" height="896"
+                 loading="eager" decoding="async" />
+          </picture>
+          <figcaption class="gallery__caption">Hot towel, taken at the pace it needs.</figcaption>
+        </figure>
+      </li>
+      
+      <li class="gallery__item">
+        <figure class="gallery__figure">
+          <picture>
+            <source type="image/webp" srcset="/assets/img/media/04-light-800.webp 800w, /assets/img/media/04-light-1014.webp 1014w" sizes="(max-width: 46em) 100vw, 33vw" />
+            <img class="gallery__img" src="/assets/img/media/04-light-1014.jpg" srcset="/assets/img/media/04-light-800.jpg 800w, /assets/img/media/04-light-1014.jpg 1014w"
+                 sizes="(max-width: 46em) 100vw, 33vw"
+                 alt="Hard light through a narrow gap, throwing long parallel bars of shadow." width="1014" height="720"
+                 loading="lazy" decoding="async" />
+          </picture>
+          <figcaption class="gallery__caption">Ventura Boulevard, late in the afternoon.</figcaption>
+        </figure>
+      </li>
+      
+      <li class="gallery__item">
+        <figure class="gallery__figure">
+          <picture>
+            <source type="image/webp" srcset="/assets/img/media/05-beard-800.webp 800w, /assets/img/media/05-beard-1200.webp 1200w" sizes="(max-width: 46em) 100vw, 33vw" />
+            <img class="gallery__img" src="/assets/img/media/05-beard-1200.jpg" srcset="/assets/img/media/05-beard-800.jpg 800w, /assets/img/media/05-beard-1200.jpg 1200w"
+                 sizes="(max-width: 46em) 100vw, 33vw"
+                 alt="Silhouette of a bearded profile, the cheek line and jaw edge shown as deliberate shapes." width="1200" height="896"
+                 loading="lazy" decoding="async" />
+          </picture>
+          <figcaption class="gallery__caption">A beard shaped to the face, not to a template.</figcaption>
+        </figure>
+      </li>
+      
+      <li class="gallery__item">
+        <figure class="gallery__figure">
+          <picture>
+            <source type="image/webp" srcset="/assets/img/media/06-razor-800.webp 800w, /assets/img/media/06-razor-1146.webp 1146w" sizes="(max-width: 46em) 100vw, 33vw" />
+            <img class="gallery__img" src="/assets/img/media/06-razor-1146.jpg" srcset="/assets/img/media/06-razor-800.jpg 800w, /assets/img/media/06-razor-1146.jpg 1146w"
+                 sizes="(max-width: 46em) 100vw, 33vw"
+                 alt="An open straight razor as a black graphic shape against a gold field." width="1146" height="844"
+                 loading="lazy" decoding="async" />
+          </picture>
+          <figcaption class="gallery__caption">Straight razor, one pass at a time.</figcaption>
+        </figure>
+      </li>
+      
+    </ul>
+    
+    <p class="gallery__credit">Artwork is illustrative — abstract studies, not photographs of the shop.</p>
+    
   </div>
 </section>
 

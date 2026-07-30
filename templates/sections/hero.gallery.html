@@ -1,4 +1,5 @@
-<section class="hero hero--gallery" id="home">
+<section class="hero hero--gallery{{#if derived.has_hero_image}} hero--has-image{{/if}}" id="home">
+  {{> hero-media}}
   <div class="hero__band" aria-hidden="true">
     <span class="hero__band-tile hero__band-tile--1"></span>
     <span class="hero__band-tile hero__band-tile--2"></span>

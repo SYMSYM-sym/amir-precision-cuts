@@ -177,7 +177,7 @@ function headAlign(variant) {
  * the builder, and the drift would only surface after a client had signed off
  * on a preview of a site that does not exist.
  */
-export function renderSiteFrom(cfg, templates) {
+export function renderSiteFrom(cfg, templates, mediaManifest = {}) {
   const variant = getVariant(cfg.brand.layout_variant);
   const partials = pickPartials(templates);
   // ANCHOR_* fill "Close to {{ANCHOR_1}} and {{ANCHOR_2}}." under a heading that
@@ -214,8 +214,32 @@ export function renderSiteFrom(cfg, templates) {
 
   const opts = { partials, name: 'site' };
 
+  /**
+   * Attach the processed image's real dimensions and srcset to a config media
+   * entry, matched by filename stem.
+   *
+   * width/height on an <img> is what keeps CLS at 0: without them the browser
+   * reserves no space, the image lands late, and everything below it jumps. The
+   * config cannot carry those numbers because the build decides them (it trims
+   * matting and resizes), so they come from the manifest the asset step wrote.
+   * A miss is not an error — the attributes are optional in the templates — but
+   * it does mean an unsized image, so it is worth knowing about.
+   */
+  const withMedia = (entry) => {
+    const stem = String(entry.src || '').replace(/^.*\//, '').replace(/\.[^.]+$/, '').replace(/-\d+$/, '');
+    const m = mediaManifest[stem];
+    if (!m) return entry;
+    return { ...entry, src: m.src, width: m.width, height: m.height, srcset_webp: m.srcset_webp, srcset_jpg: m.srcset_jpg };
+  };
+
   // --- sections, in the variant's order, using the variant's markup ---
-  const sectionHtml = variant.order.map((id) => {
+  //
+  // `gallery` is CONDITIONAL: it appears only when the config supplies two or
+  // more images, and it slots in at the variant's declared position. A business
+  // with no photographs gets a typographic site, not a row of empty frames —
+  // which is why the section is filtered out here rather than rendered empty.
+  const order = variant.order.filter((id) => id !== 'gallery' || cfg.derived.has_gallery);
+  const sectionHtml = order.map((id) => {
     const tplName = variant.sections[id];
     const tpl = templates[`sections/${tplName}`];
     if (tpl === undefined) {
@@ -226,6 +250,22 @@ export function renderSiteFrom(cfg, templates) {
     }
     return render(tpl, {
       ...baseVars,
+      derived: {
+        ...cfg.derived,
+        gallery_display: cfg.derived.gallery_display.map(withMedia),
+      },
+      media: (() => {
+        const m = { ...(cfg.media || {}) };
+        if (m.hero_image) {
+          const hero = withMedia({ src: m.hero_image });
+          m.hero_image = hero.src;
+          m.hero_image_width = hero.width;
+          m.hero_image_height = hero.height;
+          m.hero_srcset_webp = hero.srcset_webp;
+          m.hero_srcset_jpg = hero.srcset_jpg;
+        }
+        return m;
+      })(),
       SECTION_TONE: sectionTone(cfg, variant, id),
       HEAD_ALIGN: headAlign(variant),
       // per-service initial for the gallery card media, on top of price_display

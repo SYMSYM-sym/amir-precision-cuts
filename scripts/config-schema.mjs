@@ -325,6 +325,53 @@ export function validateConfig(c, { allowPlaceholders = false } = {}) {
   opt('location.longitude', (v) => Math.abs(Number(v)) <= 180, 'must be between -180 and 180');
   opt('location.service_area', (v) => Array.isArray(v), 'must be a list');
 
+  // --- media (all optional) --------------------------------------------------
+  //
+  // A site with no imagery is a legitimate configuration and stays the default:
+  // a business that has not supplied photographs should get a typographic site,
+  // not placeholder rectangles. Every key here is optional and every template
+  // that touches one is conditional.
+  //
+  // ALT TEXT IS NOT OPTIONAL. An image without it is invisible to a screen
+  // reader and fails WCAG 1.1.1, and "the config forgot" is not a defence — so
+  // an image entry with no `alt` is a validation ERROR, not a warning. Purely
+  // decorative images do not belong in this list; they belong in CSS.
+  const media = c.media || {};
+  const imgOk = (v) => typeof v === 'string' && /^\/[\w./-]+\.(jpe?g|png|webp|avif|svg)$/i.test(v);
+  if (media.hero_image !== undefined && media.hero_image !== '') {
+    if (!imgOk(media.hero_image)) {
+      errors.push('media.hero_image must be a site-absolute path like "/assets/img/hero.jpg"');
+    }
+    if (!media.hero_image_alt || String(media.hero_image_alt).trim().length < 10) {
+      errors.push(
+        'media.hero_image is set but media.hero_image_alt is missing or too short. '
+        + 'Describe what the image shows in a sentence — an unlabelled image is invisible '
+        + 'to a screen reader (WCAG 1.1.1). The hero artwork is DESCRIBED rather than '
+        + 'marked decorative: on a site whose only imagery is the art direction, '
+        + '"" tells a screen-reader user nothing about a page everyone else is looking at.',
+      );
+    }
+  }
+  const gallery = media.gallery;
+  if (gallery !== undefined) {
+    if (!Array.isArray(gallery)) {
+      errors.push('media.gallery must be a list');
+    } else {
+      gallery.forEach((g, i) => {
+        if (!imgOk(g?.src)) errors.push(`media.gallery[${i}].src must be a site-absolute image path`);
+        if (!g?.alt || String(g.alt).trim().length < 10) {
+          errors.push(`media.gallery[${i}].alt is missing or too short — describe the image (WCAG 1.1.1)`);
+        }
+      });
+      if (gallery.length === 1) {
+        errors.push('media.gallery has 1 image — a gallery of one is a hero. Use media.hero_image, or add more.');
+      }
+    }
+  }
+  opt('media.gallery_title', (v) => typeof v === 'string' && v.length <= 60, 'must be 60 characters or fewer');
+  opt('media.texture', imgOk, 'must be a site-absolute image path');
+  opt('media.credit', (v) => typeof v === 'string', 'must be a string');
+
   if (c.hours?.per_day) {
     for (const [day, h] of Object.entries(c.hours.per_day)) {
       if (!DAYS.includes(day)) errors.push(`hours.per_day has unknown day "${day}"`);
@@ -553,6 +600,31 @@ export function buildDerived(c) {
     has_geo: loc.latitude !== undefined && loc.latitude !== '' && loc.longitude !== undefined && loc.longitude !== '',
     has_getting_here: Boolean(loc.parking_notes || loc.transit_notes || loc.accessibility_notes),
     has_testimonials: Boolean((c.homepage.testimonials || []).length),
+
+    // media — every flag a template needs, computed once
+    has_hero_image: Boolean(c.media?.hero_image),
+    has_gallery: Boolean((c.media?.gallery || []).length >= 2),
+    has_texture: Boolean(c.media?.texture),
+    has_media_credit: Boolean(c.media?.credit),
+    gallery_title: c.media?.gallery_title || 'Inside the work',
+    // One LEAD image across the full width, then a uniform grid.
+    //
+    // The first attempt made every third tile span two columns. With mixed
+    // aspect ratios that produced ragged rows — a 16:9 tile beside a 4:3 tile
+    // leaves a gap no amount of gap-tuning fixes. A single full-width lead and
+    // an otherwise uniform grid reads as a considered gallery instead of an
+    // accident, and it degrades to one column on a phone without special cases.
+    gallery_display: (c.media?.gallery || []).map((g, i, arr) => ({
+      ...g,
+      index: i,
+      // A lead image only earns its place when what follows still fills whole
+      // rows of three. Six images with a lead leaves a five-tile remainder and a
+      // hole in the last row; six without one is a clean 3x2. So the rule is
+      // arithmetic, not taste, and it holds for any gallery length.
+      lead: i === 0 && arr.length >= 4 && (arr.length - 1) % 3 === 0,
+      // Only the first row is worth blocking on; the rest are below the fold.
+      loading: i < 3 ? 'eager' : 'lazy',
+    })),
     services_display: (c.services || []).map((sv) => ({
       ...sv,
       price_display: sv.price_from ? `${sv.price_from}${sv.price_note || ''}` : '',

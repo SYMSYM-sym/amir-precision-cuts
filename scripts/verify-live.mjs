@@ -173,6 +173,26 @@ async function main() {
     ok(`${asset} 200`, (await head(asset)) === 200);
   }
 
+  // 2b. Content imagery — same rule as the brand assets: referencing is not
+  // existing. A hero or gallery image that 404s leaves a bordered grey rectangle
+  // on the page, and nothing else on this list would notice. Every <img> the
+  // homepage actually asks for gets fetched, and every one must carry alt text.
+  const imgTags = [...home.body.matchAll(/<img\b[^>]*>/gi)].map((m) => m[0]);
+  const mediaSrcs = [...new Set(
+    imgTags
+      .map((tag) => (tag.match(/\ssrc="([^"]+)"/i) || [])[1])
+      .filter((s) => s && s.startsWith('/assets/img/')),
+  )];
+  if (mediaSrcs.length) {
+    const statuses = await Promise.all(mediaSrcs.map((s) => head(s)));
+    const dead = mediaSrcs.filter((_, i) => statuses[i] !== 200);
+    ok('every homepage image 200', dead.length === 0,
+      dead.length ? `dead: ${dead.slice(0, 3).join(', ')}` : `${mediaSrcs.length} checked`);
+  }
+  const missingAlt = imgTags.filter((tag) => !/\salt="/i.test(tag));
+  ok('every homepage image has an alt attribute', missingAlt.length === 0,
+    missingAlt.length ? `${missingAlt.length} without alt` : `${imgTags.length} checked`);
+
   // 3. robots.txt
   const robots = await get('/robots.txt');
   ok('robots.txt 200 + Sitemap line', robots.status === 200 && /Sitemap:/i.test(robots.body));

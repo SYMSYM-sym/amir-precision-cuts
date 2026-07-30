@@ -189,6 +189,52 @@ brand:
   layout_variant: "classic"
   feel: "measured, traditional, quietly expensive; the tone of someone who does not need to sell you the upgrade"
 
+media:
+  # ==========================================================================
+  # PLACEHOLDER ARTWORK — AI-generated, and not photographs of this shop.
+  #
+  # Deliberately abstract: silhouettes, shadow and light studies. Nothing here
+  # depicts 17388 Ventura Blvd, Amir, or any client, because a generated photo
+  # of "a barbershop" presented as this barbershop is a claim about the business
+  # that is not true. Silhouette and shadow say "men's barbering" without
+  # pretending to document a room.
+  #
+  # REPLACE WITH REAL PHOTOGRAPHY when Amir has some. Drop the files into
+  # assets-src/media/, keep the same stems, run `npm run derive -- --only=assets`.
+  # No template or code change: the paths, sizes, WebP variants and width/height
+  # attributes are all derived.
+  #
+  # alt text is REQUIRED by the validator, not optional — an unlabelled image is
+  # invisible to a screen reader (WCAG 1.1.1).
+  # ==========================================================================
+  credit: "Artwork is illustrative — abstract studies, not photographs of the shop."
+  gallery_title: "The work, in shadow"
+
+  hero_image: "/assets/img/media/hero-1600.jpg"
+  hero_image_alt: >-
+    A shaft of warm light crossing a dark room, catching dust, with the
+    silhouette of a barber's chair at its edge.
+
+  gallery:
+    - src: "/assets/img/media/01-shears-1600.jpg"
+      alt: "Barber's shears in silhouette, edges caught by a thin line of gold light."
+      caption: "Scissor work, where the length and movement come from."
+    - src: "/assets/img/media/02-profile-1600.jpg"
+      alt: "Featureless profile silhouette of a head, the tapered neckline reading as pure geometry."
+      caption: "The neckline is the part that dates first."
+    - src: "/assets/img/media/03-steam-1600.jpg"
+      alt: "Ribbons of steam curling through darkness, lit from the side."
+      caption: "Hot towel, taken at the pace it needs."
+    - src: "/assets/img/media/04-light-1600.jpg"
+      alt: "Hard light through a narrow gap, throwing long parallel bars of shadow."
+      caption: "Ventura Boulevard, late in the afternoon."
+    - src: "/assets/img/media/05-beard-1600.jpg"
+      alt: "Silhouette of a bearded profile, the cheek line and jaw edge shown as deliberate shapes."
+      caption: "A beard shaped to the face, not to a template."
+    - src: "/assets/img/media/06-razor-1600.jpg"
+      alt: "An open straight razor as a black graphic shape against a gold field."
+      caption: "Straight razor, one pass at a time."
+
 site:
   domain: "amirprecisioncuts.com"
   blog_path: "/blog"

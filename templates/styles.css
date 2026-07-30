@@ -216,6 +216,74 @@ a.topbar__item:hover { color: var(--accent); }
 .care.care--two { grid-template-columns: repeat(2, 1fr); }
 .care__lead { max-width: var(--measure); margin-inline: auto; margin-bottom: calc(var(--space) * 2.2); }
 .nowrap { white-space: nowrap; }
+
+/* ---------- media: gallery + hero image ---------- */
+/* In the SHARED block on purpose — every variant can carry a gallery, and a rule
+   parked in one IS_<VARIANT> block ships for one layout only. */
+
+.gallery {
+  list-style: none; padding: 0; margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: var(--space);
+}
+/* One lead image across the full row; everything after it is a uniform tile.
+   `1 / -1` spans whatever the auto-fit column count turns out to be, so this
+   holds at every breakpoint without a media query per layout. */
+/* min-width:0 is not cosmetic on a grid child: the default `auto` lets a wide
+   item refuse to shrink and blow the track out past the container. */
+.gallery__item { min-width: 0; }
+.gallery__item--lead { grid-column: 1 / -1; }
+
+.gallery__figure { margin: 0; }
+.gallery__img {
+  display: block; width: 100%;
+  aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: var(--radius);
+  /* The artwork is near-black on a near-black page. Without a surface behind it
+     and a hairline around it, a dark tile stops reading as an object at all and
+     the gallery looks like a rendering failure. */
+  background: var(--surface);
+  border: var(--rule) solid var(--line);
+  transition: transform .5s var(--ease), border-color .5s var(--ease);
+}
+.gallery__item--lead .gallery__img { aspect-ratio: 21 / 9; }
+@media (max-width: 40em) { .gallery__item--lead .gallery__img { aspect-ratio: 16 / 9; } }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .gallery__figure:hover .gallery__img { transform: scale(1.012); border-color: var(--line-strong); }
+}
+.gallery__caption {
+  margin-top: .6em; color: var(--muted);
+  font-size: var(--step--1); line-height: 1.45;
+}
+.gallery__credit {
+  margin-top: calc(var(--space) * 1.8);
+  padding-top: calc(var(--space) * 1.1);
+  border-top: var(--rule) solid var(--line);
+  color: var(--muted); font-size: var(--step--1);
+  text-align: center;
+}
+
+/* Hero image sits BEHIND the copy, so the copy needs a scrim it can rely on
+   rather than luck. Measured, not eyeballed: the gradient is opaque enough
+   across the whole text band to hold AA contrast against any image. Without it
+   the headline's legibility depends on what the artwork happens to be doing. */
+.hero--has-image { position: relative; isolation: isolate; }
+.hero__media { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
+.hero__media img {
+  width: 100%; height: 100%; object-fit: cover;
+  /* This artwork carries its subject right of centre; centring the crop buries
+     it behind the headline. Configurable per client would be over-engineering
+     for one number that only matters when a hero image exists at all. */
+  object-position: 68% center;
+}
+.hero__scrim {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,.86) 0%, rgba(0,0,0,.72) 45%, rgba(0,0,0,.35) 100%),
+    linear-gradient(to bottom, var(--bg) 0%, transparent 22%, transparent 70%, var(--bg) 100%);
+}
+.hero--has-image .hero__inner { padding-block: calc(var(--section-y) * 1.15); }
 .visit__cta { display: flex; flex-wrap: wrap; gap: var(--space); }
 .visit__panel-link { margin-top: .6em; }
 .visit__panel-note { margin-top: .4em; font-size: var(--step--1); color: var(--muted); }

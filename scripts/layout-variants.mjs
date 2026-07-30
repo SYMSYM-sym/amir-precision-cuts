@@ -28,6 +28,17 @@
 /** Every section the homepage can contain. 04 §A requires all of these to exist. */
 export const ALL_SECTIONS = ['hero', 'about', 'services', 'aftercare', 'faq', 'visit'];
 
+/**
+ * Sections a variant MAY order but is not required to render.
+ *
+ * `gallery` only appears when the config supplies two or more images, so it
+ * cannot be in ALL_SECTIONS — that list drives the "never renders section(s)"
+ * check, and a business with no photographs would fail it. It still has to be
+ * a KNOWN name, or the "orders unknown section(s)" check rejects it. Two lists,
+ * two questions: what must every variant handle, and what is it allowed to.
+ */
+export const OPTIONAL_SECTIONS = ['gallery'];
+
 export const VARIANTS = {
   /**
    * EDITORIAL — big whitespace, large display type, asymmetric.
@@ -58,9 +69,10 @@ export const VARIANTS = {
       '--eyebrow-tracking': '.24em',
       '--nav-h': '76px',
     },
-    order: ['hero', 'about', 'services', 'aftercare', 'faq', 'visit'],
+    order: ['hero', 'about', 'services', 'gallery', 'aftercare', 'faq', 'visit'],
     sections: {
       hero: 'hero.editorial',
+      gallery: 'gallery.grid',
       about: 'about.split',
       services: 'services.rows',
       aftercare: 'aftercare.columns',
@@ -101,8 +113,9 @@ export const VARIANTS = {
       '--eyebrow-tracking': '.12em',
       '--nav-h': '58px',
     },
-    order: ['hero', 'services', 'about', 'faq', 'aftercare', 'visit'],
+    order: ['hero', 'services', 'gallery', 'about', 'faq', 'aftercare', 'visit'],
     sections: {
+      gallery: 'gallery.grid',
       hero: 'hero.compact',
       about: 'about.split',
       services: 'services.table',
@@ -143,8 +156,9 @@ export const VARIANTS = {
       '--eyebrow-tracking': '.18em',
       '--nav-h': '72px',
     },
-    order: ['hero', 'about', 'services', 'faq', 'aftercare', 'visit'],
+    order: ['hero', 'gallery', 'about', 'services', 'faq', 'aftercare', 'visit'],
     sections: {
+      gallery: 'gallery.grid',
       hero: 'hero.gallery',
       about: 'about.centered',
       services: 'services.grid',
@@ -185,9 +199,10 @@ export const VARIANTS = {
       '--eyebrow-tracking': '.2em',
       '--nav-h': '68px',
     },
-    order: ['hero', 'about', 'services', 'aftercare', 'faq', 'visit'],
+    order: ['hero', 'about', 'gallery', 'services', 'aftercare', 'faq', 'visit'],
     sections: {
       hero: 'hero.classic',
+      gallery: 'gallery.grid',
       about: 'about.centered',
       services: 'services.columns',
       aftercare: 'aftercare.columns',
@@ -208,11 +223,11 @@ export function getVariant(name) {
     );
   }
   // Every variant must cover every section, or a homepage silently loses one.
-  const missing = ALL_SECTIONS.filter((s) => !v.sections[s]);
+  const missing = [...ALL_SECTIONS, ...OPTIONAL_SECTIONS].filter((s) => !v.sections[s]);
   if (missing.length) {
     throw new Error(`layout_variant "${name}" is missing section template(s): ${missing.join(', ')}`);
   }
-  const stray = v.order.filter((s) => !ALL_SECTIONS.includes(s));
+  const stray = v.order.filter((s) => ![...ALL_SECTIONS, ...OPTIONAL_SECTIONS].includes(s));
   if (stray.length) throw new Error(`layout_variant "${name}" orders unknown section(s): ${stray.join(', ')}`);
   const dropped = ALL_SECTIONS.filter((s) => !v.order.includes(s));
   if (dropped.length) throw new Error(`layout_variant "${name}" never renders section(s): ${dropped.join(', ')}`);

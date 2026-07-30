@@ -1,0 +1,27 @@
+<section class="section {{SECTION_TONE}} section--gallery" id="gallery">
+  <div class="container">
+    <div class="section__head {{HEAD_ALIGN}}">
+      <p class="eyebrow">Gallery</p>
+      <h2 class="h2">{{derived.gallery_title}}</h2>
+    </div>
+    <ul class="gallery">
+      {{#each derived.gallery_display}}
+      <li class="gallery__item{{#if lead}} gallery__item--lead{{/if}}">
+        <figure class="gallery__figure">
+          <picture>
+            <source type="image/webp" srcset="{{?srcset_webp}}" sizes="(max-width: 46em) 100vw, 33vw" />
+            <img class="gallery__img" src="{{src}}" srcset="{{?srcset_jpg}}"
+                 sizes="(max-width: 46em) 100vw, 33vw"
+                 alt="{{alt}}" width="{{?width}}" height="{{?height}}"
+                 loading="{{loading}}" decoding="async" />
+          </picture>
+          {{#if ?caption}}<figcaption class="gallery__caption">{{caption}}</figcaption>{{/if}}
+        </figure>
+      </li>
+      {{/each}}
+    </ul>
+    {{#if derived.has_media_credit}}
+    <p class="gallery__credit">{{media.credit}}</p>
+    {{/if}}
+  </div>
+</section>
