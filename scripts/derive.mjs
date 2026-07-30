@@ -652,10 +652,17 @@ export async function derive(argv = process.argv.slice(2)) {
         break;
       }
 
-      case 'site':
-        await renderSite(c);
-        console.log('WRITE site/index.html\nWRITE site/assets/styles.css\nWRITE site/robots.txt');
+      case 'site': {
+        // Print what was ACTUALLY written. The asset filenames carry a content
+        // hash now, so a fixed log line would be a lie the moment the CSS
+        // changed — and "site/assets/styles.css" is exactly the URL that just
+        // cost every returning visitor a broken-looking page.
+        const { stylesHref, scriptHref } = await renderSite(c);
+        console.log(
+          `WRITE site/index.html\nWRITE site${stylesHref}\nWRITE site${scriptHref}\nWRITE site/robots.txt`,
+        );
         break;
+      }
 
       case 'assets':
         runAssets(c, dryRun);

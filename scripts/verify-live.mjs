@@ -99,6 +99,14 @@ async function head(path) {
   } catch { return 0; }
 }
 
+async function headers(path) {
+  const url = path.startsWith('http') ? path : `${BASE}${path}`;
+  try {
+    const res = await fetch(url, { redirect: 'follow' });
+    return { status: res.status, cacheControl: res.headers.get('cache-control') || '' };
+  } catch { return { status: 0, cacheControl: '' }; }
+}
+
 /**
  * Sitemap URLs are absolute and canonical — they name the PRODUCTION domain
  * even in a staging build, which is correct. So when BASE is not that domain
@@ -192,6 +200,44 @@ async function main() {
   const missingAlt = imgTags.filter((tag) => !/\salt="/i.test(tag));
   ok('every homepage image has an alt attribute', missingAlt.length === 0,
     missingAlt.length ? `${missingAlt.length} without alt` : `${imgTags.length} checked`);
+
+  // 2b. THE ASSET-CACHING CONTRACT.
+  //
+  // This is the check that would have caught the worst bug this site has had.
+  //
+  // vercel.json serves the stylesheet and script `max-age=31536000, immutable`.
+  // `immutable` tells the browser never to revalidate — so if the URL is a
+  // fixed path like /assets/styles.css, a returning visitor keeps last year's
+  // stylesheet and renders new markup with it. The page looks broken to
+  // everyone who has been before, and perfect to everyone testing with a cold
+  // cache. Every other check in this file passed while that was true, because
+  // fetch() has no cache.
+  //
+  // Two assertions, and they have to be made together:
+  //   1. the assets the homepage actually links are reachable, and
+  //   2. anything served `immutable` has a content hash in its filename.
+  // Either alone is satisfiable by a broken configuration.
+  const assetRefs = [
+    ...[...home.body.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="(\/assets\/[^"]+)"/g)].map((m) => m[1]),
+    ...[...home.body.matchAll(/<script[^>]+src="(\/assets\/[^"]+)"/g)].map((m) => m[1]),
+  ];
+  ok('homepage links a stylesheet and a script from /assets/', assetRefs.length >= 2,
+    `${assetRefs.length} found: ${assetRefs.join(', ') || 'none'}`);
+
+  const assetHeaders = await Promise.all(assetRefs.map((a) => headers(a)));
+  const deadAssets = assetRefs.filter((_, i) => assetHeaders[i].status !== 200);
+  ok('every linked /assets/ file 200', deadAssets.length === 0,
+    deadAssets.length ? `dead: ${deadAssets.join(', ')}` : `${assetRefs.length} checked`);
+
+  // A hash is 6+ hex characters between two dots: styles.26121ccaed23.css
+  const HASHED = /\.[0-9a-f]{6,}\.[a-z0-9]+$/;
+  const lying = assetRefs.filter((a, i) =>
+    /immutable/.test(assetHeaders[i].cacheControl) && !HASHED.test(a));
+  ok('no unhashed asset is served immutable', lying.length === 0,
+    lying.length
+      ? `${lying.join(', ')} — a fixed URL promised never to change. Returning visitors will `
+        + 'keep the old file until the max-age expires. Content-hash the filename.'
+      : `${assetRefs.length} checked`);
 
   // 3. robots.txt
   const robots = await get('/robots.txt');

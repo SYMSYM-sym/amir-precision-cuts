@@ -24,7 +24,7 @@
  */
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { loadConfig, ROOT } from './paths.mjs';
 import { LAYOUT_VARIANTS } from './config-schema.mjs';
@@ -165,6 +165,100 @@ describe('a neighbourhood that IS the city never renders twice', () => {
         `layout_variant "${variant}" renders "${hit && hit[0]}" — the neighbourhood and the `
         + 'city are the same word and a template printed both. Use derived.place_line for a '
         + 'one-line label, or derived.place_primary / place_secondary for a two-line one.',
+      );
+    });
+  }
+});
+
+
+/**
+ * Long-cached asset URLs must carry a content hash.
+ *
+ * THE BUG THIS EXISTS FOR
+ *
+ * vercel.json serves /assets/ with `max-age=31536000, immutable`. `immutable`
+ * is a promise that the bytes behind a URL will never change, and browsers
+ * honour it completely — no revalidation, no conditional request, nothing, for
+ * a year. The stylesheet lived at the fixed path /assets/styles.css.
+ *
+ * So a redesign shipped and every RETURNING visitor rendered the new markup
+ * with the old stylesheet: correct HTML, year-old CSS, every new class falling
+ * back to browser defaults. It looked fine to anyone with a cold cache, which
+ * is everyone who tests. 90 unit tests, 38 live checks and a byte-for-byte
+ * comparison of the deployed CSS all passed while the site was visibly broken
+ * for the only person who had seen it before.
+ *
+ * verify-live.mjs checks the same contract against real response headers. This
+ * checks it at BUILD time, against the config and the markup, so it fails
+ * before a deploy rather than after one.
+ */
+describe('assets that are cached forever have content-hashed URLs', () => {
+  const templates = noFixture ? null : loadTemplateSet(ROOT);
+  const vercelPath = join(ROOT, 'vercel.json');
+
+  // Sources in vercel.json whose Cache-Control promises immutability. Anything
+  // matching one of these must have a hash in its filename.
+  const immutableSources = () => {
+    const conf = JSON.parse(readFileSync(vercelPath, 'utf8'));
+    return (conf.headers || [])
+      .filter((h) => (h.headers || []).some(
+        (k) => k.key.toLowerCase() === 'cache-control' && /immutable|max-age=[0-9]{6,}/.test(k.value)))
+      .map((h) => h.source);
+  };
+
+  // path-to-regexp, reduced to what this config uses: `(.*)` and an inline
+  // negative-lookahead group. Enough to decide whether a URL is covered.
+  const sourceMatches = (source, url) =>
+    new RegExp(`^${source.replace(/\(\.\*\)/g, '(?:.*)')}$`).test(url);
+
+  const HASHED = /\.[0-9a-f]{6,}\.[a-z0-9]+$/;
+
+  test('vercel.json still marks something immutable', { skip: noFixture }, () => {
+    assert.ok(immutableSources().length > 0,
+      'no immutable Cache-Control rule found — if that was deliberate, delete this suite; '
+      + 'if it was an accident, the site just lost its asset caching.');
+  });
+
+  for (const variant of LAYOUT_VARIANTS) {
+    test(`${variant}: no immutable URL without a content hash`, { skip: noFixture }, () => {
+      const cfg = loadConfig(FIXTURE);
+      cfg.brand.layout_variant = variant;
+      // A stand-in for what process-media.py writes. renderSiteFrom is pure and
+      // takes the manifest as an argument, so the test supplies one rather than
+      // depending on site/ having been built — and it must, because without a
+      // manifest the renderer emits the config's unhashed logical paths and
+      // this test would fail on a condition derive-site.mjs already refuses.
+      const manifest = Object.fromEntries(
+        [...(cfg.media?.gallery || []).map((g) => g.src), cfg.media?.hero_image]
+          .filter(Boolean)
+          .map((u) => {
+            const stem = u.replace(/^.*\//, '').replace(/\.[^.]+$/, '').replace(/-\d+$/, '');
+            const base = `/assets/img/media/${stem}-1600.abc123de`;
+            return [stem, {
+              src: `${base}.jpg`, width: 1600, height: 1200,
+              srcset_webp: `${base}.webp 1600w`, srcset_jpg: `${base}.jpg 1600w`,
+            }];
+          }),
+      );
+      const { indexHtml } = renderSiteFrom(cfg, templates, manifest);
+
+      const refs = [
+        ...[...indexHtml.matchAll(/<link[^>]+href="(\/[^"]+)"/g)].map((m) => m[1]),
+        ...[...indexHtml.matchAll(/<script[^>]+src="(\/[^"]+)"/g)].map((m) => m[1]),
+        ...[...indexHtml.matchAll(/<img[^>]+src="(\/[^"]+)"/g)].map((m) => m[1]),
+      ];
+      const sources = immutableSources();
+      const offenders = [...new Set(refs)]
+        .filter((u) => sources.some((src) => sourceMatches(src, u)))
+        .filter((u) => !HASHED.test(u))
+        .sort();
+
+      assert.deepEqual(
+        offenders, [],
+        `layout_variant "${variant}" links ${offenders.length} URL(s) that vercel.json serves `
+        + `immutable but that carry no content hash: ${offenders.join(', ')}.\n`
+        + 'A fixed URL under an immutable header can never be updated for a returning '
+        + 'visitor. Either content-hash the filename or narrow the header rule.',
       );
     });
   }

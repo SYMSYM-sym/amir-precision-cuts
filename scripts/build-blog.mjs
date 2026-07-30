@@ -7,7 +7,7 @@ import { render, loadPartial } from './render-templates.mjs';
 import { ROOT, cfg, contentPath } from './paths.mjs';
 import { readAuthor } from './authors.mjs';
 import { isDarkTheme } from './layout-variants.mjs';
-import { fontsHref } from './derive-site.mjs';
+import { fontsHref, readAssetHrefs } from './derive-site.mjs';
 import { FEED_MAX } from './constants.mjs';
 
 const ARTICLES_DIR = join(ROOT, 'content/articles');
@@ -39,11 +39,19 @@ const SITE = cfg.derived.site_url;
  * a partial variable set used to render an empty <span>; the strict renderer
  * throws instead, which is how this got caught.
  */
+// The stylesheet and script are content-hashed, so their URLs change whenever
+// their bytes do. Read once per run from what derive actually emitted — never
+// hardcoded, and never recomputed here, because a second copy of that logic is
+// a second thing that can drift out of step with the homepage.
+const ASSETS = readAssetHrefs();
+
 function baseVars(extra = {}) {
   return {
     ...cfg,
     THEME: isDarkTheme(cfg) ? 'dark' : 'light',
     FONTS_HREF: fontsHref(cfg),
+    STYLES_HREF: ASSETS.stylesHref,
+    SCRIPT_HREF: ASSETS.scriptHref,
     HOME_HREF: '/',
     NAV_JOURNAL_ACTIVE: true,
     ...extra,

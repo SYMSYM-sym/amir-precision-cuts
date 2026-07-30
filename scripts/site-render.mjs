@@ -277,6 +277,31 @@ export function renderSiteFrom(cfg, templates, mediaManifest = {}) {
     }, { ...opts, name: `section:${tplName}` });
   }).join('\n');
 
+  // --- stylesheet and script FIRST ---
+  //
+  // Their filenames carry a hash of their own bytes (see assetHash), and the
+  // markup has to reference those filenames — so they have to exist before the
+  // <head> is rendered. Order matters here and it is not arbitrary.
+  const cssTpl = templates['styles.css'];
+  const css = render(cssTpl, {
+    ...baseVars,
+    TOKEN_BLOCK: tokenBlock(cfg),
+    IS_EDITORIAL: variant.label === 'editorial',
+    IS_COMPACT: variant.label === 'compact',
+    IS_GALLERY: variant.label === 'gallery',
+    IS_CLASSIC: variant.label === 'classic',
+  }, { ...opts, name: 'styles.css' });
+
+  // Copied, not rendered: it is the DOM-contract JS and holds no config values.
+  // It still goes through the foreign-facts gate below, because "this file
+  // obviously has no business facts in it" is exactly the assumption that lets
+  // one in.
+  const script = templates['script.js'];
+
+  const { stylesHref, scriptHref } = assetHrefs(css, script);
+  baseVars.STYLES_HREF = stylesHref;
+  baseVars.SCRIPT_HREF = scriptHref;
+
   // --- head ---
   const jsonLd = [localBusinessJsonLd(cfg), faqPageJsonLd(cfg)];
   const extraHead = [
@@ -319,23 +344,6 @@ export function renderSiteFrom(cfg, templates, mediaManifest = {}) {
 
   indexHtml = `<!-- ${BANNER} -->\n${indexHtml}`;
 
-  // --- stylesheet ---
-  const cssTpl = templates['styles.css'];
-  const css = render(cssTpl, {
-    ...baseVars,
-    TOKEN_BLOCK: tokenBlock(cfg),
-    IS_EDITORIAL: variant.label === 'editorial',
-    IS_COMPACT: variant.label === 'compact',
-    IS_GALLERY: variant.label === 'gallery',
-    IS_CLASSIC: variant.label === 'classic',
-  }, { ...opts, name: 'styles.css' });
-
-  // --- script.js ---
-  // Copied, not rendered: it is the DOM-contract JS and holds no config values.
-  // It still goes through the foreign-facts gate, because "this file obviously
-  // has no business facts in it" is exactly the assumption that lets one in.
-  const script = templates['script.js'];
-
   // --- robots.txt (R21: derive renders it; build-blog must never write it) ---
   const robotsTpl = templates['robots.txt'];
   const robots = render(robotsTpl, baseVars, { ...opts, name: 'robots.txt' });
@@ -348,7 +356,7 @@ export function renderSiteFrom(cfg, templates, mediaManifest = {}) {
   assertNoForeignFacts(script, cfg, 'site/assets/script.js');
   assertContrast(cfg);
 
-  return { indexHtml, css, robots, script };
+  return { indexHtml, css, robots, script, stylesHref, scriptHref };
 }
 
 function pickPartials(templates) {
@@ -360,6 +368,52 @@ function pickPartials(templates) {
 }
 
 /** 04 §E: contrast is non-negotiable. A brand palette that fails AA fails the build. */
+/**
+ * Content hash for an emitted asset filename.
+ *
+ * WHY THE FILENAMES CARRY A HASH
+ *
+ * vercel.json serves everything under /assets/ with
+ * `max-age=31536000, immutable`. `immutable` is a PROMISE that the bytes behind
+ * a URL will never change, and the browser takes it literally: it will not
+ * revalidate, not send If-None-Match, not ask again for a year.
+ *
+ * /assets/styles.css was a fixed path. So the redesign shipped, the HTML
+ * updated (HTML is not cached that way), and every returning visitor rendered
+ * the NEW markup with the YEAR-OLD stylesheet — every new class falling back to
+ * browser defaults. The site looked broken to exactly the people who had seen
+ * it before, and not at all to anyone testing with a cold cache, which is why
+ * 38/38 live checks and a byte-for-byte comparison of the deployed file both
+ * came back clean.
+ *
+ * Hashing the filename makes the promise true: change one byte and the URL
+ * changes, so `immutable` is a statement of fact rather than a bet.
+ *
+ * FNV-1a, not SHA-256, because this file is PURE — the intake portal imports it
+ * in a browser where node:crypto does not exist and crypto.subtle is async.
+ * This is cache-busting, not integrity: a collision means a stale stylesheet,
+ * not a vulnerability, and 64 bits is far past enough for a handful of files
+ * per build. The IMAGE pipeline uses a real SHA-256 because it runs in Python
+ * with no such constraint.
+ */
+export function assetHash(str) {
+  let h1 = 0x811c9dc5, h2 = 0x01000193;
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
+    h2 = Math.imul(h2 ^ (c + i), 0x85ebca6b) >>> 0;
+  }
+  return (h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0')).slice(0, 12);
+}
+
+/** The two hashed asset URLs, derived from the bytes that will be written. */
+export function assetHrefs(css, script) {
+  return {
+    stylesHref: `/assets/styles.${assetHash(css)}.css`,
+    scriptHref: `/assets/script.${assetHash(script)}.js`,
+  };
+}
+
 export function assertContrast(cfg) {
   const p = cfg.brand.palette;
   const checks = [
