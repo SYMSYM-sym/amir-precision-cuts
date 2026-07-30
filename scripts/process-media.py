@@ -29,6 +29,7 @@ WHAT IT DOES
 
 Run via `npm run derive -- --only=assets`. Standalone: python3 scripts/process-media.py
 """
+import hashlib
 import json
 import os
 import sys
@@ -121,11 +122,23 @@ def process(path, manifest):
             width = src_w
         height = round(src_h * (width / src_w))
         resized = im.resize((width, height), Image.LANCZOS)
-        base = f"{stem}-{width}"
+        # Content-hashed filenames, so these can be cached FOREVER.
+        #
+        # Without a hash the only safe header is max-age=0, and a repeat visitor
+        # re-validates seven images on every page view. With one, the URL changes
+        # whenever the bytes do, so `immutable` is not a gamble.
+        #
+        # The hash never appears in business.config.yaml: the config references a
+        # logical name and site-render.mjs resolves it through the manifest. A
+        # human editing config should not have to know a checksum.
+        tmp_jpg = OUT / f".{stem}-{width}.tmp.jpg"
+        resized.save(tmp_jpg, "JPEG", quality=JPEG_QUALITY, optimize=True, progressive=True)
+        digest = hashlib.sha256(tmp_jpg.read_bytes()).hexdigest()[:8]
+        base = f"{stem}-{width}.{digest}"
         webp = OUT / f"{base}.webp"
         jpg = OUT / f"{base}.jpg"
+        tmp_jpg.rename(jpg)
         resized.save(webp, "WEBP", quality=WEBP_QUALITY, method=6)
-        resized.save(jpg, "JPEG", quality=JPEG_QUALITY, optimize=True, progressive=True)
         entry["variants"].append({
             "width": width, "height": height,
             "webp": f"/assets/img/media/{base}.webp",
@@ -158,6 +171,12 @@ def main():
         print("SKIP  assets-src/media/ is empty")
         return 0
     OUT.mkdir(parents=True, exist_ok=True)
+    # Content-hashed names mean a changed image writes a NEW file rather than
+    # overwriting one. Without a sweep, every edit leaves its predecessor behind
+    # and the deployed site grows a tail of unreachable images forever.
+    for stale in OUT.glob("*"):
+        if stale.is_file():
+            stale.unlink()
     manifest = {}
     for p in sources:
         process(p, manifest)

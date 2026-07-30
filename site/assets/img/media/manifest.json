@@ -2,24 +2,24 @@
   "01-shears": {
     "height": 896,
     "source": "01-shears.png",
-    "src": "/assets/img/media/01-shears-1200.jpg",
-    "srcset_jpg": "/assets/img/media/01-shears-800.jpg 800w, /assets/img/media/01-shears-1200.jpg 1200w",
-    "srcset_webp": "/assets/img/media/01-shears-800.webp 800w, /assets/img/media/01-shears-1200.webp 1200w",
+    "src": "/assets/img/media/01-shears-1200.c57f6085.jpg",
+    "srcset_jpg": "/assets/img/media/01-shears-800.a92816b1.jpg 800w, /assets/img/media/01-shears-1200.c57f6085.jpg 1200w",
+    "srcset_webp": "/assets/img/media/01-shears-800.a92816b1.webp 800w, /assets/img/media/01-shears-1200.c57f6085.webp 1200w",
     "trimmed": false,
     "variants": [
       {
         "height": 896,
-        "jpg": "/assets/img/media/01-shears-1200.jpg",
+        "jpg": "/assets/img/media/01-shears-1200.c57f6085.jpg",
         "jpg_bytes": 102041,
-        "webp": "/assets/img/media/01-shears-1200.webp",
+        "webp": "/assets/img/media/01-shears-1200.c57f6085.webp",
         "webp_bytes": 39922,
         "width": 1200
       },
       {
         "height": 597,
-        "jpg": "/assets/img/media/01-shears-800.jpg",
+        "jpg": "/assets/img/media/01-shears-800.a92816b1.jpg",
         "jpg_bytes": 32869,
-        "webp": "/assets/img/media/01-shears-800.webp",
+        "webp": "/assets/img/media/01-shears-800.a92816b1.webp",
         "webp_bytes": 6582,
         "width": 800
       }
@@ -29,24 +29,24 @@
   "02-profile": {
     "height": 896,
     "source": "02-profile.png",
-    "src": "/assets/img/media/02-profile-1200.jpg",
-    "srcset_jpg": "/assets/img/media/02-profile-800.jpg 800w, /assets/img/media/02-profile-1200.jpg 1200w",
-    "srcset_webp": "/assets/img/media/02-profile-800.webp 800w, /assets/img/media/02-profile-1200.webp 1200w",
+    "src": "/assets/img/media/02-profile-1200.49a7a77b.jpg",
+    "srcset_jpg": "/assets/img/media/02-profile-800.b8a6b996.jpg 800w, /assets/img/media/02-profile-1200.49a7a77b.jpg 1200w",
+    "srcset_webp": "/assets/img/media/02-profile-800.b8a6b996.webp 800w, /assets/img/media/02-profile-1200.49a7a77b.webp 1200w",
     "trimmed": false,
     "variants": [
       {
         "height": 896,
-        "jpg": "/assets/img/media/02-profile-1200.jpg",
+        "jpg": "/assets/img/media/02-profile-1200.49a7a77b.jpg",
         "jpg_bytes": 94604,
-        "webp": "/assets/img/media/02-profile-1200.webp",
+        "webp": "/assets/img/media/02-profile-1200.49a7a77b.webp",
         "webp_bytes": 31178,
         "width": 1200
       },
       {
         "height": 597,
-        "jpg": "/assets/img/media/02-profile-800.jpg",
+        "jpg": "/assets/img/media/02-profile-800.b8a6b996.jpg",
         "jpg_bytes": 33135,
-        "webp": "/assets/img/media/02-profile-800.webp",
+        "webp": "/assets/img/media/02-profile-800.b8a6b996.webp",
         "webp_bytes": 7754,
         "width": 800
       }
@@ -56,24 +56,24 @@
   "03-steam": {
     "height": 896,
     "source": "03-steam.png",
-    "src": "/assets/img/media/03-steam-1200.jpg",
-    "srcset_jpg": "/assets/img/media/03-steam-800.jpg 800w, /assets/img/media/03-steam-1200.jpg 1200w",
-    "srcset_webp": "/assets/img/media/03-steam-800.webp 800w, /assets/img/media/03-steam-1200.webp 1200w",
+    "src": "/assets/img/media/03-steam-1200.fd4a7758.jpg",
+    "srcset_jpg": "/assets/img/media/03-steam-800.8c24cffd.jpg 800w, /assets/img/media/03-steam-1200.fd4a7758.jpg 1200w",
+    "srcset_webp": "/assets/img/media/03-steam-800.8c24cffd.webp 800w, /assets/img/media/03-steam-1200.fd4a7758.webp 1200w",
     "trimmed": false,
     "variants": [
       {
         "height": 896,
-        "jpg": "/assets/img/media/03-steam-1200.jpg",
+        "jpg": "/assets/img/media/03-steam-1200.fd4a7758.jpg",
         "jpg_bytes": 114776,
-        "webp": "/assets/img/media/03-steam-1200.webp",
+        "webp": "/assets/img/media/03-steam-1200.fd4a7758.webp",
         "webp_bytes": 50228,
         "width": 1200
       },
       {
         "height": 597,
-        "jpg": "/assets/img/media/03-steam-800.jpg",
+        "jpg": "/assets/img/media/03-steam-800.8c24cffd.jpg",
         "jpg_bytes": 40306,
-        "webp": "/assets/img/media/03-steam-800.webp",
+        "webp": "/assets/img/media/03-steam-800.8c24cffd.webp",
         "webp_bytes": 12508,
         "width": 800
       }
@@ -83,24 +83,24 @@
   "04-light": {
     "height": 720,
     "source": "04-light.png",
-    "src": "/assets/img/media/04-light-1014.jpg",
-    "srcset_jpg": "/assets/img/media/04-light-800.jpg 800w, /assets/img/media/04-light-1014.jpg 1014w",
-    "srcset_webp": "/assets/img/media/04-light-800.webp 800w, /assets/img/media/04-light-1014.webp 1014w",
+    "src": "/assets/img/media/04-light-1014.55e2d016.jpg",
+    "srcset_jpg": "/assets/img/media/04-light-800.20c6e1d9.jpg 800w, /assets/img/media/04-light-1014.55e2d016.jpg 1014w",
+    "srcset_webp": "/assets/img/media/04-light-800.20c6e1d9.webp 800w, /assets/img/media/04-light-1014.55e2d016.webp 1014w",
     "trimmed": true,
     "variants": [
       {
         "height": 720,
-        "jpg": "/assets/img/media/04-light-1014.jpg",
+        "jpg": "/assets/img/media/04-light-1014.55e2d016.jpg",
         "jpg_bytes": 72549,
-        "webp": "/assets/img/media/04-light-1014.webp",
+        "webp": "/assets/img/media/04-light-1014.55e2d016.webp",
         "webp_bytes": 22916,
         "width": 1014
       },
       {
         "height": 568,
-        "jpg": "/assets/img/media/04-light-800.jpg",
+        "jpg": "/assets/img/media/04-light-800.20c6e1d9.jpg",
         "jpg_bytes": 40223,
-        "webp": "/assets/img/media/04-light-800.webp",
+        "webp": "/assets/img/media/04-light-800.20c6e1d9.webp",
         "webp_bytes": 10332,
         "width": 800
       }
@@ -110,24 +110,24 @@
   "05-beard": {
     "height": 896,
     "source": "05-beard.png",
-    "src": "/assets/img/media/05-beard-1200.jpg",
-    "srcset_jpg": "/assets/img/media/05-beard-800.jpg 800w, /assets/img/media/05-beard-1200.jpg 1200w",
-    "srcset_webp": "/assets/img/media/05-beard-800.webp 800w, /assets/img/media/05-beard-1200.webp 1200w",
+    "src": "/assets/img/media/05-beard-1200.4c6725df.jpg",
+    "srcset_jpg": "/assets/img/media/05-beard-800.afbdf9f1.jpg 800w, /assets/img/media/05-beard-1200.4c6725df.jpg 1200w",
+    "srcset_webp": "/assets/img/media/05-beard-800.afbdf9f1.webp 800w, /assets/img/media/05-beard-1200.4c6725df.webp 1200w",
     "trimmed": false,
     "variants": [
       {
         "height": 896,
-        "jpg": "/assets/img/media/05-beard-1200.jpg",
+        "jpg": "/assets/img/media/05-beard-1200.4c6725df.jpg",
         "jpg_bytes": 71926,
-        "webp": "/assets/img/media/05-beard-1200.webp",
+        "webp": "/assets/img/media/05-beard-1200.4c6725df.webp",
         "webp_bytes": 16522,
         "width": 1200
       },
       {
         "height": 597,
-        "jpg": "/assets/img/media/05-beard-800.jpg",
+        "jpg": "/assets/img/media/05-beard-800.afbdf9f1.jpg",
         "jpg_bytes": 25744,
-        "webp": "/assets/img/media/05-beard-800.webp",
+        "webp": "/assets/img/media/05-beard-800.afbdf9f1.webp",
         "webp_bytes": 7404,
         "width": 800
       }
@@ -137,24 +137,24 @@
   "06-razor": {
     "height": 844,
     "source": "06-razor.png",
-    "src": "/assets/img/media/06-razor-1146.jpg",
-    "srcset_jpg": "/assets/img/media/06-razor-800.jpg 800w, /assets/img/media/06-razor-1146.jpg 1146w",
-    "srcset_webp": "/assets/img/media/06-razor-800.webp 800w, /assets/img/media/06-razor-1146.webp 1146w",
+    "src": "/assets/img/media/06-razor-1146.1187d26a.jpg",
+    "srcset_jpg": "/assets/img/media/06-razor-800.5cbdee36.jpg 800w, /assets/img/media/06-razor-1146.1187d26a.jpg 1146w",
+    "srcset_webp": "/assets/img/media/06-razor-800.5cbdee36.webp 800w, /assets/img/media/06-razor-1146.1187d26a.webp 1146w",
     "trimmed": true,
     "variants": [
       {
         "height": 844,
-        "jpg": "/assets/img/media/06-razor-1146.jpg",
+        "jpg": "/assets/img/media/06-razor-1146.1187d26a.jpg",
         "jpg_bytes": 118435,
-        "webp": "/assets/img/media/06-razor-1146.webp",
+        "webp": "/assets/img/media/06-razor-1146.1187d26a.webp",
         "webp_bytes": 55612,
         "width": 1146
       },
       {
         "height": 589,
-        "jpg": "/assets/img/media/06-razor-800.jpg",
+        "jpg": "/assets/img/media/06-razor-800.5cbdee36.jpg",
         "jpg_bytes": 50040,
-        "webp": "/assets/img/media/06-razor-800.webp",
+        "webp": "/assets/img/media/06-razor-800.5cbdee36.webp",
         "webp_bytes": 16948,
         "width": 800
       }
@@ -164,24 +164,24 @@
   "hero": {
     "height": 768,
     "source": "hero.png",
-    "src": "/assets/img/media/hero-1376.jpg",
-    "srcset_jpg": "/assets/img/media/hero-800.jpg 800w, /assets/img/media/hero-1376.jpg 1376w",
-    "srcset_webp": "/assets/img/media/hero-800.webp 800w, /assets/img/media/hero-1376.webp 1376w",
+    "src": "/assets/img/media/hero-1376.b9e6f298.jpg",
+    "srcset_jpg": "/assets/img/media/hero-800.4e07ec32.jpg 800w, /assets/img/media/hero-1376.b9e6f298.jpg 1376w",
+    "srcset_webp": "/assets/img/media/hero-800.4e07ec32.webp 800w, /assets/img/media/hero-1376.b9e6f298.webp 1376w",
     "trimmed": false,
     "variants": [
       {
         "height": 768,
-        "jpg": "/assets/img/media/hero-1376.jpg",
+        "jpg": "/assets/img/media/hero-1376.b9e6f298.jpg",
         "jpg_bytes": 97258,
-        "webp": "/assets/img/media/hero-1376.webp",
+        "webp": "/assets/img/media/hero-1376.b9e6f298.webp",
         "webp_bytes": 32296,
         "width": 1376
       },
       {
         "height": 447,
-        "jpg": "/assets/img/media/hero-800.jpg",
+        "jpg": "/assets/img/media/hero-800.4e07ec32.jpg",
         "jpg_bytes": 22321,
-        "webp": "/assets/img/media/hero-800.webp",
+        "webp": "/assets/img/media/hero-800.4e07ec32.webp",
         "webp_bytes": 4932,
         "width": 800
       }
