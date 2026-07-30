@@ -52,3 +52,15 @@ export const MAX_TOPICS_PER_RUN = cfg.content.limits.max_topics_per_run;
 export const MAX_REGEN_PER_TOPIC = cfg.content.limits.max_regen_per_topic;
 export const MAX_API_CALLS_PER_RUN = cfg.content.limits.max_api_calls_per_run;
 export const MAX_DERIVE_API_CALLS = cfg.content.limits.max_derive_api_calls;
+
+/**
+ * How many articles the sitemap, feed.xml, feed.json and llms.txt carry.
+ *
+ * Lives HERE, not in build-blog.mjs, because verify-live.mjs has to know it:
+ * the blog index lists every article while these four are capped, so a
+ * consistency check that compares them needs the cap to compute what "agreeing"
+ * means. When it was a private const in build-blog.mjs, verify asserted
+ * sitemap === cards and went red the moment a site published its 41st article
+ * (§14 A1). Two files needing one number is exactly what constants.mjs is for.
+ */
+export const FEED_MAX = 40;

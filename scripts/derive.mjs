@@ -461,6 +461,39 @@ export function buildCronLines(c) {
   return lines.join('\n');
 }
 
+/**
+ * The dashboard's Vercel cron — the SAME cadence, in Vercel's dialect.
+ *
+ * §14 A12 says the cadence lives in four places. Three of them were threaded
+ * through config; `dashboard/vercel.json` was not, and it still carried the
+ * reference build's schedule: `0 16 * * 1,4` — Monday and Thursday — in a repo
+ * whose config says Tuesday and Friday. A backstop cron firing on the wrong two
+ * days is worse than no backstop, because the dashboard reports it as healthy.
+ *
+ * Vercel crons are UTC-only with no DST awareness, so both offsets are emitted
+ * (as GitHub's are). Firing an hour early or late is harmless for a backstop;
+ * firing on the wrong DAY is not.
+ */
+export function buildVercelCrons(c) {
+  const tz = c.location.timezone;
+  const hhmm = c.content.publish_hour_local;
+  const seen = new Set();
+  const crons = [];
+  for (const monthIndex of [0, 6]) {
+    const { hour, minute, dayShift } = utcHourFor(tz, hhmm, monthIndex);
+    const days = c.content.cadence_days
+      .map((d) => (DAY_CRON[d] + dayShift + 7) % 7)
+      .sort((a, b) => a - b)
+      .join(',');
+    // Offset from the GitHub run so the backstop lands after it, not with it.
+    const schedule = `${(minute + 47) % 60} ${hour} * * ${days}`;
+    if (seen.has(schedule)) continue;
+    seen.add(schedule);
+    crons.push({ path: '/api/cron/publish', schedule });
+  }
+  return `${JSON.stringify({ crons }, null, 2)}\n`;
+}
+
 function buildWorkflows(c) {
   const src = join(ROOT, 'templates', 'workflows');
   const dest = join(ROOT, '.github', 'workflows');
@@ -613,6 +646,9 @@ export async function derive(argv = process.argv.slice(2)) {
           mkdirSync(dirname(p), { recursive: true });
           writeFileSync(p, buildDashboardConstants(c), 'utf8');
           console.log(`WRITE ${rel(p)}`);
+          const vj = join(ROOT, 'dashboard', 'vercel.json');
+          writeFileSync(vj, buildVercelCrons(c), 'utf8');
+          console.log(`WRITE ${rel(vj)}`);
         } else {
           console.log('SKIP  dashboard/ (not present)');
         }

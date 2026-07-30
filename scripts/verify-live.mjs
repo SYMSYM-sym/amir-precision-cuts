@@ -33,6 +33,22 @@ try {
   ({ cfg } = await import('./paths.mjs'));
 } catch { /* running without node_modules — argv/env must supply the domain */ }
 
+/**
+ * How many articles the sitemap and feeds carry. Imported when it can be, and
+ * otherwise duplicated — this script must run in a bare CI job with no
+ * `npm install`, and constants.mjs pulls in js-yaml through paths.mjs.
+ *
+ * A duplicated constant is a drift risk, so `pipeline.test.mjs` asserts that
+ * this fallback equals constants.mjs. Duplication that a test watches is a
+ * trade-off; duplication that nothing watches is the bug.
+ */
+const FEED_MAX_FALLBACK = 40;
+let FEED_MAX = FEED_MAX_FALLBACK;
+try {
+  ({ FEED_MAX } = await import('./constants.mjs'));
+} catch { /* bare CI — the fallback above is asserted equal by the test suite */ }
+export { FEED_MAX_FALLBACK };
+
 const argUrl = process.argv[2];
 // Keep an explicit scheme when one is given, so the built site can be verified
 // against a local server before it is ever deployed. Everything else defaults
@@ -207,7 +223,34 @@ async function main() {
   ok('llms.txt lists titled articles', blogUrls.length === 0 || /\[[^\]]+\]\(https?:/.test(llms.body));
 
   // 8. Consistency — the silent-failure detector
-  ok('consistency sitemap==index cards', blogUrls.length === cardCount, `sitemap=${blogUrls.length} cards=${cardCount}`);
+  //
+  // §14 A1: the sitemap and both feeds are capped at FEED_MAX (40); the blog
+  // index is NOT, because it paginates client-side and should list everything.
+  // A flat `sitemap === cards` therefore holds for the first forty articles and
+  // then fails on the forty-first — turning a routine milestone into a red
+  // health check, and training whoever is on call to ignore it. That is worse
+  // than having no check.
+  //
+  // The assertion that survives the cap and still catches the real failure
+  // (index and sitemap disagreeing about what exists) is: the sitemap carries
+  // exactly min(cards, cap) URLs, and every sitemap URL is one the index links.
+  const expectedInSitemap = Math.min(cardCount, FEED_MAX);
+  ok(
+    'consistency sitemap==min(index cards, cap)',
+    blogUrls.length === expectedInSitemap,
+    `sitemap=${blogUrls.length} cards=${cardCount} cap=${FEED_MAX} expected=${expectedInSitemap}`,
+  );
+  const cardHrefs = new Set(
+    [...blog.body.matchAll(/href="(\/blog\/[^"#?]+)\/?"/g)].map((m) => m[1].replace(/\/$/, '')),
+  );
+  const orphanSitemapUrls = blogUrls
+    .map((u) => new URL(u, BASE).pathname.replace(/\/$/, ''))
+    .filter((p) => !cardHrefs.has(p));
+  ok(
+    'every sitemap URL is linked from /blog/',
+    orphanSitemapUrls.length === 0,
+    orphanSitemapUrls.length ? `orphans: ${orphanSitemapUrls.slice(0, 3).join(', ')}` : `${blogUrls.length} checked`,
+  );
   ok('consistency sitemap==feed.xml items', blogUrls.length === fxItems, `sitemap=${blogUrls.length} feed.xml=${fxItems}`);
   ok('consistency sitemap==feed.json items', blogUrls.length === fjItems, `sitemap=${blogUrls.length} feed.json=${fjItems}`);
   ok('every sitemap article is live', liveArticles === blogUrls.length, `${liveArticles}/${blogUrls.length} live`);

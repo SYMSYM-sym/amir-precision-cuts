@@ -2,19 +2,11 @@
   "crons": [
     {
       "path": "/api/cron/publish",
-      "schedule": "0 16 * * 1,4"
+      "schedule": "47 17 * * 2,5"
     },
     {
       "path": "/api/cron/publish",
-      "schedule": "0 17 * * 1,4"
-    },
-    {
-      "path": "/api/cron/publish",
-      "schedule": "0 14 * * 5"
-    },
-    {
-      "path": "/api/cron/publish",
-      "schedule": "0 15 * * 5"
+      "schedule": "47 16 * * 2,5"
     }
   ]
 }

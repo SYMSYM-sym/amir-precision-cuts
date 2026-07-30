@@ -9,6 +9,28 @@
  * queued, not published, not live. Nothing noticed, because nothing checked.
  */
 import { loadQueue, loadPublished, loadNeedsReview } from './pick-topic.mjs';
+import { cfg } from './paths.mjs';
+
+/**
+ * Queue runway, in days.
+ *
+ * The dashboard computes this and shows a banner under 21 days — but the
+ * dashboard is a page someone has to open. Nothing on the automated path ever
+ * looked at the queue, so the failure mode was: the queue drains to zero, and
+ * the first anyone hears about it is `publish-article` failing with "No topic
+ * could be published this run" on a Tuesday morning. The health check runs
+ * weekly and already opens an issue on failure; this is the cheapest place to
+ * put the warning, and 15 days of runway is two weeks of notice.
+ *
+ * A low queue is a WARNING, not a failure: an empty queue is a content problem,
+ * not a broken site, and turning the weekly health check red for it would train
+ * whoever is on call to ignore a red health check.
+ */
+export function queueRunway(queueLength, c = cfg) {
+  const perWeek = (c.content.cadence_days || []).length || 1;
+  const perDay = perWeek / 7;
+  return { days: Math.round(queueLength / perDay), perWeek };
+}
 
 export function checkInvariants({ queue, published, needsReview }) {
   const problems = [];
@@ -54,6 +76,26 @@ function main() {
     process.exit(1);
   }
   console.log('Ledger invariant holds: every topic is in exactly one ledger.');
+
+  const { days, perWeek } = queueRunway(queue.length);
+  console.log(`Queue runway: ~${days} day(s) at ${perWeek}/week.`);
+  if (queue.length === 0) {
+    console.warn(
+      '\nWARNING: the queue is EMPTY. The next scheduled publish will fail.\n'
+      + '  npm run derive -- --only=queue --append --count=25',
+    );
+  } else if (days < 15) {
+    console.warn(
+      `\nWARNING: queue runway is ~${days} day(s) — under the 15-day reseed threshold.\n`
+      + '  npm run derive -- --only=queue --append --count=25\n'
+      + '(--append never rewrites an existing entry; --force on a repo with publish '
+      + 'history is refused outright.)',
+    );
+  }
+  const nr = needsReview.length;
+  if (nr) {
+    console.warn(`\nWARNING: ${nr} topic(s) awaiting triage in needs-review.yaml — \`npm run requeue -- --list\`.`);
+  }
 }
 
 if (process.argv[1] && process.argv[1].endsWith('assert-invariants.mjs')) main();

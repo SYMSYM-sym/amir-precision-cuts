@@ -26,6 +26,14 @@ jobs:
       - name: Verify live site
         run: node scripts/verify-live.mjs
 
+      # R5 layer 2 is about the site being up; this is about it having anything
+      # left to say. The ledger check prints queue runway and warns under 15
+      # days, and warns on untriaged needs-review entries. It does NOT fail the
+      # job for either: an empty queue is a content problem, not an outage, and a
+      # health check that goes red for content trains people to ignore red.
+      - name: Ledger invariant + queue runway
+        run: node scripts/assert-invariants.mjs
+
       # R5 layer 1: say something when it breaks. GitHub emails the actor on a
       # failed scheduled run, but only the actor -- this makes the failure
       # visible in the repo itself, where anyone looking will see it.

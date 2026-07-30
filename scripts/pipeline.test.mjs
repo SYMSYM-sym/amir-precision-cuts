@@ -467,3 +467,19 @@ describe('publish crons are derived, and cover DST [NEW]', () => {
     assert.match(wf, /set -euo pipefail/);
   });
 });
+
+describe('duplicated constants stay in sync', () => {
+  test('verify-live.mjs FEED_MAX_FALLBACK equals constants.mjs FEED_MAX', async () => {
+    // verify-live.mjs must run in a bare CI job with no node_modules, so it
+    // cannot statically import constants.mjs and carries its own fallback.
+    // This is the test that makes that duplication safe: bump the cap in one
+    // place and this goes red rather than the health check going red later,
+    // against a live site, at article 41.
+    const { FEED_MAX } = await import('./constants.mjs');
+    const { FEED_MAX_FALLBACK } = await import('./verify-live.mjs');
+    assert.equal(
+      FEED_MAX_FALLBACK, FEED_MAX,
+      'verify-live.mjs\'s FEED_MAX_FALLBACK has drifted from constants.mjs FEED_MAX',
+    );
+  });
+});
