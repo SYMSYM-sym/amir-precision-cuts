@@ -49,9 +49,16 @@
       {{#if derived.has_contact}}
       <div class="visit__row">
         <dt>Contact</dt>
-        <dd>
+        {{! Each channel is its own <a> and the line break comes from CSS, not
+             from a <br /> between them. With manual breaks the markup has to
+             know which channel comes first: a client who publishes an email but
+             no phone got a leading <br /> and a blank first line, and adding
+             Instagram as a third optional channel turns that into six orderings
+             to get right instead of one rule. }}
+        <dd class="visit__contact">
           {{#if ?booking.publish_phone}}<a href="tel:{{booking.phone}}">{{derived.phone_display}}</a>{{/if}}
-          {{#if ?booking.publish_email}}<br /><a href="mailto:{{booking.email}}">{{booking.email}}</a>{{/if}}
+          {{#if ?booking.publish_email}}<a href="mailto:{{booking.email}}">{{booking.email}}</a>{{/if}}
+          {{#if derived.has_instagram}}<a href="{{booking.social.instagram}}" rel="noopener" target="_blank">{{derived.instagram_handle}}</a>{{/if}}
         </dd>
       </div>
       {{/if}}

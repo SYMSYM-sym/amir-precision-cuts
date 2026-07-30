@@ -16,9 +16,10 @@
         {{#if derived.has_contact}}
         <div class="visit__row">
           <p class="visit__row-label">Contact</p>
-          <p class="visit__row-value">
+          <p class="visit__row-value visit__contact">
             {{#if ?booking.publish_phone}}<a href="tel:{{booking.phone}}">Call {{business.short_name}}</a>{{/if}}
             {{#if ?booking.publish_email}}<a href="mailto:{{booking.email}}">{{booking.email}}</a>{{/if}}
+            {{#if derived.has_instagram}}<a href="{{booking.social.instagram}}" rel="noopener" target="_blank">{{derived.instagram_handle}}</a>{{/if}}
           </p>
         </div>
         {{/if}}

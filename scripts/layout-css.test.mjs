@@ -27,7 +27,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { loadConfig, ROOT } from './paths.mjs';
-import { LAYOUT_VARIANTS } from './config-schema.mjs';
+import { LAYOUT_VARIANTS, buildDerived } from './config-schema.mjs';
 import { renderSiteFrom } from './site-render.mjs';
 import { loadTemplateSet } from './derive-site.mjs';
 
@@ -262,4 +262,74 @@ describe('assets that are cached forever have content-hashed URLs', () => {
       );
     });
   }
+});
+
+
+/**
+ * The Contact row is built from three INDEPENDENTLY optional channels.
+ *
+ * Both fixtures now publish something, which is realistic and also means the
+ * empty case stops being covered — the same gap that let "Encino, Encino" ship
+ * (no fixture had neighbourhood == city, so no test ever rendered it). So the
+ * zero case is asserted here by taking a real config and removing them.
+ *
+ * The Instagram handle is derived from the URL rather than stored beside it,
+ * so the parsing is worth pinning too: the URL a client pastes comes off the
+ * app's share sheet as often as from a browser bar.
+ */
+describe('the Visit contact row handles every combination of channels', () => {
+  const templates = noFixture ? null : loadTemplateSet(ROOT);
+  const VISIT_VARIANTS = { classic: 'visit.stacked', editorial: 'visit.split' };
+
+  for (const [variant, tpl] of Object.entries(VISIT_VARIANTS)) {
+    test(`${variant} (${tpl}): no channels published means no Contact row`, { skip: noFixture }, () => {
+      const cfg = loadConfig(FIXTURE);
+      cfg.brand.layout_variant = variant;
+      cfg.booking.publish_phone = false;
+      cfg.booking.publish_email = false;
+      delete cfg.booking.social;
+      // loadConfig derives once at load; mutating the config afterwards does
+      // not re-derive it, and a stale derived block is worse than none — the
+      // flags would still say a channel exists while the value is gone.
+      cfg.derived = buildDerived(cfg);
+      const { indexHtml } = renderSiteFrom(cfg, templates);
+      assert.ok(!/>Contact</.test(indexHtml),
+        `${variant} rendered a Contact row with nothing to put in it`);
+    });
+
+    test(`${variant} (${tpl}): Instagram alone still opens the row`, { skip: noFixture }, () => {
+      const cfg = loadConfig(FIXTURE);
+      cfg.brand.layout_variant = variant;
+      cfg.booking.publish_phone = false;
+      cfg.booking.publish_email = false;
+      cfg.booking.social = { instagram: 'https://www.instagram.com/testhandle' };
+      cfg.derived = buildDerived(cfg);
+      const { indexHtml } = renderSiteFrom(cfg, templates);
+      assert.ok(/>Contact</.test(indexHtml),
+        `${variant} hid the Contact row for a business whose only published channel is Instagram`);
+      assert.ok(indexHtml.includes('@testhandle'),
+        `${variant} did not render the handle`);
+      assert.ok(indexHtml.includes('https://www.instagram.com/testhandle'),
+        `${variant} rendered the handle but not the link`);
+    });
+  }
+
+  test('the handle is parsed from however the URL was pasted', { skip: noFixture }, () => {
+    const cfg = loadConfig(FIXTURE);
+    const cases = [
+      ['https://www.instagram.com/amir_cuts', '@amir_cuts'],
+      ['https://instagram.com/amir_cuts', '@amir_cuts'],
+      ['https://www.instagram.com/amir_cuts/', '@amir_cuts'],
+      ['https://www.instagram.com/amir_cuts?igsh=MXhhbGY', '@amir_cuts'],
+      ['https://www.instagram.com/amir.cuts/reels/', '@amir.cuts'],
+    ];
+    for (const [url, want] of cases) {
+      const c = { ...cfg, booking: { ...cfg.booking, social: { instagram: url } } };
+      assert.equal(buildDerived(c).instagram_handle, want, `parsing ${url}`);
+    }
+    // Unparseable must be undefined, not "@" — the engine is strict, so an
+    // undefined value throws at build time instead of printing a bare @ live.
+    const bad = { ...cfg, booking: { ...cfg.booking, social: { instagram: 'not-a-url' } } };
+    assert.equal(buildDerived(bad).instagram_handle, undefined);
+  });
 });

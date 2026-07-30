@@ -58,6 +58,13 @@ booking:
   phone: ""
   publish_email: false
   email: ""
+  # Present so the "reachable ONLY on social" case is actually rendered by a
+  # test. This fixture publishes neither a phone nor an email, so before this
+  # key the Visit section's whole Contact row was absent from every test run —
+  # and derived.has_contact did not count Instagram, which is precisely the
+  # combination a real appointment-only client can arrive with.
+  social:
+    instagram: "https://www.instagram.com/ledgerwoodlash"
 
 homepage:
   about_body: >-

@@ -504,6 +504,13 @@ a.topbar__item:hover { color: var(--accent); }
 .visit__ledger dt { margin: 0; font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--muted); font-weight: 600; }
 .visit__ledger dd { margin: 0; line-height: 1.5; }
 .visit__ledger dd.muted { color: var(--muted); font-size: var(--step--1); line-height: 1.6; }
+/* SHARED — visit.stacked (compact, classic) and visit.split (editorial,
+   gallery) both use it. Every contact channel is optional and independently
+   configured, so the break between them is a rule here rather than a <br /> in
+   the markup: that way no template has to know which channel comes first, and
+   adding a third one does not multiply the orderings that have to be correct. */
+.visit__contact a { display: block; }
+.visit__contact a + a { margin-top: .35em; }
 .visit__ledger a { text-decoration: none; border-bottom: 1px solid var(--line-strong); }
 .visit__ledger a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 /* The address at display size. It is the reason the page exists for a walk-in

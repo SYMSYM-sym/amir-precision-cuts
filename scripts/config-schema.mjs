@@ -579,6 +579,26 @@ export function buildDerived(c) {
 
   const socialUrls = Object.values(booking.social || {}).filter(Boolean);
 
+  /**
+   * The Instagram HANDLE, for places that want "@name" rather than a URL.
+   *
+   * Derived from the URL already in config rather than added as a second key,
+   * because two fields holding the same fact drift: someone changes the account
+   * and updates one of them. The URL is the source of truth; the handle is a
+   * rendering of it.
+   *
+   * Tolerant of how the URL is actually written — with or without www, with or
+   * without a trailing slash, with a ?igsh= tracking parameter pasted from the
+   * app's share sheet. Returns undefined for anything it cannot parse, so the
+   * strict template engine throws rather than printing "@" on a live page.
+   */
+  const instagramHandle = (() => {
+    const url = booking.social?.instagram;
+    if (!url) return undefined;
+    const m = /instagram\.com\/+([A-Za-z0-9._]+)/.exec(String(url));
+    return m ? `@${m[1]}` : undefined;
+  })();
+
   const taglineNamesCity = new RegExp(
     `\\b${loc.address_city.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i',
   ).test(business.tagline || '');
@@ -734,7 +754,16 @@ export function buildDerived(c) {
       return `every ${d.slice(0, -1).join(', ')} and ${d[d.length - 1]}`;
     })(),
     booking_line_period: `${bookingLine}.`,
-    has_contact: booking.publish_phone === true || booking.publish_email === true,
+    // Instagram counts as a way to reach the shop, not just a badge in the
+    // footer: for an appointment-only business with no booking URL, a DM is
+    // often how an appointment actually gets made. has_contact gates the whole
+    // Contact row, so leaving Instagram out of it hid the row entirely for a
+    // client whose only published channel is Instagram.
+    instagram_handle: instagramHandle,
+    has_instagram: Boolean(instagramHandle),
+    has_contact: booking.publish_phone === true
+      || booking.publish_email === true
+      || Boolean(instagramHandle),
 
     // seo copy formulas (07 §B)
     // Only append the city when the tagline has not already said it. The naive
