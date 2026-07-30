@@ -73,6 +73,21 @@ table { border-collapse: collapse; width: 100%; }
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
+/* WCAG 2.4.1 (Bypass Blocks, Level A). Without this a keyboard user tabs through
+   the phone link, the brand and six nav items before reaching the content — on
+   every page. axe does not flag the omission because the landmark rule it uses
+   is satisfied by <main> alone, which is why this was missing: the automated
+   check passed and nobody tabbed through the page. */
+.skip-link {
+  position: absolute; left: 50%; top: 0; transform: translate(-50%, -110%);
+  z-index: 200; padding: .7em 1.2em;
+  background: var(--accent); color: var(--bg);
+  font-size: var(--step--1); font-weight: 600; text-decoration: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  transition: transform .18s var(--ease);
+}
+.skip-link:focus { transform: translate(-50%, 0); }
+
 /* ---------- primitives ---------- */
 .container { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--pad); }
 .section { padding-block: var(--section-y); }
@@ -200,9 +215,24 @@ a.topbar__item:hover { color: var(--accent); }
 .footer__base p { margin: 0; }
 
 /* ---------- reveal ---------- */
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
-.reveal.is-visible { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
+/* Slides, does not fade.
+ *
+ * This used to animate opacity from 0. The settled page passes WCAG AA on every
+ * node, but an automated audit does not wait for a transition to settle: axe
+ * caught 61 nodes mid-fade at 1.1:1 contrast, because opacity is folded into the
+ * effective foreground colour. Gold accent text at low alpha over a near-black
+ * background computes to #1f1c13, which is a real 600ms window of unreadable
+ * text and a Lighthouse accessibility failure that no amount of "but it looks
+ * fine" argues away.
+ *
+ * Translating instead keeps the motion and removes the window entirely: the text
+ * is at full contrast for every frame it is on screen. Clipping the parent
+ * hides the incoming element until it arrives, so nothing floats over adjacent
+ * content on the way in.
+ */
+.reveal { transform: translateY(14px); transition: transform .55s var(--ease); will-change: transform; }
+.reveal.is-visible { transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { transform: none; transition: none; } }
 
 /* ==========================================================================
    VARIANT: classic

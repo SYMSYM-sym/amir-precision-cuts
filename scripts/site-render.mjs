@@ -286,6 +286,12 @@ export function renderSiteFrom(cfg, templates) {
     IS_CLASSIC: variant.label === 'classic',
   }, { ...opts, name: 'styles.css' });
 
+  // --- script.js ---
+  // Copied, not rendered: it is the DOM-contract JS and holds no config values.
+  // It still goes through the foreign-facts gate, because "this file obviously
+  // has no business facts in it" is exactly the assumption that lets one in.
+  const script = templates['script.js'];
+
   // --- robots.txt (R21: derive renders it; build-blog must never write it) ---
   const robotsTpl = templates['robots.txt'];
   const robots = render(robotsTpl, baseVars, { ...opts, name: 'robots.txt' });
@@ -295,9 +301,10 @@ export function renderSiteFrom(cfg, templates) {
   assertNoForeignFacts(indexHtml, cfg, 'site/index.html');
   assertNoForeignFacts(css, cfg, 'site/assets/styles.css');
   assertNoForeignFacts(robots, cfg, 'robots.txt');
+  assertNoForeignFacts(script, cfg, 'site/assets/script.js');
   assertContrast(cfg);
 
-  return { indexHtml, css, robots };
+  return { indexHtml, css, robots, script };
 }
 
 function pickPartials(templates) {

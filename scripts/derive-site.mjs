@@ -21,6 +21,13 @@ export function loadTemplateSet(root = ROOT) {
     page: readFileSync(join(T, 'page.html'), 'utf8'),
     'styles.css': readFileSync(join(T, 'styles.css'), 'utf8'),
     'robots.txt': readFileSync(join(T, 'robots.txt'), 'utf8'),
+    // script.js used to live at site/assets/script.js — a HAND-AUTHORED source
+    // file inside the DERIVED output directory. `rm -rf site && npm run derive`
+    // (the AF5 delete-and-rebuild test) destroyed it and could not bring it
+    // back, because nothing generated it. Anything under site/ must be
+    // reproducible from templates/ and business.config.yaml, or site/ is not
+    // output. It carries no business facts, so derive copies it verbatim.
+    'script.js': readFileSync(join(T, 'script.js'), 'utf8'),
   };
   for (const f of readdirSync(join(T, 'partials'))) {
     if (f.endsWith('.html')) out[`partials/${basename(f, '.html')}`] = readFileSync(join(T, 'partials', f), 'utf8');
@@ -32,12 +39,13 @@ export function loadTemplateSet(root = ROOT) {
 }
 
 export async function renderSite(cfg, { write = true } = {}) {
-  const { indexHtml, css, robots } = renderSiteFrom(cfg, loadTemplateSet());
+  const { indexHtml, css, robots, script } = renderSiteFrom(cfg, loadTemplateSet());
   if (write) {
     mkdirSync(join(SITE, 'assets'), { recursive: true });
     writeFileSync(join(SITE, 'index.html'), indexHtml, 'utf8');
     writeFileSync(join(SITE, 'assets', 'styles.css'), css, 'utf8');
     writeFileSync(join(SITE, 'robots.txt'), robots, 'utf8');
+    writeFileSync(join(SITE, 'assets', 'script.js'), script, 'utf8');
   }
-  return { indexHtml, css, robots, hash: configHash({ ...cfg, derived: undefined }) };
+  return { indexHtml, css, robots, script, hash: configHash({ ...cfg, derived: undefined }) };
 }

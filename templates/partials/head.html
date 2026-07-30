@@ -10,7 +10,18 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="{{FONTS_HREF}}" />
+<!-- The webfont stylesheet is loaded NON-BLOCKING.
+     As a plain <link rel="stylesheet"> it is render-blocking, and measured on a
+     network where fonts.googleapis.com was unreachable the page stayed blank for
+     12.9 seconds — first paint waited out the whole timeout. Not hypothetical:
+     that host is slow on some networks and blocked on others, and the visitor
+     sees nothing at all while it hangs.
+     media="print" makes the browser fetch it at low priority without blocking
+     paint; onload promotes it to all media once it lands. The token stack falls
+     back to Georgia / system-ui, so the pre-swap paint is a deliberate design
+     rather than a flash of nothing. <noscript> covers scripting-off. -->
+<link rel="stylesheet" href="{{FONTS_HREF}}" media="print" onload="this.media='all';this.onload=null" />
+<noscript><link rel="stylesheet" href="{{FONTS_HREF}}" /></noscript>
 <link rel="stylesheet" href="/assets/styles.css" />
 <link rel="alternate" type="application/rss+xml" title="{{site.blog_title}}" href="/feed.xml" />
 <link rel="alternate" type="application/feed+json" title="{{site.blog_title}}" href="/feed.json" />

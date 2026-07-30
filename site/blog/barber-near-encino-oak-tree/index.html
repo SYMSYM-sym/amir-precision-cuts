@@ -12,7 +12,18 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" />
+<!-- The webfont stylesheet is loaded NON-BLOCKING.
+     As a plain <link rel="stylesheet"> it is render-blocking, and measured on a
+     network where fonts.googleapis.com was unreachable the page stayed blank for
+     12.9 seconds — first paint waited out the whole timeout. Not hypothetical:
+     that host is slow on some networks and blocked on others, and the visitor
+     sees nothing at all while it hangs.
+     media="print" makes the browser fetch it at low priority without blocking
+     paint; onload promotes it to all media once it lands. The token stack falls
+     back to Georgia / system-ui, so the pre-swap paint is a deliberate design
+     rather than a flash of nothing. <noscript> covers scripting-off. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" media="print" onload="this.media='all';this.onload=null" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" /></noscript>
 <link rel="stylesheet" href="/assets/styles.css" />
 <link rel="alternate" type="application/rss+xml" title="From the Chair" href="/feed.xml" />
 <link rel="alternate" type="application/feed+json" title="From the Chair" href="/feed.json" />
@@ -32,6 +43,7 @@
 </head>
 
 <body class="blog-page">
+<a class="skip-link" href="#main">Skip to content</a>
 <div class="topbar">
   <div class="topbar__inner container">
     <span class="topbar__item"><span class="dot" aria-hidden="true"></span>By appointment only</span>
@@ -72,7 +84,7 @@
   </div>
 </header>
 
-<main>
+<main id="main" tabindex="-1">
   <article class="article-shell" itemscope itemtype="https://schema.org/Article">
     <header class="article-hero">
       <div class="article-hero__inner container">
@@ -117,7 +129,7 @@
 </div></details><details class="faq__item"><summary><span>Where is the nearest parking on Ventura Boulevard?</span><span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Street parking, metered on the blocks closest to the shop. It is easy midweek and slower on Saturday, so allow a few extra minutes then.</p>
 </div></details><details class="faq__item"><summary><span>How late is the shop open on weekdays?</span><span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Until 8 in the evening Tuesday through Friday, which is late enough to come after work. Saturday closes at 7, and the shop is closed Sunday and Monday.</p>
 </div></details></div></div></div>
-    <section class="section section--dark continue-reading"><div class="container"><p class="eyebrow">Continue reading</p><h2 class="h2">More from <span class="accent">From the Chair</span></h2><div class="continue-reading__grid"><article class="continue-reading__card"><a href="/blog/barbershop-near-sherman-oaks"><h3 class="h3">Coming From Sherman Oaks for a Haircut</h3><p class="muted">A barbershop near Sherman Oaks does not have to be in Sherman Oaks. Amir Precision Cuts is a short hop west along Ventura Boulevard, at 173…</p></a></article><article class="continue-reading__card"><a href="/blog/mens-haircut-encino"><h3 class="h3">Men's Haircuts in Encino: What $50 Actually Buys</h3><p class="muted">A men's haircut in Encino is $50 at Amir Precision Cuts. That covers the consultation, the cut itself shaped to how your hair grows, and th…</p></a></article></div></div></section>
+    <section class="section section--dark continue-reading"><div class="container"><p class="eyebrow">Continue reading</p><h2 class="h2">More from <span class="accent">From the Chair</span></h2><div class="continue-reading__grid"><article class="continue-reading__card"><a href="/blog/barbershop-near-sherman-oaks"><h3 class="h3">Coming From Sherman Oaks for a Haircut</h3><p class="muted">A barbershop near Sherman Oaks does not have to be in Sherman Oaks. Amir Precision Cuts is a short hop west along Ventura Boulevard, at 173…</p></a></article><article class="continue-reading__card"><a href="/blog/mens-haircut-encino"><h3 class="h3">Men's Haircuts in Encino: What $50 Actually Buys</h3><p class="muted">A men's haircut in Encino is $50 at Amir Precision Cuts. That covers the consultation, the cut itself shaped to how your hair grows, and th…</p></a></article><article class="continue-reading__card"><a href="/blog/barber-tarzana-reseda-side"><h3 class="h3">For Men in Tarzana and Reseda: Worth the Ten Minutes</h3><p class="muted">A barber near Tarzana is usually a barber in Tarzana. This one is ten minutes east, on Ventura Boulevard in Encino, and the reason men make…</p></a></article></div></div></section>
   </article>
 </main>
 <footer class="footer">

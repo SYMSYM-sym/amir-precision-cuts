@@ -13,7 +13,18 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" />
+<!-- The webfont stylesheet is loaded NON-BLOCKING.
+     As a plain <link rel="stylesheet"> it is render-blocking, and measured on a
+     network where fonts.googleapis.com was unreachable the page stayed blank for
+     12.9 seconds — first paint waited out the whole timeout. Not hypothetical:
+     that host is slow on some networks and blocked on others, and the visitor
+     sees nothing at all while it hangs.
+     media="print" makes the browser fetch it at low priority without blocking
+     paint; onload promotes it to all media once it lands. The token stack falls
+     back to Georgia / system-ui, so the pre-swap paint is a deliberate design
+     rather than a flash of nothing. <noscript> covers scripting-off. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" media="print" onload="this.media='all';this.onload=null" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" /></noscript>
 <link rel="stylesheet" href="/assets/styles.css" />
 <link rel="alternate" type="application/rss+xml" title="From the Chair" href="/feed.xml" />
 <link rel="alternate" type="application/feed+json" title="From the Chair" href="/feed.json" />
@@ -35,6 +46,7 @@
 </head>
 
 <body class="layout-classic theme-dark">
+<a class="skip-link" href="#main">Skip to content</a>
 <div class="topbar">
   <div class="topbar__inner container">
     <span class="topbar__item"><span class="dot" aria-hidden="true"></span>By appointment only</span>
@@ -75,7 +87,7 @@
   </div>
 </header>
 
-<main id="main">
+<main id="main" tabindex="-1">
 <section class="hero hero--classic" id="home">
   <div class="hero__inner container hero__inner--center">
     <p class="eyebrow">men&#39;s barbershop &middot; Encino</p>

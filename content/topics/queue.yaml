@@ -5,22 +5,6 @@
 # that re-adds already-published and quarantined slugs and breaks the ledger invariant).
 # Hand-editing a topic's `notes` is expected and good; that is where quality comes from.
 
-- slug: barber-tarzana-reseda-side
-  title: "For Men in Tarzana and Reseda: Worth the Ten Minutes"
-  target_keyword: barber near tarzana
-  secondary_keywords:
-    - barbershop reseda area
-    - barber near lake balboa
-  intent: MOF / commercial
-  bucket: hyperlocal
-  internal_links:
-    - page: visit
-    - service: scissor-cut-beard-trim
-  notes: >-
-    DRIVE-IN angle from the west and north -- Tarzana, Reseda, Lake Balboa. The trade is a slightly
-    longer drive for a chair that is not double-booked. Distinct from the Sherman Oaks piece, which
-    comes from the other direction and leads on chains. Mention appointment timing so a drive is
-    never wasted.
 - slug: saturday-barber-appointment-encino
   title: Getting a Saturday Barber Appointment in Encino
   target_keyword: saturday barber appointment encino

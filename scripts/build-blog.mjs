@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync, rmSync } from 'fs';
 import { join, resolve } from 'path';
 import { pathToFileURL } from 'url';
 import { parseMd as matter } from './md.mjs';
@@ -464,6 +464,30 @@ async function loadPartials() {
   };
 }
 
+/**
+ * Remove /blog/<slug>/ directories with no corresponding article.
+ *
+ * build-blog only ever WROTE pages, so a slug that stopped existing kept its
+ * page forever: the dry-run fixture after cleanup, a topic that was quarantined
+ * after publishing, a slug corrected in frontmatter. The page stays live and
+ * reachable while vanishing from the sitemap, the feeds and the index — and the
+ * consistency check in verify-live.mjs cannot see it, because sitemap, cards and
+ * feeds all agree with each other. The only thing that disagrees is the disk.
+ */
+function pruneOrphanArticleDirs(all) {
+  if (!existsSync(BLOG_DIR)) return [];
+  const live = new Set(all.map((a) => a.slug).filter(Boolean));
+  const removed = [];
+  for (const name of readdirSync(BLOG_DIR)) {
+    const dir = join(BLOG_DIR, name);
+    if (!statSync(dir).isDirectory()) continue;
+    if (live.has(name)) continue;
+    rmSync(dir, { recursive: true, force: true });
+    removed.push(name);
+  }
+  return removed;
+}
+
 export async function buildBlog() {
   const all = parseArticles();
   const partials = await loadPartials();
@@ -471,6 +495,8 @@ export async function buildBlog() {
   for (const article of all) {
     await renderArticlePage(article, all, partials);
   }
+  const orphans = pruneOrphanArticleDirs(all);
+  if (orphans.length) console.log(`      pruned ${orphans.length} orphaned blog page(s): ${orphans.join(', ')}`);
   await renderBlogIndex(all, partials);
   writeSitemap(all);
   writeFeeds(all);

@@ -342,13 +342,15 @@ export async function validateArticleFile(mdPath, options = {}) {
   if (kw) {
     const occurrences = countKeywordPhrase(main, kw);
     const pct = (occurrences / Math.max(wcMain, 1)) * 100;
-    // A flat 0.5% floor is right for a one- or two-word keyword and absurd for a
-    // long-tail phrase: "barbershop near sherman oaks" five times in 900 words is
-    // stuffing, not optimisation, and warning about it pushes the writer the wrong
-    // way. Long phrases get an occurrence floor instead of a percentage floor.
-    // The 2.5% CEILING still applies to everything — that one is about stuffing.
+    // A percentage floor only makes sense for a SINGLE-term head keyword. Applied
+    // to a phrase it demands stuffing: "barber near tarzana" is two significant
+    // terms, and 0.5% of a 950-word article is five proximate repetitions of
+    // them — which no barber would write and no reader would forgive. Any
+    // multi-word phrase therefore gets an occurrence floor of 2: present in the
+    // opening answer paragraph, and once more in the body.
+    // The 2.5% CEILING still applies to everything; that one is about stuffing.
     const terms = keywordTerms(kw).length;
-    const floor = terms <= 2 ? Math.max(2, Math.ceil(0.005 * wcMain)) : 2;
+    const floor = terms <= 1 ? Math.max(2, Math.ceil(0.005 * wcMain)) : 2;
     if (occurrences < floor) {
       warnings.push(`Target keyword appears ${occurrences}× (want >=${floor} for "${kw}")`);
     } else if (pct > 2.5) {

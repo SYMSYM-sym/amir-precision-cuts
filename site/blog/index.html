@@ -12,7 +12,18 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" />
+<!-- The webfont stylesheet is loaded NON-BLOCKING.
+     As a plain <link rel="stylesheet"> it is render-blocking, and measured on a
+     network where fonts.googleapis.com was unreachable the page stayed blank for
+     12.9 seconds — first paint waited out the whole timeout. Not hypothetical:
+     that host is slow on some networks and blocked on others, and the visitor
+     sees nothing at all while it hangs.
+     media="print" makes the browser fetch it at low priority without blocking
+     paint; onload promotes it to all media once it lands. The token stack falls
+     back to Georgia / system-ui, so the pre-swap paint is a deliberate design
+     rather than a flash of nothing. <noscript> covers scripting-off. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" media="print" onload="this.media='all';this.onload=null" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" /></noscript>
 <link rel="stylesheet" href="/assets/styles.css" />
 <link rel="alternate" type="application/rss+xml" title="From the Chair" href="/feed.xml" />
 <link rel="alternate" type="application/feed+json" title="From the Chair" href="/feed.json" />
@@ -25,6 +36,7 @@
 </head>
 
 <body class="blog-page blog-index-page">
+<a class="skip-link" href="#main">Skip to content</a>
 <div class="topbar">
   <div class="topbar__inner container">
     <span class="topbar__item"><span class="dot" aria-hidden="true"></span>By appointment only</span>
@@ -65,7 +77,7 @@
   </div>
 </header>
 
-<main>
+<main id="main" tabindex="-1">
   <section class="section blog-index-hero">
     <div class="container">
       <p class="eyebrow">From the Chair</p>
@@ -91,6 +103,12 @@
 <span class="blog-card__meta"><time datetime="2026-07-30">2026-07-30</time><span class="blog-card__pill">hyperlocal</span></span>
 <h2 class="blog-card__title h3">Men's Haircuts in Encino: What $50 Actually Buys</h2>
 <p class="blog-card__excerpt muted">A men's haircut in Encino is $50 at Amir Precision Cuts. That covers the consultation, the cut itself shaped to how your hair grows, and the neckline and edges finished by hand at the end. It is one price rather than a …</p>
+</a></article>
+<article class="blog-card" data-bucket="hyperlocal">
+<a class="blog-card__link" href="/blog/barber-tarzana-reseda-side">
+<span class="blog-card__meta"><time datetime="2026-07-30">2026-07-30</time><span class="blog-card__pill">hyperlocal</span></span>
+<h2 class="blog-card__title h3">For Men in Tarzana and Reseda: Worth the Ten Minutes</h2>
+<p class="blog-card__excerpt muted">A barber near Tarzana is usually a barber in Tarzana. This one is ten minutes east, on Ventura Boulevard in Encino, and the reason men make that drive is time rather than distance: an appointment that starts when it say…</p>
 </a></article>
 <article class="blog-card" data-bucket="hyperlocal">
 <a class="blog-card__link" href="/blog/barber-near-encino-oak-tree">

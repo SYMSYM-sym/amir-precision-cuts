@@ -175,6 +175,7 @@ Encino, Ventura Boulevard, Louise Avenue, Hayvenhurst Avenue, the Encino Oak Tre
 # Recent articles (avoid repeating angles, examples, or quotes)
 - Coming From Sherman Oaks for a Haircut: A barbershop near Sherman Oaks does not have to be in Sherman Oaks. Amir Precision Cuts is a short hop west along Ventura Boulevard, at 17388 in Encino. For most men on the Sherman Oaks side the drive is under ten minutes, and it buys a single-barber chair instead of whoever is free. ## The trip west Ventura Boulevard is the whole route. It runs continuously from Sherman Oaks into Encino, so there is no clever way to do it and no reason to look
 - Men's Haircuts in Encino: What $50 Actually Buys: A men's haircut in Encino is $50 at Amir Precision Cuts. That covers the consultation, the cut itself shaped to how your hair grows, and the neckline and edges finished by hand at the end. It is one price rather than a starting point, and it is the same on a Tuesday as it is on a Saturday. ## What the number covers Price pages tend to describe a haircut with adjectives. Here is the itemised version instead. **The consultation.** Three or four 
+- For Men in Tarzana and Reseda: Worth the Ten Minutes: A barber near Tarzana is usually a barber in Tarzana. This one is ten minutes east, on Ventura Boulevard in Encino, and the reason men make that drive is time rather than distance: an appointment that starts when it says it does, and finishes without being hurried into the next one. ## Ten minutes, and what they cost From central Tarzana it is about ten minutes east along Ventura Boulevard. From the Reseda side, coming down Hayvenhurst Avenue o
 - A Barber a Short Walk From the Encino Oak Tree: Amir Precision Cuts sits on Ventura Boulevard in Encino, a few minutes on foot from the Encino Oak Tree and just west of Louise Avenue. Anyone already on that stretch — working there, running errands, walking back from Encino Park — can reach the chair without getting into a car. Appointments run Tuesday to Saturday. ## The stretch of Ventura Boulevard the shop sits on This barbershop on Ventura Boulevard in Encino sits on a stretch that change
 
 # Output rules
@@ -208,17 +209,17 @@ Return a single fenced markdown block. No prose before or after. Frontmatter is 
 
 ```markdown
 ---
-title: "For Men in Tarzana and Reseda: Worth the Ten Minutes"
-slug: "barber-tarzana-reseda-side"
-target_keyword: "barber near tarzana"
+title: "Getting a Saturday Barber Appointment in Encino"
+slug: "saturday-barber-appointment-encino"
+target_keyword: "saturday barber appointment encino"
 secondary_keywords:
-  - "barbershop reseda area"
-  - "barber near lake balboa"
+  - "weekend barber encino"
+  - "saturday haircut encino"
 description: "<70-160 character meta description, no quotes around it>"
 date: "2026-07-30"
 author: "amir-precision-team"
 bucket: "hyperlocal"
-intent: "MOF / commercial"
+intent: "BOF / transactional"
 reading_time_minutes: <integer>
 self_check:
   word_count: <integer>
@@ -259,12 +260,12 @@ self_check:
 ```
 
 Now write the article for:
-TITLE: For Men in Tarzana and Reseda: Worth the Ten Minutes
-TARGET KEYWORD: barber near tarzana
-SECONDARY KEYWORDS: barbershop reseda area, barber near lake balboa
-INTENT: MOF / commercial
+TITLE: Getting a Saturday Barber Appointment in Encino
+TARGET KEYWORD: saturday barber appointment encino
+SECONDARY KEYWORDS: weekend barber encino, saturday haircut encino
+INTENT: BOF / transactional
 BUCKET: hyperlocal
-NOTES: DRIVE-IN angle from the west and north -- Tarzana, Reseda, Lake Balboa. The trade is a slightly longer drive for a chair that is not double-booked. Distinct from the Sherman Oaks piece, which comes from the other direction and leads on chains. Mention appointment timing so a drive is never wasted.
+NOTES: SCHEDULING-PRESSURE angle. Saturday is 9 to 7 rather than 9 to 8 and fills first; booking a day or two ahead midweek is usually enough. Practical, not promotional. Do NOT restate the whole opening-hours table -- one clean mention only.
 
 ### USER
 Write the article now. Output the markdown block only.

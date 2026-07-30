@@ -297,6 +297,19 @@ async function main() {
   });
 
   console.log('Done:', articlePath);
+
+  // A dry run must leave NO residue. The fixture article lives in
+  // content/articles/ long enough for build-blog to render it — that is the
+  // point of the exercise — and is then removed, because anything left in that
+  // directory joins the originality corpus. Left behind, the fixture becomes a
+  // permanent competitor to every real article, and `npm run dry` accumulates
+  // one more copy per calendar date it is run on. Rebuild afterwards so the
+  // blog index, sitemap and feeds do not advertise a page that no longer exists.
+  if (dryRun) {
+    safeUnlink(articlePath);
+    await buildBlog();
+    console.log('Dry run cleaned up: fixture removed, blog rebuilt without it.');
+  }
 }
 
 main().catch((e) => {
