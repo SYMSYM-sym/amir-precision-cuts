@@ -1,38 +1,81 @@
+{{!
+  visit.stacked — copy on the left, a practical ledger on the right.
+
+  USED BY compact AND classic. New classes need rules in the SHARED block.
+
+  Was: a centred head, then three centred panels (Address / Hours / Contact),
+  then a two-column <dl> of transit and parking notes — six blocks of centred
+  grey text, in the section whose entire job is "here is where we are and when
+  you can come".
+
+  Now: the address at display size on the left with the directions link under it,
+  and everything a visitor might need to check on the right as one ruled ledger.
+  Transit and parking joined that ledger instead of sitting in a separate <dl>
+  below it; they are the same kind of fact as Hours, and separating them was what
+  left them looking like an appendix.
+
+  `visit__panels` / `visit__panel*` / `visit__notes` are no longer emitted from
+  this template. `visit__notes` still has a rule in the shared block because
+  visit.split (editorial + gallery) does emit it — deleting that rule is exactly
+  the bug the stylesheet header warns about, from the other direction.
+
+  `hours_runs` rather than `hours_line`: Saturday closes an hour earlier and gets
+  its own line rather than being flattened into one string.
+}}
 <section class="section {{SECTION_TONE}} section--visit" id="visit">
-  <div class="container">
-    <div class="section__head section__head--center">
+  <div class="container container--wide grid grid--visit">
+    <div class="visit__copy">
       <p class="eyebrow">Visit</p>
       <h2 class="h2">Find us in {{location.neighborhood}}</h2>
       <p class="section__sub">Close to {{ANCHOR_1}} and {{ANCHOR_2}}.</p>
+      <p class="visit__address">{{location.address_street}}<br />{{derived.address_city_region_postal}}</p>
+      <a class="visit__link" href="{{derived.address_maps_url}}" rel="noopener" target="_blank">Get directions <span aria-hidden="true">&rarr;</span></a>
     </div>
-    <div class="visit__panels">
-      <div class="visit__panel">
-        <h3 class="h3 visit__panel-title">Address</h3>
-        <p>{{location.address_street}}<br />{{derived.address_city_region_postal}}</p>
-        <p class="visit__panel-link"><a href="{{derived.address_maps_url}}" rel="noopener" target="_blank">Get directions</a></p>
+    <dl class="visit__ledger">
+      <div class="visit__row">
+        <dt>Hours</dt>
+        <dd>
+          {{#each derived.hours_runs}}<span class="nowrap">{{this}}</span>{{#unless @last}}<br />{{/unless}}{{/each}}
+          {{#if ?hours.notes}}<br /><span class="muted">{{hours.notes}}</span>{{/if}}
+        </dd>
       </div>
-      <div class="visit__panel">
-        <h3 class="h3 visit__panel-title">Hours</h3>
-        <p>{{#if derived.hours_uniform}}{{derived.hours_days_long}}<br />{{derived.hours_times_long}}{{else}}{{derived.hours_line}}{{/if}}</p>
-        <p class="visit__panel-note">{{derived.booking_line_period}}</p>
+      <div class="visit__row">
+        <dt>Booking</dt>
+        <dd>
+          {{derived.booking_line_period}}
+          {{#if ?booking.lead_time_note}}<br /><span class="muted">{{booking.lead_time_note}}</span>{{/if}}
+        </dd>
       </div>
       {{#if derived.has_contact}}
-      <div class="visit__panel">
-        <h3 class="h3 visit__panel-title">Contact</h3>
-        {{#if ?booking.publish_phone}}<p><a href="tel:{{booking.phone}}">Call {{business.short_name}}</a></p>{{/if}}
-        {{#if ?booking.publish_email}}<p><a href="mailto:{{booking.email}}">{{booking.email}}</a></p>{{/if}}
+      <div class="visit__row">
+        <dt>Contact</dt>
+        <dd>
+          {{#if ?booking.publish_phone}}<a href="tel:{{booking.phone}}">{{derived.phone_display}}</a>{{/if}}
+          {{#if ?booking.publish_email}}<br /><a href="mailto:{{booking.email}}">{{booking.email}}</a>{{/if}}
+        </dd>
       </div>
       {{/if}}
-    </div>
-    {{#if derived.has_getting_here}}
-    <dl class="visit__notes visit__notes--center">
-      {{#if ?location.transit_notes}}<dt>Transit</dt><dd>{{location.transit_notes}}</dd>{{/if}}
-      {{#if ?location.parking_notes}}<dt>Parking</dt><dd>{{location.parking_notes}}</dd>{{/if}}
-      {{#if ?location.accessibility_notes}}<dt>Access</dt><dd>{{location.accessibility_notes}}</dd>{{/if}}
+      {{#if ?location.transit_notes}}
+      <div class="visit__row">
+        <dt>Transit</dt>
+        <dd class="muted">{{location.transit_notes}}</dd>
+      </div>
+      {{/if}}
+      {{#if ?location.parking_notes}}
+      <div class="visit__row">
+        <dt>Parking</dt>
+        <dd class="muted">{{location.parking_notes}}</dd>
+      </div>
+      {{/if}}
+      {{#if ?location.accessibility_notes}}
+      <div class="visit__row">
+        <dt>Access</dt>
+        <dd class="muted">{{location.accessibility_notes}}</dd>
+      </div>
+      {{/if}}
     </dl>
-    {{/if}}
-    {{#if ?booking.url}}
-    <p class="visit__cta visit__cta--center"><a class="btn btn--accent btn--lg" href="{{booking.url}}">Book an appointment</a></p>
-    {{/if}}
   </div>
+  {{#if ?booking.url}}
+  <p class="visit__cta container container--wide"><a class="btn btn--accent btn--lg" href="{{booking.url}}">Book an appointment</a></p>
+  {{/if}}
 </section>

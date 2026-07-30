@@ -1,24 +1,68 @@
+{{!
+  gallery.grid — a full-bleed interstitial band, then the grid.
+
+  USED BY ALL FOUR VARIANTS. Every class added here needs its rule in the SHARED
+  block of styles.css, above `#if IS_EDITORIAL`.
+
+  The band is the page's one moment of pause: one image, one line, edge to edge,
+  no section padding. Seven equally-padded sections in a row is what made the old
+  page feel like a form to scroll rather than a place to look at.
+
+  It is the LEAD gallery image promoted out of the grid — ``#if @first`` for the
+  band, ``#unless @first`` for the tiles — which is why it needs no new asset,
+  no new section id in ALL_SECTIONS, and no change to site-render.mjs. It also
+  inherits the gallery section's own condition for free: a business that supplies
+  no photographs gets no band, because it gets no gallery.
+
+  The tiles went from 4:3 landscape to 4:5 portrait. The artwork is silhouettes
+  and profiles; a landscape crop of a vertical subject spends most of its area on
+  background, which is why six tiles of near-black read as six empty rectangles.
+
+  HEAD_ALIGN is still interpolated here — unlike services.columns — because the
+  `gallery` variant centres its section heads by design and this is its title
+  section.
+}}
 <section class="section {{SECTION_TONE}} section--gallery" id="gallery">
-  <div class="container">
-    <div class="section__head {{HEAD_ALIGN}}">
-      <p class="eyebrow">Gallery</p>
-      <h2 class="h2">{{derived.gallery_title}}</h2>
+  {{#each derived.gallery_display}}{{#if @first}}
+  <div class="gallery-band">
+    <picture>
+      <source type="image/webp" srcset="{{?srcset_webp}}" sizes="100vw" />
+      <img class="gallery-band__img {{focus_class}}" src="{{src}}" srcset="{{?srcset_jpg}}" sizes="100vw"
+           alt="{{alt}}" width="{{?width}}" height="{{?height}}"
+           loading="{{loading}}" decoding="async" />
+    </picture>
+    <span class="gallery-band__scrim" aria-hidden="true"></span>
+    <span class="gallery-band__grain" aria-hidden="true"></span>
+    <div class="gallery-band__inner container container--wide">
+      <span class="gallery-band__rule" aria-hidden="true"></span>
+      {{#if ?caption}}<p class="gallery-band__line">{{caption}}</p>{{/if}}
+    </div>
+  </div>
+  {{/if}}{{/each}}
+  <div class="container container--wide">
+    <div class="section__head section__head--split {{HEAD_ALIGN}}">
+      <div>
+        <p class="eyebrow">Gallery</p>
+        <h2 class="h2">{{derived.gallery_title}}</h2>
+      </div>
     </div>
     <ul class="gallery">
-      {{#each derived.gallery_display}}
+      {{#each derived.gallery_display}}{{#unless @first}}
       <li class="gallery__item{{#if lead}} gallery__item--lead{{/if}}">
         <figure class="gallery__figure">
-          <picture>
-            <source type="image/webp" srcset="{{?srcset_webp}}" sizes="(max-width: 46em) 100vw, 33vw" />
-            <img class="gallery__img" src="{{src}}" srcset="{{?srcset_jpg}}"
-                 sizes="(max-width: 46em) 100vw, 33vw"
-                 alt="{{alt}}" width="{{?width}}" height="{{?height}}"
-                 loading="{{loading}}" decoding="async" />
-          </picture>
+          <span class="gallery__frame">
+            <picture>
+              <source type="image/webp" srcset="{{?srcset_webp}}" sizes="(max-width: 46em) 50vw, 25vw" />
+              <img class="gallery__img {{focus_class}}" src="{{src}}" srcset="{{?srcset_jpg}}"
+                   sizes="(max-width: 46em) 50vw, 25vw"
+                   alt="{{alt}}" width="{{?width}}" height="{{?height}}"
+                   loading="{{loading}}" decoding="async" />
+            </picture>
+          </span>
           {{#if ?caption}}<figcaption class="gallery__caption">{{caption}}</figcaption>{{/if}}
         </figure>
       </li>
-      {{/each}}
+      {{/unless}}{{/each}}
     </ul>
     {{#if derived.has_media_credit}}
     <p class="gallery__credit">{{media.credit}}</p>

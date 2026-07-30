@@ -1,8 +1,35 @@
+{{!
+  services.columns — the price board, promoted to the second section.
+
+  The dotted leader was the strongest thing on the page and it was running across
+  a ~480px column in a two-up grid, which makes it a bullet rather than a board.
+  One column at --max-wide gives every row a leader long enough to read as a
+  price list on a wall.
+
+  Two structural changes beyond the width:
+
+  • The duration left the description. It used to be an italic parenthetical at
+    the end of the prose — "(1 hr 15 min)" — which is where you put an aside, not
+    a number a visitor is comparing across six rows. It now sits right-aligned on
+    the description's baseline, in the micro tier, so the six of them form a
+    column you can read down.
+  • The head is a split: title left, count and booking model right. HEAD_ALIGN is
+    deliberately NOT interpolated here. This template is only ever used by
+    `classic`, and a centred head over a left-aligned board was the mismatch that
+    made the section look like a default.
+
+  `SERVICE_COUNT` and `derived.booking_line` rather than any literal: this
+  template renders for a nail salon and a tattoo parlour too.
+}}
 <section class="section {{SECTION_TONE}} section--services" id="services">
-  <div class="container">
-    <div class="section__head {{HEAD_ALIGN}}">
-      <p class="eyebrow">Services</p>
-      <h2 class="h2">Services &amp; Pricing</h2>
+  <span class="section__halo" aria-hidden="true"></span>
+  <div class="container container--wide">
+    <div class="section__head section__head--split">
+      <div>
+        <p class="eyebrow">Services</p>
+        <h2 class="h2">Services &amp; Pricing</h2>
+      </div>
+      <p class="section__aside">{{SERVICE_COUNT}} services<br />{{derived.booking_line}}</p>
     </div>
     <dl class="service-list">
       {{#each services}}
@@ -11,7 +38,10 @@
           <span class="service-list__name">{{label}}</span>
           {{#if ?price_from}}<span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">{{price_display}}</span>{{/if}}
         </dt>
-        <dd class="service-list__desc">{{description}}{{#if ?duration}} <span class="service-list__duration">({{duration}})</span>{{/if}}</dd>
+        <dd class="service-list__desc">
+          <span class="service-list__body">{{description}}</span>
+          {{#if ?duration}}<span class="service-list__duration">{{duration}}</span>{{/if}}
+        </dd>
       </div>
       {{/each}}
     </dl>

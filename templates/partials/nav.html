@@ -1,29 +1,55 @@
+{{!
+  nav — the phone number is now the primary action.
+
+  `booking.url` is empty for an appointment-only business, which meant the old nav
+  rendered NO call to action at all on desktop: the only way to act was a 14px
+  muted-grey link in the topbar. The number is the conversion, so it gets the one
+  gold thing in the bar.
+
+  The mark lost its gold border and gold type. Four golds inside 76px — mark
+  border, mark text, link hover, CTA — is not an accent; it is a colour scheme.
+  The mark is neutral so the button is unmistakably the thing to press.
+
+  `nav__meta` adds the city under the name, which is the single most useful
+  qualifier on a local business site and costs one line. Hidden under 760px.
+}}
 <header class="nav" id="nav">
-  <div class="nav__inner container">
+  <div class="nav__inner container container--wide">
     <a class="nav__brand" href="{{HOME_HREF}}" aria-label="{{business.name}} — Home">
       <span class="nav__mark">{{business.initials}}</span>
-      <span class="nav__name">{{business.short_name}}</span>
+      <span class="nav__brand-text">
+        <span class="nav__name">{{business.short_name}}</span>
+        <span class="nav__meta">{{derived.place_primary}}, {{location.address_region}}</span>
+      </span>
     </a>
     <nav class="nav__links" aria-label="Primary">
-      <a href="{{HOME_HREF}}#about">About</a>
       <a href="{{HOME_HREF}}#services">Services</a>
+      <a href="{{HOME_HREF}}#about">About</a>
       <a href="/blog/"{{#if ?NAV_JOURNAL_ACTIVE}} class="nav__link--active" aria-current="page"{{/if}}>{{site.blog_title}}</a>
       <a href="{{HOME_HREF}}#aftercare">Aftercare</a>
       <a href="{{HOME_HREF}}#faq">FAQ</a>
       <a href="{{HOME_HREF}}#visit">Visit</a>
     </nav>
-    {{#if ?booking.url}}<a class="btn btn--accent nav__cta" href="{{booking.url}}">Book</a>{{/if}}
+    {{#if ?booking.url}}
+    <a class="btn btn--accent nav__cta" href="{{booking.url}}">Book</a>
+    {{else}}
+    {{#if ?booking.publish_phone}}<a class="btn btn--accent nav__cta" href="tel:{{booking.phone}}" aria-label="Call {{business.name}}">{{derived.phone_display}}</a>{{/if}}
+    {{/if}}
     <button class="nav__toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navMobile" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
   </div>
   <div class="nav__mobile" id="navMobile">
-    <a href="{{HOME_HREF}}#about">About</a>
-    <a href="{{HOME_HREF}}#services">Services</a>
-    <a href="/blog/">{{site.blog_title}}</a>
-    <a href="{{HOME_HREF}}#aftercare">Aftercare</a>
-    <a href="{{HOME_HREF}}#faq">FAQ</a>
-    <a href="{{HOME_HREF}}#visit">Visit</a>
-    {{#if ?booking.url}}<a class="btn btn--accent" href="{{booking.url}}">Book an appointment</a>{{/if}}
+    <a href="{{HOME_HREF}}#services">Services<span class="nav__mobile-i" aria-hidden="true">01</span></a>
+    <a href="{{HOME_HREF}}#about">About<span class="nav__mobile-i" aria-hidden="true">02</span></a>
+    <a href="/blog/">{{site.blog_title}}<span class="nav__mobile-i" aria-hidden="true">03</span></a>
+    <a href="{{HOME_HREF}}#aftercare">Aftercare<span class="nav__mobile-i" aria-hidden="true">04</span></a>
+    <a href="{{HOME_HREF}}#faq">FAQ<span class="nav__mobile-i" aria-hidden="true">05</span></a>
+    <a href="{{HOME_HREF}}#visit">Visit<span class="nav__mobile-i" aria-hidden="true">06</span></a>
+    {{#if ?booking.url}}
+    <a class="btn btn--accent" href="{{booking.url}}">Book an appointment</a>
+    {{else}}
+    {{#if ?booking.publish_phone}}<a class="btn btn--accent" href="tel:{{booking.phone}}" aria-label="Call {{business.name}}">Call {{derived.phone_display}}</a>{{/if}}
+    {{/if}}
   </div>
 </header>

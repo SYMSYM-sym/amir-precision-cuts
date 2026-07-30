@@ -1,11 +1,28 @@
-<div class="topbar">
-  <div class="topbar__inner container">
+{{!
+  topbar — booking model, hours, phone.
+
+  Hours were four screens down and this strip was two thirds empty. `hours_line`
+  is the compact one-string form, which is what this row wants; the ledger forms
+  in the hero and the visit section use `hours_runs` and give Saturday its own
+  line. Hidden under 760px, where the phone number wins the space.
+
+  <aside>, not <div>. At body level a bare div is content outside every landmark
+  — axe's `region` rule fires on all three page types, and a screen-reader user
+  navigating by landmark skips straight past the hours and the phone number. It
+  cannot be a second <header>: the nav is already the banner, and two banners at
+  top level is its own violation. It is not nested inside the nav either,
+  because `.nav` is position: sticky and a wrapper would cap its sticky range at
+  the wrapper's own height — the bar would unpin about 100px down the page.
+}}
+<aside class="topbar" aria-label="Hours and contact">
+  <div class="topbar__inner container container--wide">
     <span class="topbar__item"><span class="dot" aria-hidden="true"></span>{{derived.booking_line}}</span>
     <span class="topbar__spacer"></span>
+    <span class="topbar__item topbar__hours">{{derived.hours_line}}</span>
     {{#if ?booking.publish_phone}}
     <a class="topbar__item" href="tel:{{booking.phone}}" aria-label="Call {{business.name}}">{{derived.phone_display}}</a>
     {{else}}
     {{#if ?booking.url}}<a class="topbar__item" href="{{booking.url}}">Book</a>{{/if}}
     {{/if}}
   </div>
-</div>
+</aside>

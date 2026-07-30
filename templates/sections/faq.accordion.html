@@ -1,5 +1,22 @@
+{{!
+  faq.accordion — head on one side, answers on the other.
+
+  USED BY ALL FOUR VARIANTS. `faq-layout` needs its rule in the SHARED block.
+
+  The split is a token decision, not four copies of a template: `--grid-faq` is
+  `.85fr 1.15fr` in classic, `.8fr 1.2fr` in editorial, `.75fr 1.25fr` in compact
+  and `1fr` in gallery — which stacks it straight back to the centred arrangement
+  that layout wants, with no fork here.
+
+  HEAD_ALIGN stays interpolated for the same reason.
+
+  The head is sticky against the answers on wide viewports (see .faq-layout in
+  styles.css), so opening the sixth question does not scroll the section title
+  off the screen — the one place on the page where content genuinely outruns its
+  own heading.
+}}
 <section class="section {{SECTION_TONE}} section--faq" id="faq">
-  <div class="container">
+  <div class="container container--wide faq-layout">
     <div class="section__head {{HEAD_ALIGN}}">
       <p class="eyebrow">Frequently asked</p>
       <h2 class="h2">Questions people actually ask.</h2>

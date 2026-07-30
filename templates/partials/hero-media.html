@@ -2,11 +2,18 @@
     <div class="hero__media">
       <picture>
         <source type="image/webp" srcset="{{?media.hero_srcset_webp}}" sizes="100vw" />
-        <img src="{{media.hero_image}}" srcset="{{?media.hero_srcset_jpg}}" sizes="100vw"
+        <img class="{{derived.hero_focus_class}}" src="{{media.hero_image}}" srcset="{{?media.hero_srcset_jpg}}" sizes="100vw"
              alt="{{media.hero_image_alt}}"
              width="{{?media.hero_image_width}}" height="{{?media.hero_image_height}}"
              fetchpriority="high" decoding="async" />
       </picture>
     </div>
     <div class="hero__scrim" aria-hidden="true"></div>
+    {{! Grain over the hero artwork specifically, at ~2.5x the page strength.
+         The images already carry grain of their own and stopped dead at the edge
+         of the frame; matching it across the whole hero is what makes the
+         photograph sit IN the page rather than on top of it. A third element
+         rather than a second background layer on .hero__scrim, so the scrim
+         gradients stay readable and either can be tuned without the other. }}
+    <div class="hero__grain" aria-hidden="true"></div>
 {{/if}}

@@ -1,10 +1,38 @@
+{{!
+  hero.gallery — the `gallery` variant's opener.
+
+  The three-tile band above the hero used to be three CSS gradients. On a client
+  with no photographs that is a reasonable abstract opener; on a client who has
+  supplied seven images it reads as placeholder art that nobody replaced, which
+  is exactly what it looked like on the first real build. So the band uses the
+  first three gallery images when a gallery exists, and keeps the gradients as
+  the genuine no-imagery fallback.
+
+  The image branch is a <ul>, not aria-hidden decoration: these are the client's
+  own photographs and they already carry alt text the validator enforces.
+}}
 <section class="hero hero--gallery{{#if derived.has_hero_image}} hero--has-image{{/if}}" id="home">
   {{> hero-media}}
+  {{#if derived.has_gallery}}
+  <ul class="hero__band hero__band--images">
+    {{#each derived.hero_band}}
+    <li class="hero__band-cell">
+      <picture>
+        <source type="image/webp" srcset="{{?srcset_webp}}" sizes="(max-width: 46em) 33vw, 30vw" />
+        <img class="hero__band-img {{focus_class}}" src="{{src}}" srcset="{{?srcset_jpg}}"
+             sizes="(max-width: 46em) 33vw, 30vw" alt="{{alt}}"
+             width="{{?width}}" height="{{?height}}" loading="eager" decoding="async" />
+      </picture>
+    </li>
+    {{/each}}
+  </ul>
+  {{else}}
   <div class="hero__band" aria-hidden="true">
     <span class="hero__band-tile hero__band-tile--1"></span>
     <span class="hero__band-tile hero__band-tile--2"></span>
     <span class="hero__band-tile hero__band-tile--3"></span>
   </div>
+  {{/if}}
   <div class="hero__inner container hero__inner--center">
     <p class="eyebrow">{{business.type}} in {{location.address_city}}</p>
     <h1 class="hero__title">{{business.tagline}}</h1>

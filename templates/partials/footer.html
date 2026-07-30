@@ -1,29 +1,48 @@
+{{!
+  footer — a lockup, then four columns, then the base bar.
+
+  The footer used to open with a ruled monogram next to a 26ch line of grey text,
+  which is a business card rather than a close. The name now appears once at
+  display size above a hairline.
+
+  Column titles are muted, not accent. Four gold headings spend the accent on
+  labels and leave nothing for the two links in here anyone actually clicks; gold
+  is now the hover state instead.
+}}
 <footer class="footer">
-  <div class="container footer__inner">
-    <div class="footer__brand">
+  <div class="container container--wide">
+    <div class="footer__lockup">
       <span class="nav__mark">{{business.initials}}</span>
-      <p>{{derived.footer_tagline}}</p>
+      <span class="footer__name">{{business.name}}</span>
     </div>
-    <div class="footer__cols">
-      <div>
-        <p class="footer__col-title">Visit</p>
-        <p>{{location.address_street}}<br />{{derived.address_city_region_postal}}</p>
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <p class="footer__tagline">{{derived.footer_tagline}}</p>
+        {{#if ?booking.social.instagram}}
+        <p class="footer__social"><a href="{{booking.social.instagram}}" rel="noopener" target="_blank">Instagram</a></p>
+        {{/if}}
       </div>
-      <div>
-        <p class="footer__col-title">Hours</p>
-        <p>{{#each derived.hours_runs}}<span class="nowrap">{{this}}</span>{{#unless @last}} &middot; {{/unless}}{{/each}}</p>
-      </div>
-      <div>
-        <p class="footer__col-title">Booking</p>
-        <p>{{derived.booking_line}}</p>
-        {{#if ?booking.publish_phone}}<p><a href="tel:{{booking.phone}}" aria-label="Call {{business.name}}">{{derived.phone_display}}</a></p>{{/if}}
-        {{#if ?booking.publish_email}}<p><a href="mailto:{{booking.email}}">{{booking.email}}</a></p>{{/if}}
-        {{#if ?booking.url}}<p><a href="{{booking.url}}">Book online</a></p>{{/if}}
+      <div class="footer__cols">
+        <div>
+          <p class="footer__col-title">Visit</p>
+          <p>{{location.address_street}}<br />{{derived.address_city_region_postal}}</p>
+        </div>
+        <div>
+          <p class="footer__col-title">Hours</p>
+          <p>{{#each derived.hours_runs}}<span class="nowrap">{{this}}</span>{{#unless @last}}<br />{{/unless}}{{/each}}</p>
+        </div>
+        <div>
+          <p class="footer__col-title">Booking</p>
+          <p>{{derived.booking_line}}</p>
+          {{#if ?booking.publish_phone}}<p><a href="tel:{{booking.phone}}" aria-label="Call {{business.name}}">{{derived.phone_display}}</a></p>{{/if}}
+          {{#if ?booking.publish_email}}<p><a href="mailto:{{booking.email}}">{{booking.email}}</a></p>{{/if}}
+          {{#if ?booking.url}}<p><a href="{{booking.url}}">Book online</a></p>{{/if}}
+        </div>
       </div>
     </div>
-  </div>
-  <div class="container footer__base">
-    <p>&copy; <span id="year"></span> {{business.name}} &middot; All rights reserved.</p>
-    <p class="footer__meta">{{derived.booking_line_period}}</p>
+    <div class="footer__base">
+      <p>&copy; <span id="year"></span> {{business.name}} &middot; All rights reserved.</p>
+      <p class="footer__meta">{{derived.booking_line_period}}</p>
+    </div>
   </div>
 </footer>

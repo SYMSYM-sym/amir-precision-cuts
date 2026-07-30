@@ -5,6 +5,19 @@
    DO NOT HAND-EDIT. Change the config (palette, fonts, layout_variant) instead;
    this file is output, and the next derive will overwrite anything you write here.
    Layout variant: classic
+
+   PARTITION MAP — read before adding a rule.
+     lines below, up to the IS_EDITORIAL block  →  SHARED by all four layouts
+     inside an IS_<VARIANT> block               →  that layout ONLY
+   (written without braces on purpose: this header is CSS comment syntax, not
+   template comment syntax, so a real block tag here would open a block the
+   engine never sees closed — which is exactly what happened once.)
+   A rule in the wrong block ships for one layout and vanishes for three. If the
+   class appears in a template that more than one variant uses — every partial,
+   gallery.grid, faq.accordion, about.split, aftercare.columns, visit.stacked —
+   its rule belongs in the shared block. `npm test` renders all four and fails on
+   any emitted class with no matching rule; it cannot tell you a rule is merely
+   in the wrong place, so the map above is the only guard.
    ========================================================================== */
 
 :root {
@@ -13,35 +26,47 @@
   --accent: #c9a227;
   --text: #f5f2ec;
   --muted: #a8a29a;
-  --bg-2: #171717;
-  --bg-3: #1b1b1b;
-  --line: #2d2d2c;
-  --line-strong: #52514f;
+  --cool: #2c2f3a;
+  --bg-2: #1e1f23;
+  --bg-3: #202124;
+  --line: #2d2e31;
+  --line-strong: #474749;
   --accent-soft: #d8be6c;
   --accent-deep: #897020;
+  --halo: #2f2915;
   --font-display: "Playfair Display", Georgia, 'Times New Roman', serif;
   --font-body: "Work Sans", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ease: cubic-bezier(.2,.7,.2,1);
-  --step--1: clamp(.85rem, .83rem + .12vw, .92rem);
-  --step-0: clamp(1.02rem, 1rem + .15vw, 1.1rem);
-  --step-1: clamp(1.22rem, 1.17rem + .28vw, 1.38rem);
-  --step-2: clamp(1.47rem, 1.38rem + .45vw, 1.73rem);
-  --step-3: clamp(1.76rem, 1.62rem + .72vw, 2.16rem);
-  --step-4: clamp(2.11rem, 1.87rem + 1.2vw, 2.99rem);
-  --space: clamp(1rem, .92rem + .5vw, 1.5rem);
-  --section-y: clamp(4rem, 6vw, 6.5rem);
-  --measure: 65ch;
+  --grain: url(data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.85%22%20numOctaves%3D%223%22%20stitchTiles%3D%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%22120%22%20height%3D%22120%22%20filter%3D%22url%28%23n%29%22%2F%3E%3C%2Fsvg%3E);
+  --grain-page: .045;
+  --grain-media: .11;
+  --step--2: clamp(.68rem, .66rem + .1vw, .74rem);
+  --step--1: clamp(.8rem, .78rem + .12vw, .875rem);
+  --step-0: clamp(1.02rem, 1rem + .18vw, 1.14rem);
+  --step-1: clamp(1.22rem, 1.14rem + .38vw, 1.48rem);
+  --step-2: clamp(1.5rem, 1.32rem + .85vw, 2.12rem);
+  --step-3: clamp(2rem, 1.62rem + 1.75vw, 3.3rem);
+  --step-4: clamp(3.1rem, 1.9rem + 6vw, 7.4rem);
+  --space: clamp(1rem, .9rem + .55vw, 1.6rem);
+  --section-y: clamp(4.5rem, 7vw, 8rem);
+  --section-y-tight: clamp(2.75rem, 4vw, 4.5rem);
+  --section-y-loose: clamp(6rem, 10vw, 11rem);
+  --measure: 62ch;
   --radius: 2px;
   --radius-sm: 2px;
-  --rule: 2px;
-  --grid-about: 1fr 1fr;
-  --grid-visit: 1fr 1fr;
-  --max: 1080px;
-  --pad: clamp(20px, 3.5vw, 40px);
+  --rule: 1px;
+  --rule-strong: 2px;
+  --grid-about: 1.3fr .7fr;
+  --grid-visit: 1.15fr .85fr;
+  --grid-faq: .85fr 1.15fr;
+  --max: 1120px;
+  --max-wide: 1400px;
+  --pad: clamp(20px, 3.5vw, 48px);
   --display-weight: 500;
-  --display-tracking: 0em;
-  --eyebrow-tracking: .2em;
-  --nav-h: 68px;
+  --display-tracking: -0.012em;
+  --display-tracking-display: -0.035em;
+  --eyebrow-tracking: .22em;
+  --nav-h: 76px;
 }
 
 /* ---------- reset ---------- */
@@ -63,7 +88,7 @@ body {
 img, svg { max-width: 100%; height: auto; display: block; }
 a { color: inherit; }
 h1, h2, h3, h4 { margin: 0 0 .5em; line-height: 1.12; font-weight: var(--display-weight); letter-spacing: var(--display-tracking); font-family: var(--font-display); }
-p { margin: 0 0 1em; }
+p { margin: 0 0 1em; text-wrap: pretty; }
 ul, ol { margin: 0 0 1em; padding-left: 1.2em; }
 table { border-collapse: collapse; width: 100%; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--radius-sm); }
@@ -71,6 +96,32 @@ table { border-collapse: collapse; width: 100%; }
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- page grain ----------
+ * The artwork has grain and the page had none, so every image sat ON the page
+ * instead of IN it — the tiles read as pasted rectangles because their texture
+ * stopped dead at the border.
+ *
+ * One fixed layer, generated (see GRAIN_URI in scripts/layout-variants.mjs), so
+ * it costs no request and cannot go stale against the palette. Three things
+ * matter here and each has bitten someone:
+ *   • pointer-events: none — a full-viewport overlay otherwise eats every click
+ *     on the page and the site looks dead rather than textured.
+ *   • z-index below .skip-link (200) — the first tab stop has to stay visible
+ *     and clickable (WCAG 2.4.1), and it renders above this on purpose.
+ *   • soft-light at ~4% — measured, not eyeballed: at this strength the shift
+ *     on --text over --bg is under half a point of contrast ratio, so nothing
+ *     that passed assertContrast() stops passing once the grain lands.
+ * Set --grain-page: 0 in the tokens to switch the whole thing off.
+ */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 100;
+  pointer-events: none;
+  background-image: var(--grain);
+  opacity: var(--grain-page);
+  mix-blend-mode: soft-light;
 }
 
 /* WCAG 2.4.1 (Bypass Blocks, Level A). Without this a keyboard user tabs through
@@ -90,127 +141,249 @@ table { border-collapse: collapse; width: 100%; }
 
 /* ---------- primitives ---------- */
 .container { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--pad); }
+/* A second measure, for the two or three sections that are structure rather
+   than reading — the price board and the gallery grid. Without it, "break out
+   of the column" means "go full-bleed", and a 1900px-wide price row is not an
+   improvement on a 1080px one. */
+.container--wide { max-width: var(--max-wide); }
+
 .section { padding-block: var(--section-y); }
 .section--dark { background: var(--bg-2); }
+/* Two dark sections in a row read as one section twice as tall unless the seam
+   is drawn. Cheaper and quieter than alternating a third surface colour. */
+.section--dark + .section--dark { border-top: var(--rule) solid var(--line); }
+
 .section__head { margin-bottom: calc(var(--space) * 2); }
 .section__head--center { text-align: center; margin-inline: auto; max-width: var(--measure); }
+/* Head on the left, a two-line meta note on the right. The note is the only
+   place a section says how many of a thing there are or what the imagery is —
+   information the old centred head had nowhere to put. */
+.section__head--split { display: grid; grid-template-columns: 1fr auto; gap: var(--space); align-items: end; }
+/* `gallery` is the centred variant and still sends section__head--center. One
+   rule keeps the split markup harmless there instead of forking the template. */
+.section__head--split.section__head--center { display: block; }
+.section__aside {
+  margin: 0; text-align: right;
+  font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase; font-weight: 600; color: var(--muted);
+  line-height: 2;
+}
+.section__head--center .section__aside { text-align: center; margin-top: .8em; line-height: 1.7; }
 .section__sub { color: var(--muted); max-width: var(--measure); font-size: var(--step-0); }
 .section__head--center .section__sub { margin-inline: auto; }
+
 .h2 { font-size: var(--step-3); }
 .h3 { font-size: var(--step-1); }
-.lead { font-size: var(--step-1); color: var(--text); max-width: var(--measure); }
+.lead { font-size: var(--step-1); color: var(--text); max-width: var(--measure); line-height: 1.45; }
 .muted { color: var(--muted); }
 .accent { color: var(--accent); }
 .eyebrow {
   font-family: var(--font-body);
-  font-size: var(--step--1);
+  font-size: var(--step--2);
   letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
   color: var(--accent);
-  margin: 0 0 .75em;
+  margin: 0 0 1.1em;
   font-weight: 600;
+  display: flex; align-items: center; gap: 1em;
 }
+/* A modifier with no rule is dead intent: the editorial hero asked for a lighter
+   eyebrow and got the accent one, because nothing ever defined it. */
+.eyebrow--light { color: var(--text); opacity: .72; }
+/* The short rule that turns an eyebrow from a caption into a masthead. Drawn as
+   a real element rather than ::before so a centred eyebrow can drop it without
+   a second rule fighting content: ''. */
+.eyebrow__rule { width: 3rem; height: 1px; background: currentColor; display: inline-block; flex: none; }
+.section__head--center .eyebrow { justify-content: center; }
+
 .grid { display: grid; gap: calc(var(--space) * 2); }
 .grid--about { grid-template-columns: var(--grid-about); align-items: start; }
 .grid--visit { grid-template-columns: var(--grid-visit); align-items: start; }
+.nowrap { white-space: nowrap; }
 
 /* ---------- buttons ---------- */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+  display: inline-flex; align-items: center; justify-content: center; gap: .6em;
   min-height: 44px; padding: .7em 1.4em;
   border: 1px solid transparent; border-radius: var(--radius);
   font-family: var(--font-body); font-size: var(--step--1); font-weight: 600;
-  letter-spacing: .04em; text-decoration: none; cursor: pointer;
+  letter-spacing: .08em; text-transform: uppercase; text-decoration: none; cursor: pointer;
   transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
 }
-.btn--accent { background: var(--accent); color: var(--bg); }
-.btn--accent:hover { background: var(--accent-soft); }
+.btn--accent { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.btn--accent:hover { background: var(--accent-soft); border-color: var(--accent-soft); color: var(--bg); }
 .btn--ghost { border-color: var(--line-strong); color: var(--text); background: transparent; }
 .btn--ghost:hover { border-color: var(--accent); color: var(--accent); }
-.btn--lg { padding: .9em 1.8em; font-size: var(--step-0); }
+/* For a ghost button sitting ON the hero artwork. A transparent border over a
+   photograph is a border over whatever the photograph is doing; the wash gives
+   it something consistent to sit on without hiding the image behind it. */
+.btn--glass { border-color: var(--line-strong); color: var(--text); background: color-mix(in srgb, var(--bg) 40%, transparent); backdrop-filter: blur(4px); }
+.btn--glass:hover { border-color: var(--accent); color: var(--accent); }
+.btn--lg { min-height: 52px; padding: .85em 1.9em; }
 .btn--block { display: flex; width: 100%; }
 
 /* ---------- topbar ---------- */
-.topbar { background: var(--bg-2); border-bottom: var(--rule) solid var(--line); font-size: var(--step--1); }
-.topbar__inner { display: flex; align-items: center; gap: var(--space); min-height: 38px; }
+.topbar {
+  background: var(--bg); border-bottom: var(--rule) solid var(--line);
+  font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase; font-weight: 600;
+  position: relative; z-index: 60;
+}
+.topbar__inner { display: flex; align-items: center; gap: calc(var(--space) * 1.5); min-height: 40px; }
 .topbar__spacer { flex: 1; }
-.topbar__item { color: var(--muted); text-decoration: none; display: inline-flex; align-items: center; gap: .5em; }
+.topbar__item { color: var(--muted); text-decoration: none; display: inline-flex; align-items: center; gap: .7em; }
 a.topbar__item:hover { color: var(--accent); }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
+/* Opening hours are the single most-wanted fact on a local business site and
+   they were four screens down. Hidden on small viewports rather than wrapped:
+   the phone number next to it is the action, and it wins the space. */
+.topbar__hours { color: var(--muted); }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); display: inline-block; flex: none; }
 
 /* ---------- nav ---------- */
 .nav {
-  position: sticky; top: 0; z-index: 50;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(10px);
-  border-bottom: var(--rule) solid transparent;
+  position: sticky; top: 0; z-index: 80;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(1.1);
+  border-bottom: var(--rule) solid var(--line);
   transition: border-color .25s var(--ease), background .25s var(--ease);
 }
-.nav.is-scrolled { border-bottom-color: var(--line); background: var(--bg); }
-.nav__inner { display: flex; align-items: center; gap: var(--space); min-height: var(--nav-h); }
-.nav__brand { display: inline-flex; align-items: center; gap: .6em; text-decoration: none; margin-right: auto; }
+.nav.is-scrolled { background: var(--bg); }
+.nav__inner { display: flex; align-items: center; gap: calc(var(--space) * 1.5); min-height: var(--nav-h); }
+.nav__brand { display: inline-flex; align-items: center; gap: .75em; text-decoration: none; margin-right: auto; }
+/* The mark used to be gold-ruled with gold type, next to a gold hover state, in
+   a bar that now also holds a gold CTA. Four golds in 76px is not an accent.
+   The mark is neutral so the one gold thing in the nav is the thing to click. */
 .nav__mark {
-  display: inline-grid; place-items: center; min-width: 2.2em; height: 2.2em; padding-inline: .4em;
-  border: var(--rule) solid var(--accent); border-radius: var(--radius-sm);
-  color: var(--accent); font-family: var(--font-display); font-size: var(--step--1);
-  letter-spacing: .08em;
+  display: inline-grid; place-items: center; width: 2.5em; height: 2.5em;
+  border: var(--rule) solid var(--line-strong); border-radius: var(--radius-sm);
+  color: var(--text); font-family: var(--font-display); font-size: var(--step--1);
+  letter-spacing: .1em; text-indent: .1em; flex: none;
 }
-.nav__name { font-family: var(--font-display); font-size: var(--step-0); letter-spacing: var(--display-tracking); }
-.nav__links { display: flex; gap: calc(var(--space) * 1.1); }
-.nav__links a { text-decoration: none; color: var(--muted); font-size: var(--step--1); letter-spacing: .04em; }
-.nav__links a:hover, .nav__link--active { color: var(--accent); }
-.nav__cta { padding: .55em 1.1em; }
-.nav__toggle { display: none; width: 44px; height: 44px; background: none; border: 0; cursor: pointer; padding: 10px; }
-.nav__toggle span { display: block; height: 2px; background: var(--text); margin: 5px 0; transition: transform .25s var(--ease), opacity .2s var(--ease); }
+.nav__brand-text { display: grid; gap: .15em; }
+.nav__name { font-family: var(--font-display); font-size: var(--step-0); letter-spacing: var(--display-tracking); line-height: 1; white-space: nowrap; }
+.nav__meta { font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--muted); line-height: 1; font-weight: 600; white-space: nowrap; }
+.nav__links { display: flex; gap: calc(var(--space) * 1.35); }
+.nav__links a {
+  text-decoration: none; color: var(--muted);
+  font-size: var(--step--1); letter-spacing: .14em; text-transform: uppercase; font-weight: 500;
+  white-space: nowrap; padding-block: .4em;
+  border-bottom: 1px solid transparent;
+  transition: color .2s var(--ease), border-color .2s var(--ease);
+}
+.nav__links a:hover, .nav__link--active { color: var(--text); border-bottom-color: var(--accent); }
+/* booking.url is empty for an appointment-only business, so the phone number IS
+   the primary action. It was in the topbar at 14px in muted grey, which is where
+   you put a fact, not a call to action. */
+.nav__cta { padding: .6em 1.3em; letter-spacing: .06em; text-transform: none; white-space: nowrap; }
+.nav__toggle { display: none; width: 44px; height: 44px; background: none; border: 0; cursor: pointer; padding: 12px; }
+.nav__toggle span { display: block; height: 1px; background: var(--text); margin: 6px 0; transition: transform .25s var(--ease), opacity .2s var(--ease); }
+.nav__toggle[aria-expanded="true"] span { background: var(--accent); }
 .nav__toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nav__toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .nav__toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-.nav__mobile { display: none; flex-direction: column; gap: var(--space); padding: var(--space) var(--pad) calc(var(--space) * 2); background: var(--bg-2); border-top: var(--rule) solid var(--line); }
-.nav__mobile a { text-decoration: none; color: var(--text); font-size: var(--step-1); font-family: var(--font-display); }
+.nav__mobile { display: none; flex-direction: column; padding: .5em var(--pad) calc(var(--space) * 2); background: var(--bg-2); border-top: var(--rule) solid var(--line); }
+.nav__mobile a {
+  text-decoration: none; color: var(--text);
+  font-size: var(--step-2); font-family: var(--font-display); letter-spacing: var(--display-tracking);
+  padding-block: .7em; border-bottom: var(--rule) solid var(--line);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1em;
+}
+.nav__mobile .btn { margin-top: calc(var(--space) * 1.5); font-family: var(--font-body); font-size: var(--step--1); border-bottom: 0; }
+.nav__mobile-i { font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking); color: var(--muted); font-family: var(--font-body); font-weight: 600; }
+.nav__mobile a:first-child .nav__mobile-i { color: var(--accent); }
 .nav.is-open .nav__mobile { display: flex; }
 
 /* ---------- hero (shared) ---------- */
 .hero { position: relative; }
-.hero__title { margin: 0 0 .35em; }
+.hero__title { margin: 0; }
 .hero__lede { color: var(--muted); max-width: var(--measure); font-size: var(--step-1); }
-.hero__cta { display: flex; flex-wrap: wrap; gap: var(--space); margin-top: calc(var(--space) * 1.5); }
+.hero__cta { display: flex; flex-wrap: wrap; gap: var(--space); margin-top: calc(var(--space) * 2); }
 .hero__inner--center { text-align: center; }
 .hero__inner--center .hero__lede { margin-inline: auto; }
 .hero__inner--center .hero__cta { justify-content: center; }
+/* The facts a visitor came for, under the headline, on a rule. Deliberately a
+   <dl>: address / hours / booking are label-value pairs, and marking them up as
+   paragraphs is what made them invisible to a screen reader and to the eye. */
+.hero__ledger {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space); margin: calc(var(--space) * 3) 0 0;
+  padding-top: calc(var(--space) * 1.4);
+  /* Not var(--line): this rule sits over the artwork, and a hairline computed
+     against --bg disappears wherever the image is lighter than --bg. */
+  border-top: var(--rule) solid color-mix(in srgb, var(--text) 22%, transparent);
+  max-width: 62rem;
+}
+.hero__ledger > div { margin: 0; }
+.hero__ledger dt { font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.hero__ledger dd { margin: .5em 0 0; font-size: var(--step--1); color: var(--text); line-height: 1.5; }
 
 /* ---------- FAQ (shared across variants) ---------- */
-.faq { max-width: var(--measure); }
+/* Head on one side, answers on the other. `--grid-faq` is 1fr in the gallery
+   variant, which stacks it back to the centred arrangement that layout wants —
+   the split is a token decision, not four copies of this block. */
+.faq-layout { display: grid; grid-template-columns: var(--grid-faq); gap: calc(var(--space) * 3.5); align-items: start; }
+.faq-layout > .section__head { margin-bottom: 0; position: sticky; top: calc(var(--nav-h) + var(--space)); }
+.faq { max-width: var(--measure); border-top: var(--rule) solid var(--line); }
 .section__head--center + .faq { margin-inline: auto; }
 .faq__item { border-bottom: var(--rule) solid var(--line); }
 .faq__item summary {
-  list-style: none; cursor: pointer; padding: calc(var(--space) * 1.1) 0;
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space);
-  font-family: var(--font-display); font-size: var(--step-1); min-height: 44px;
+  list-style: none; cursor: pointer; padding: calc(var(--space) * 1.15) 0;
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--space);
+  font-family: var(--font-display); font-size: var(--step-1);
+  letter-spacing: var(--display-tracking); line-height: 1.35; min-height: 44px;
 }
 .faq__item summary::-webkit-details-marker { display: none; }
-.faq__icon { position: relative; width: 14px; height: 14px; flex: none; }
+.faq__icon { position: relative; width: 13px; height: 13px; flex: none; transform: translateY(-2px); }
 .faq__icon::before, .faq__icon::after {
-  content: ''; position: absolute; inset: 50% 0 auto 0; height: 2px; background: var(--accent);
+  content: ''; position: absolute; inset: 50% 0 auto 0; height: 1px; background: var(--accent);
   transition: transform .25s var(--ease);
 }
 .faq__icon::after { transform: rotate(90deg); }
 .faq__item[open] .faq__icon::after { transform: rotate(0deg); }
-.faq__body { padding-bottom: calc(var(--space) * 1.2); color: var(--muted); max-width: var(--measure); }
+/* The answer indented under the question on a gold hairline, so an open item
+   reads as a branch of its question rather than as the next paragraph. */
+.faq__body {
+  padding: 0 0 calc(var(--space) * 1.35) calc(var(--space) * 1.4);
+  border-left: 1px solid var(--accent);
+  color: var(--muted); max-width: var(--measure);
+}
 .faq__body p:last-child { margin-bottom: 0; }
 
 /* ---------- footer ---------- */
-.footer { background: var(--bg-2); border-top: var(--rule) solid var(--line); padding-top: calc(var(--section-y) * .55); }
-.footer__inner { display: grid; grid-template-columns: 1fr 2fr; gap: calc(var(--space) * 2); }
-.footer__brand p { color: var(--muted); max-width: 26ch; margin-top: .8em; }
-.footer__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space); }
-.footer__col-title { font-size: var(--step--1); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--accent); margin-bottom: .6em; }
-.footer__cols p { color: var(--muted); font-size: var(--step--1); }
-.footer__cols a { color: var(--muted); }
+.footer { background: var(--bg-2); border-top: var(--rule) solid var(--line); padding-top: calc(var(--section-y) * .6); }
+/* The name, once, at size, before the columns. The footer used to open with a
+   ruled monogram and a 26ch line of grey text, which is a business card, not a
+   close. */
+.footer__lockup {
+  display: flex; align-items: center; gap: 1em;
+  padding-bottom: calc(var(--space) * 1.6);
+  border-bottom: var(--rule) solid var(--line);
+  margin-bottom: calc(var(--space) * 2);
+}
+.footer__name { font-family: var(--font-display); font-size: var(--step-2); letter-spacing: var(--display-tracking); line-height: 1.1; }
+.footer__inner { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: calc(var(--space) * 2); }
+.footer__brand p { margin: 0; }
+.footer__tagline { color: var(--text); max-width: 26ch; font-family: var(--font-display); font-size: var(--step-1); line-height: 1.35; letter-spacing: var(--display-tracking); }
+.footer__social { margin-top: 1.4em; }
+.footer__social a {
+  font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
+  color: var(--muted); font-weight: 600; text-decoration: none;
+  border-bottom: 1px solid var(--line-strong); padding-bottom: .25em;
+}
+.footer__social a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.footer__cols { display: contents; }
+/* Column titles in muted, not accent. Four gold headings in a footer spend the
+   accent on labels and leave nothing for the two links that matter. */
+.footer__col-title { font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--muted); margin: 0 0 1em; font-weight: 600; }
+.footer__cols p { color: var(--muted); font-size: var(--step--1); margin: 0; line-height: 1.7; }
+.footer__cols a { color: var(--muted); text-decoration: none; }
 .footer__cols a:hover { color: var(--accent); }
 .footer__base {
   display: flex; flex-wrap: wrap; gap: var(--space); justify-content: space-between;
-  border-top: var(--rule) solid var(--line); margin-top: calc(var(--space) * 2);
-  padding-block: calc(var(--space) * 1.2); font-size: var(--step--1); color: var(--muted);
+  border-top: var(--rule) solid var(--line); margin-top: calc(var(--space) * 2.5);
+  padding-block: calc(var(--space) * 1.3);
+  font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase; font-weight: 600; color: var(--muted);
 }
 .footer__base p { margin: 0; }
 
@@ -226,9 +399,7 @@ a.topbar__item:hover { color: var(--accent); }
  * fine" argues away.
  *
  * Translating instead keeps the motion and removes the window entirely: the text
- * is at full contrast for every frame it is on screen. Clipping the parent
- * hides the incoming element until it arrives, so nothing floats over adjacent
- * content on the way in.
+ * is at full contrast for every frame it is on screen.
  */
 .reveal { transform: translateY(14px); transition: transform .55s var(--ease); will-change: transform; }
 .reveal.is-visible { transform: none; }
@@ -242,145 +413,408 @@ a.topbar__item:hover { color: var(--accent); }
    ========================================================================== */
 
 
-/* ---------- shared: rules every layout variant needs ---------- */
-/* These live ABOVE the IS_<VARIANT> partition on purpose. A rule placed inside a
-   variant block only ships for that variant, which is how the Transit/Parking
-   list ended up with browser-default styling on a centred page. */
+/* ---------- shared: aftercare ---------- */
+/* `.care` itself lives here rather than in two variant blocks. aftercare.columns
+   is used by BOTH editorial and classic, and the base grid was duplicated in
+   each — which is the exact shape of the bug that put an unstyled <dl> on a
+   client's homepage, one copy away from happening again. */
+.care { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(var(--space) * 2.5); }
 .care.care--two { grid-template-columns: repeat(2, 1fr); }
-.care__lead { max-width: var(--measure); margin-inline: auto; margin-bottom: calc(var(--space) * 2.2); }
-.nowrap { white-space: nowrap; }
+/* Split by subject, not by paragraph. The prose blob had three subjects inside
+   it (hair, beard, after a shave) and no structure that said so; when the config
+   supplies homepage.aftercare_items this is what renders. */
+.care.care--subjects { grid-template-columns: repeat(3, 1fr); counter-reset: care; }
+.care.care--subjects > .care__col { counter-increment: care; }
+.care__lead { max-width: var(--measure); margin-bottom: calc(var(--space) * 2.2); }
+/* When the config supplies aftercare_lede it renders inside the split head, next
+   to the h2, where a trailing margin would push the rule off the baseline. */
+.section__head .care__lead { margin-bottom: 0; }
+.care__col { min-width: 0; border-top: var(--rule) solid var(--line); padding-top: calc(var(--space) * 1.2); }
+.care__col--accent { border-top: var(--rule-strong) solid var(--accent); }
+.care__num {
+  margin: 0 0 .9em; font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase; color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums;
+}
+/* Numbered by CSS counter, not by an @number token. `decimal-leading-zero` gives
+   01, 02, 03 — and still gives 10, 11 correctly, which a template-side zero-pad
+   would not. The element is aria-hidden and empty in the markup: the number is
+   ordinal decoration, and a screen reader reading "zero one, Hair" is worse than
+   silence. */
+.care__num::before { content: counter(care, decimal-leading-zero); }
+.care__col--accent .care__num { color: var(--accent); }
+.care__title { font-size: var(--step-1); margin-bottom: .6em; }
+.care__col p { color: var(--muted); margin-bottom: 0; }
+/* The two standing notes — schedule, and what to do if it is wrong — are a
+   footnote to the aftercare, not a third and fourth subject. Set as labels so
+   the three subjects above stay the structure of the section. */
+.care__notes {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: calc(var(--space) * 2.5);
+  margin-top: calc(var(--space) * 2.75); padding-top: calc(var(--space) * 1.6);
+  border-top: var(--rule) solid var(--line);
+}
+.care__notes h3 {
+  margin: 0 0 .5em; font-family: var(--font-body); font-size: var(--step--1);
+  letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
+  color: var(--text); font-weight: 600;
+}
+.care__notes p { margin: 0; color: var(--muted); font-size: var(--step--1); line-height: 1.6; max-width: 52ch; }
 
-/* ---------- media: gallery + hero image ---------- */
+/* ---------- shared: the about detail panel ---------- */
+/* about.split is used by editorial, compact AND classic. These rules were
+   duplicated in two variant blocks and absent from the third; one definition
+   here, with the genuinely-different bits overridden below. */
+.about__points { list-style: none; padding: 0; margin: 0; display: grid; gap: .85em; }
+.about__points li {
+  display: flex; gap: .9em; align-items: baseline; color: var(--muted);
+  font-size: var(--step--1); letter-spacing: .06em; text-transform: uppercase; font-weight: 500;
+}
+.check { width: 6px; height: 6px; flex: none; background: var(--accent); transform: translateY(-2px); }
+.about__card {
+  position: relative; overflow: hidden;
+  border: var(--rule) solid var(--line);
+  border-top: var(--rule-strong) solid var(--accent);
+  background: var(--bg-3);
+  padding: calc(var(--space) * 1.6);
+  border-radius: var(--radius);
+}
+/* Grain inside the panel too, or a filled surface on a grained page is the one
+   flat rectangle on the screen. */
+.about__card::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: var(--grain); opacity: var(--grain-page); mix-blend-mode: soft-light;
+}
+.about__card > * { position: relative; }
+.about__card-label { font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--accent); margin: 0 0 .7em; font-weight: 600; }
+.about__card-address { margin: 0 0 calc(var(--space) * 1.4); font-family: var(--font-display); font-size: var(--step-1); line-height: 1.35; letter-spacing: var(--display-tracking); }
+.about__card-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space);
+  padding-block: calc(var(--space) * 1.2);
+  border-block: var(--rule) solid var(--line);
+  margin-bottom: calc(var(--space) * 1.4);
+}
+.about__card-row .about__card-label { color: var(--muted); margin-bottom: .5em; }
+.about__card-row p { margin: 0; font-size: var(--step--1); line-height: 1.5; }
+
+/* ---------- shared: visit ---------- */
+/* visit.stacked is compact + classic; visit.split is editorial + gallery. Both
+   emit .visit__row, which previously had a rule in only two of the four. */
+.visit__row { display: grid; grid-template-columns: 8rem 1fr; gap: var(--space); padding-block: calc(var(--space) * 1.15); border-bottom: var(--rule) solid var(--line); }
+.visit__row:last-child { border-bottom: 0; }
+.visit__ledger { margin: 0; border-top: var(--rule-strong) solid var(--accent); }
+.visit__ledger dt { margin: 0; font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.visit__ledger dd { margin: 0; line-height: 1.5; }
+.visit__ledger dd.muted { color: var(--muted); font-size: var(--step--1); line-height: 1.6; }
+.visit__ledger a { text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+.visit__ledger a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+/* The address at display size. It is the reason the page exists for a walk-in
+   business and it was 22px of grey inside a centred card. */
+.visit__address { margin: 0 0 calc(var(--space) * 1.4); font-family: var(--font-display); font-size: var(--step-2); line-height: 1.25; letter-spacing: var(--display-tracking); }
+.visit__link {
+  display: inline-flex; align-items: center; gap: .7em; min-height: 44px;
+  color: var(--accent); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; text-decoration: none;
+  border-bottom: 1px solid var(--line-strong); padding-bottom: .3em;
+}
+.visit__link:hover { border-bottom-color: var(--accent); }
+.visit__cta { display: flex; flex-wrap: wrap; gap: var(--space); }
+/* Emitted by visit.split (editorial + gallery). It lived in the shared block
+   because of the bug this file's header describes: the FIRST classic build put
+   an unstyled <dl> of transit and parking notes on a client's homepage. It stays
+   shared even though visit.stacked no longer uses it — two of four variants do,
+   and "only editorial needs this" is how it went missing the first time. */
+.visit__notes {
+  display: grid; grid-template-columns: 7rem 1fr;
+  gap: .35em var(--space);
+  margin: calc(var(--space) * 2) 0 0;
+  padding-top: calc(var(--space) * 1.2);
+  border-top: var(--rule) solid var(--line);
+  text-align: left;
+}
+.visit__notes dt {
+  font-size: var(--step--2); text-transform: uppercase;
+  letter-spacing: var(--eyebrow-tracking); color: var(--accent); margin: 0; font-weight: 600;
+}
+.visit__notes dd { margin: 0; color: var(--muted); font-size: var(--step--1); line-height: 1.6; }
+
+/* ---------- media: gallery, hero image, interstitial band ---------- */
 /* In the SHARED block on purpose — every variant can carry a gallery, and a rule
    parked in one IS_<VARIANT> block ships for one layout only. */
 
 .gallery {
   list-style: none; padding: 0; margin: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-  gap: var(--space);
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+  gap: calc(var(--space) * 1.1);
 }
-/* One lead image across the full row; everything after it is a uniform tile.
-   `1 / -1` spans whatever the auto-fit column count turns out to be, so this
-   holds at every breakpoint without a media query per layout. */
 /* min-width:0 is not cosmetic on a grid child: the default `auto` lets a wide
    item refuse to shrink and blow the track out past the container. */
 .gallery__item { min-width: 0; }
 .gallery__item--lead { grid-column: 1 / -1; }
-
 .gallery__figure { margin: 0; }
-.gallery__img {
-  display: block; width: 100%;
-  aspect-ratio: 4 / 3; object-fit: cover;
-  border-radius: var(--radius);
+/* The frame exists so the image can have an overlay. An <img> has no
+   pseudo-element, so grain and a hover crop both need a box around it — and the
+   box is what lets the image scale inside a fixed outline instead of growing. */
+.gallery__frame {
+  display: block; position: relative; overflow: hidden;
+  aspect-ratio: 4 / 5;
   /* The artwork is near-black on a near-black page. Without a surface behind it
      and a hairline around it, a dark tile stops reading as an object at all and
      the gallery looks like a rendering failure. */
   background: var(--surface);
   border: var(--rule) solid var(--line);
-  transition: transform .5s var(--ease), border-color .5s var(--ease);
+  border-radius: var(--radius);
+  transition: border-color .5s var(--ease);
 }
-.gallery__item--lead .gallery__img { aspect-ratio: 21 / 9; }
-@media (max-width: 40em) { .gallery__item--lead .gallery__img { aspect-ratio: 16 / 9; } }
+.gallery__frame::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: var(--grain); opacity: var(--grain-media); mix-blend-mode: overlay;
+}
+.gallery__img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus-pos, center); transition: transform .7s var(--ease); }
+
+/* --- focal points ---------------------------------------------------------
+ * SHARED. Emitted by `derived.gallery_display[].focus_class` and
+ * `derived.hero_focus_class`, from an allowlist in config-schema.mjs.
+ *
+ * Every image here is object-fit: cover inside a fixed ratio, so the crop
+ * throws away whatever is not near the object-position. The default is centre
+ * and most artwork survives it; artwork whose subject sits in one corner does
+ * not. The steam study is a curl of light in the lower left against black, and
+ * a centred 4:5 crop of it shipped as an empty rectangle.
+ *
+ * Classes rather than an inline style attribute: the value comes from a YAML
+ * file a client edits, and `style="object-position:<value>"` would make that
+ * file a CSS injection sink. The page also has no inline styles at all today,
+ * which is worth keeping.
+ *
+ * They set a CUSTOM PROPERTY rather than object-position directly, so each
+ * consumer keeps its own default: the interstitial band is framed at
+ * `center 42%` on purpose, and a focus class that set object-position outright
+ * would silently beat it on source order and undo that framing for every
+ * client who never configured a focal point.
+ * ------------------------------------------------------------------------- */
+.media-focus--center       { --focus-pos: center; }
+.media-focus--top          { --focus-pos: top; }
+.media-focus--bottom       { --focus-pos: bottom; }
+.media-focus--left         { --focus-pos: left; }
+.media-focus--right        { --focus-pos: right; }
+.media-focus--left-top     { --focus-pos: left top; }
+.media-focus--left-bottom  { --focus-pos: left bottom; }
+.media-focus--right-top    { --focus-pos: right top; }
+.media-focus--right-bottom { --focus-pos: right bottom; }
+.gallery__item--lead .gallery__frame { aspect-ratio: 21 / 9; }
+@media (max-width: 40em) { .gallery__item--lead .gallery__frame { aspect-ratio: 16 / 9; } }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .gallery__figure:hover .gallery__img { transform: scale(1.012); border-color: var(--line-strong); }
+  .gallery__figure:hover .gallery__img { transform: scale(1.04); }
+  .gallery__figure:hover .gallery__frame { border-color: var(--line-strong); }
 }
-.gallery__caption {
-  margin-top: .6em; color: var(--muted);
-  font-size: var(--step--1); line-height: 1.45;
-}
+.gallery__caption { margin-top: .85em; color: var(--muted); font-size: var(--step--1); line-height: 1.5; }
 .gallery__credit {
-  margin-top: calc(var(--space) * 1.8);
+  margin: calc(var(--space) * 2) 0 0;
   padding-top: calc(var(--space) * 1.1);
   border-top: var(--rule) solid var(--line);
-  color: var(--muted); font-size: var(--step--1);
-  text-align: center;
+  color: var(--muted); font-size: var(--step--2);
+  letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; font-weight: 600;
 }
+
+/* --- the interstitial band ---
+ * One full-bleed image and one line, between two sections. It is the only place
+ * on the page that is neither a section nor a grid, which is the point: seven
+ * equally-padded sections in a row is what made the page feel like a form.
+ *
+ * It is the lead gallery image promoted out of the grid, so it costs no new
+ * asset, no new section id and no change to site-render.mjs — and it appears
+ * only when the config supplies a gallery, exactly like the section it opens.
+ *
+ * Graded cool (see --cool) against the warm accent everywhere else. That
+ * contrast is the whole reason the counter-tone exists; a page of one hue at one
+ * temperature is what "restrained" turns into when nothing pushes back.
+ */
+.gallery-band {
+  position: relative; overflow: hidden;
+  height: clamp(340px, 48vh, 580px);
+  isolation: isolate;
+  /* Negative top margin equal to the section's own top padding, so the band sits
+     FLUSH against whatever section precedes it in every variant. Cancelling the
+     padding here rather than zeroing it on .section--gallery keeps one rule for
+     all four layouts instead of four padding overrides that drift apart. */
+  margin: calc(var(--section-y) * -1) 0 var(--section-y-tight);
+}
+.gallery-band__img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: var(--focus-pos, center 42%); z-index: -3;
+  filter: saturate(.3) contrast(1.14) brightness(.95);
+}
+.gallery-band__scrim {
+  position: absolute; inset: 0; z-index: -2;
+  background: linear-gradient(180deg,
+    var(--bg) 0%,
+    color-mix(in srgb, var(--bg) 80%, transparent) 14%,
+    color-mix(in srgb, var(--cool) 38%, transparent) 52%,
+    color-mix(in srgb, var(--bg) 94%, transparent) 100%);
+}
+.gallery-band__grain { position: absolute; inset: 0; z-index: -1; background-image: var(--grain); opacity: calc(var(--grain-media) * 1.4); mix-blend-mode: overlay; }
+.gallery-band__inner { position: absolute; inset: auto 0 0 0; padding-bottom: calc(var(--space) * 2.25); }
+.gallery-band__rule { display: block; width: 3rem; height: 1px; background: var(--accent); margin-bottom: calc(var(--space) * 1.1); }
+.gallery-band__line { margin: 0; font-family: var(--font-display); font-size: var(--step-2); line-height: 1.25; letter-spacing: var(--display-tracking); max-width: 26ch; }
 
 /* Hero image sits BEHIND the copy, so the copy needs a scrim it can rely on
    rather than luck. Measured, not eyeballed: the gradient is opaque enough
-   across the whole text band to hold AA contrast against any image. Without it
-   the headline's legibility depends on what the artwork happens to be doing. */
+   across the whole text band to hold AA contrast against any image.
+   The gradients are keyed to the copy's position — bottom-left in the classic
+   hero — rather than to the centre, which is why the vertical ramp is far
+   heavier at the bottom than the old radial-from-centre version. */
 .hero--has-image { position: relative; isolation: isolate; }
-.hero__media { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
+.hero__media { position: absolute; inset: 0; z-index: -3; overflow: hidden; }
 .hero__media img {
   width: 100%; height: 100%; object-fit: cover;
-  /* This artwork carries its subject right of centre; centring the crop buries
-     it behind the headline. Configurable per client would be over-engineering
-     for one number that only matters when a hero image exists at all. */
-  object-position: 68% center;
+  /* Right-of-centre by default, because the copy is anchored bottom-LEFT and a
+     centred crop puts the subject behind the headline. This is a default, not a
+     fact about anyone's artwork: `media.hero_focus` overrides it per client
+     through --focus-pos, and a client whose hero is centred sets "center". */
+  object-position: var(--focus-pos, 70% 45%);
+  filter: contrast(1.06) saturate(.92);
 }
 .hero__scrim {
-  position: absolute; inset: 0; z-index: -1;
+  position: absolute; inset: 0; z-index: -2;
   background:
-    radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,.86) 0%, rgba(0,0,0,.72) 45%, rgba(0,0,0,.35) 100%),
-    linear-gradient(to bottom, var(--bg) 0%, transparent 22%, transparent 70%, var(--bg) 100%);
+    linear-gradient(to top, rgba(9,9,9,.97) 0%, rgba(9,9,9,.88) 22%, rgba(9,9,9,.48) 52%, rgba(9,9,9,.14) 76%, rgba(9,9,9,.52) 100%),
+    linear-gradient(to right, rgba(9,9,9,.88) 0%, rgba(9,9,9,.5) 32%, rgba(9,9,9,0) 62%);
 }
-.hero--has-image .hero__inner { padding-block: calc(var(--section-y) * 1.15); }
-.visit__cta { display: flex; flex-wrap: wrap; gap: var(--space); }
-.visit__panel-link { margin-top: .6em; }
-.visit__panel-note { margin-top: .4em; font-size: var(--step--1); color: var(--muted); }
-/* A modifier with no rule is dead intent: the editorial hero asked for a lighter
-   eyebrow and got the accent one, because nothing ever defined it. */
-.eyebrow--light { color: var(--text); opacity: .72; }
-
-.visit__notes {
-  display: grid; grid-template-columns: 7rem 1fr;
-  gap: .35em var(--space);
-  max-width: 46rem; margin: calc(var(--space) * 2) auto 0;
-  padding-top: calc(var(--space) * 1.2);
-  border-top: var(--rule) solid var(--line);
-  text-align: left;
-}
-.visit__notes dt {
-  font-size: var(--step--1); text-transform: uppercase;
-  letter-spacing: var(--eyebrow-tracking); color: var(--accent); margin: 0;
-}
-.visit__notes dd { margin: 0; color: var(--muted); font-size: var(--step--1); }
+/* On a phone the copy block is a much larger fraction of the hero, so the
+   eyebrow rides up out of the dense part of the scrim and onto open artwork.
+   Measured from rendered glyph pixels: 8.0:1 at 1440px, 3.7:1 at 390px against
+   a 4.5 requirement — the same markup, failing only where the frame is narrow.
+   The left-to-right wash also does less on a narrow viewport, because 32% of
+   390px is 125px. Raising the two middle stops fixes it without touching the
+   desktop framing, where the artwork is the point. Re-measured: 8.0:1. */
 @media (max-width: 40em) {
-  .care.care--two { grid-template-columns: 1fr; }
-  .visit__notes { grid-template-columns: 1fr; gap: .15em; }
-  .visit__notes dd { margin-bottom: .8em; }
+  .hero__scrim {
+    background:
+      linear-gradient(to top, rgba(9,9,9,.97) 0%, rgba(9,9,9,.93) 34%, rgba(9,9,9,.78) 62%, rgba(9,9,9,.42) 84%, rgba(9,9,9,.62) 100%),
+      linear-gradient(to right, rgba(9,9,9,.9) 0%, rgba(9,9,9,.66) 45%, rgba(9,9,9,.2) 100%);
+  }
+}
+.hero__grain { position: absolute; inset: 0; z-index: -1; background-image: var(--grain); opacity: var(--grain-media); mix-blend-mode: overlay; }
+.hero--has-image .hero__inner { padding-block: calc(var(--section-y) * 1.15); }
+
+
+
+
+
+
+
+
+/* --- classic: serif-forward, rule-separated, symmetric where it earns it ---
+ *
+ * headAlign() in site-render.mjs still sends `section__head--center` for this
+ * variant, and `gallery` depends on that function, so the modifier is
+ * neutralised HERE rather than changed there. Centring seven consecutive
+ * section heads is what made the page read as a template: the eye never has a
+ * reason to move, so nothing on the page has emphasis.
+ */
+.section__head--center { text-align: left; margin-inline: 0; max-width: none; }
+.section__head--center .section__sub,
+.section__head--center .section__aside { margin-inline: 0; text-align: left; }
+.section__head--center .eyebrow { justify-content: flex-start; }
+.section__head--center .section__aside { text-align: right; margin-top: 0; }
+/* The shared block flattens a split head back to a block when it also carries
+   --center, for the gallery variant. classic gets both classes and wants the
+   grid, so it is switched back on here — one line, and the alternative is a
+   second head template that exists only to omit a modifier. */
+.section__head--split.section__head--center { display: grid; grid-template-columns: 1fr auto; align-items: end; }
+.section__head { margin-bottom: calc(var(--space) * 2.25); }
+.h2 { line-height: 1.02; }
+
+/* Per-section rhythm. One --section-y for all seven is the reason the page had
+   no pacing; these hooks exist for exactly this. */
+.section--services { padding-block: calc(var(--section-y) * 1.15) var(--section-y-loose); position: relative; overflow: hidden; }
+.section--faq { padding-block: var(--section-y); }
+
+/* --- hero: full-viewport, artwork edge to edge, copy anchored bottom-left ---
+ * Was a 45px headline floating in the middle of a 900px section behind a
+ * centre-weighted scrim — an arrangement that makes the artwork a backdrop and
+ * the headline a caption. Anchoring the copy to one corner lets the light shaft
+ * in the artwork stay visible AND raises the measured contrast, because the
+ * text no longer sits on the brightest part of the frame.
+ * 88svh, not 100: a sliver of the price board has to show below the fold or a
+ * full-height hero is a dead end.
+ */
+.hero--classic {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: 88vh;
+  min-height: 88svh;
+  display: grid; align-content: end;
+  border-bottom: var(--rule) solid var(--line);
+}
+.hero--classic .hero__inner {
+  padding-top: calc(var(--nav-h) + var(--space) * 5);
+  padding-bottom: calc(var(--space) * 2.75);
+}
+.hero--classic .hero__title {
+  font-size: var(--step-4);
+  font-weight: 400;
+  line-height: .92;
+  letter-spacing: var(--display-tracking-display);
+  max-width: 14ch;
+  text-wrap: balance;
+}
+/* Gold on the tagline plus gold on the eyebrow plus gold on the CTA is three
+   things competing at the top of the page. The tagline is the sentence, so it
+   gets the text colour and the display face instead. */
+.hero__tagline {
+  font-family: var(--font-display); font-size: var(--step-2); color: var(--text);
+  margin: calc(var(--space) * 1.1) 0 0; max-width: 34ch;
+  line-height: 1.24; letter-spacing: var(--display-tracking);
 }
 
+/* --- services: the price board, promoted --- */
+/* The dotted leader was the best thing on the page and it was running across a
+   480px column in a two-up grid. One column at --max-wide gives every row a
+   leader long enough to read as a board rather than as a bullet. */
+.section--services .section__halo {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: min(1100px, 90%); height: 420px; pointer-events: none;
+  background: radial-gradient(60% 100% at 50% 0%, var(--halo) 0%, color-mix(in srgb, var(--bg) 100%, transparent) 72%);
+}
+.section--services > .container { position: relative; }
+.service-list { display: grid; grid-template-columns: 1fr; margin: 0; border-top: var(--rule-strong) solid var(--accent); }
+.service-list__item {
+  padding: calc(var(--space) * 1.35) var(--space);
+  margin-inline: calc(var(--space) * -1);
+  border-bottom: var(--rule) solid var(--line);
+  transition: background .25s var(--ease);
+}
+.service-list__item:hover { background: var(--bg-2); }
+.service-list__term {
+  display: flex; align-items: baseline; gap: .8em;
+  font-family: var(--font-display); font-size: var(--step-2);
+  letter-spacing: var(--display-tracking); line-height: 1.2;
+}
+.service-list__name { min-width: 0; }
+.service-list__leader { flex: 1; border-bottom: 1px dotted var(--line-strong); transform: translateY(-.28em); min-width: 3rem; }
+.service-list__price { color: var(--accent); white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* Description left, duration right, on one baseline. Duration used to be an
+   italic parenthetical inside the description, which is where you put an aside,
+   not a number someone is comparing across six rows. */
+.service-list__desc { margin: .7em 0 0; display: flex; gap: var(--space); align-items: baseline; justify-content: space-between; }
+.service-list__body { color: var(--muted); max-width: 62ch; }
+.service-list__duration {
+  font-style: normal; white-space: nowrap;
+  font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase; color: var(--muted); font-weight: 600;
+}
 
+/* --- about: asymmetric (about.split), on a surface --- */
+.grid--about { gap: calc(var(--space) * 3.5); }
+.about__copy .lead { max-width: 48ch; margin-bottom: 1.1em; }
+.about__copy > p { max-width: var(--measure); }
+.about__points { margin-top: calc(var(--space) * 1.6); }
 
-
-
-
-
-
-/* --- classic: symmetric, serif-forward, rule-separated --- */
-.hero--classic { padding-block: calc(var(--section-y) * 1.2); text-align: center; border-bottom: var(--rule) solid var(--line); }
-.hero--classic .hero__title { font-size: var(--step-4); }
-.hero__rule { width: 6rem; margin: calc(var(--space) * 1.2) auto; border: 0; border-top: var(--rule) solid var(--accent); }
-.hero__tagline { font-family: var(--font-display); font-size: var(--step-2); color: var(--accent); margin-bottom: .6em; }
-.hero--classic .hero__lede { margin-inline: auto; }
-
-.service-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 calc(var(--space) * 3); margin: 0; }
-.service-list__item { padding-block: calc(var(--space) * 1.1); border-bottom: var(--rule) solid var(--line); }
-.service-list__term { display: flex; align-items: baseline; gap: .6em; font-family: var(--font-display); font-size: var(--step-1); }
-.service-list__leader { flex: 1; border-bottom: 1px dotted var(--line-strong); transform: translateY(-.25em); }
-.service-list__price { color: var(--accent); white-space: nowrap; }
-.service-list__desc { margin: .35em 0 0; color: var(--muted); font-size: var(--step--1); }
-.service-list__duration { font-style: italic; }
-
-.about__narrow { max-width: calc(var(--measure) + 8ch); margin-inline: auto; }
-.about__lead, .about__body { text-align: center; margin-inline: auto; max-width: var(--measure); }
-.about__strip { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space); margin-block: calc(var(--space) * 2); text-align: center; border-block: var(--rule) solid var(--line); padding-block: calc(var(--space) * 1.2); }
-.about__strip strong { display: block; font-family: var(--font-display); font-size: var(--step-2); color: var(--accent); }
-.about__strip span { color: var(--muted); font-size: var(--step--1); }
-.about__cta { text-align: center; }
-
-.care { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(var(--space) * 2); text-align: center; }
-.care__col--accent { border-top: 2px solid var(--accent); padding-top: var(--space); }
-.care__title { font-size: var(--step-1); }
-.care__col p { color: var(--muted); }
-
-.visit__panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: calc(var(--space) * 2); text-align: center; }
-.visit__panel-title { font-size: var(--step-1); }
-.visit__panel p { color: var(--muted); }
-.visit__cta--center { text-align: center; margin-top: calc(var(--space) * 2); }
+/* --- aftercare + faq + visit --- */
+.care__lead { margin-inline: 0; }
+.faq { max-width: none; }
+.grid--visit { gap: calc(var(--space) * 3.5); }
+.visit__copy .section__sub { margin-bottom: calc(var(--space) * 2); }
 
 
 /* ==========================================================================
@@ -388,70 +822,163 @@ a.topbar__item:hover { color: var(--accent); }
    DOM CONTRACT (04 §C / 14 §D): .blog-card is counted by verify-live.mjs;
    #blogGrid, #blogLoadMore, [data-bucket] and .blog-filter__btn are read by the
    inline IIFE in templates/blog-index.html. Renaming any of them fails SILENTLY.
+   The card MARKUP is emitted by scripts/build-blog.mjs, not by a template, so
+   everything below is a restyle of fixed markup — which is why the date renders
+   as an ISO string. Changing that is a one-line change in build-blog.mjs.
    ========================================================================== */
 .blog-index-hero { padding-bottom: calc(var(--space) * 2); }
-.blog-filter { display: flex; flex-wrap: wrap; gap: .5em; margin-top: calc(var(--space) * 1.5); }
+.blog-index-hero .h2 { max-width: 20ch; }
+.blog-filter {
+  display: flex; flex-wrap: wrap; gap: .6em;
+  margin-top: calc(var(--space) * 2);
+  padding-top: calc(var(--space) * 1.2);
+  border-top: var(--rule) solid var(--line);
+}
 .blog-filter__btn {
-  background: none; border: var(--rule) solid var(--line); border-radius: 999px;
-  color: var(--muted); padding: .45em 1em; min-height: 36px; cursor: pointer;
-  font-family: var(--font-body); font-size: var(--step--1); text-transform: capitalize;
+  background: none; border: var(--rule) solid var(--line); border-radius: var(--radius);
+  color: var(--muted); padding: .55em 1.2em; min-height: 38px; cursor: pointer;
+  font-family: var(--font-body); font-size: var(--step--2);
+  letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; font-weight: 600;
 }
 .blog-filter__btn:hover { border-color: var(--accent); color: var(--accent); }
 .blog-filter__btn.is-active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-.blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: calc(var(--space) * 1.5); }
-.blog-card { background: var(--bg-3); border: var(--rule) solid var(--line); border-radius: var(--radius); transition: border-color .2s var(--ease), transform .2s var(--ease); }
-.blog-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-.blog-card__link { display: block; padding: calc(var(--space) * 1.3); text-decoration: none; height: 100%; }
-.blog-card__meta { display: flex; gap: .8em; align-items: center; font-size: var(--step--1); color: var(--muted); margin-bottom: .8em; }
-.blog-card__pill { border: var(--rule) solid var(--line); border-radius: 999px; padding: .15em .7em; text-transform: capitalize; }
-.blog-card__title { margin-bottom: .5em; }
-.blog-card__excerpt { margin: 0; font-size: var(--step--1); }
+/* An editorial list, not a card wall. Four bordered boxes on a dark page read as
+   four empty rectangles; a hairline and a real title size read as writing. */
+.blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr)); gap: 0 calc(var(--space) * 3.5); }
+.blog-card { border-top: var(--rule) solid var(--line); transition: opacity .25s var(--ease); }
+.blog-card:first-child { border-top: var(--rule-strong) solid var(--accent); }
+.blog-card:hover { opacity: .72; }
+.blog-card__link { display: block; padding-block: calc(var(--space) * 1.75); text-decoration: none; height: 100%; }
+.blog-card__meta {
+  display: flex; gap: 1.2em; align-items: baseline; margin-bottom: 1.2em;
+  font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase; color: var(--muted); font-weight: 600;
+}
+.blog-card__pill { color: var(--accent); }
+.blog-card__title { margin-bottom: .55em; font-size: var(--step-2); line-height: 1.15; }
+.blog-card__excerpt { margin: 0 0 1.4em; max-width: 54ch; }
+.blog-card__link::after {
+  content: 'Read \00a0\2192';
+  font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase; color: var(--accent); font-weight: 600;
+}
 .blog-load-more-wrap { display: flex; justify-content: center; margin-top: calc(var(--space) * 2); }
 .blog-empty-state { text-align: center; color: var(--muted); padding-block: calc(var(--space) * 3); }
 
 /* ---------- article ---------- */
-.article-hero { padding-block: calc(var(--section-y) * .8) calc(var(--space) * 2); border-bottom: var(--rule) solid var(--line); }
-.article-hero__inner { max-width: calc(var(--measure) + 6ch); }
-.article-hero__title { font-size: var(--step-3); }
-.article-hero__meta { display: flex; flex-wrap: wrap; gap: .8em; align-items: center; font-size: var(--step--1); }
-.article-pill { border: var(--rule) solid var(--line); border-radius: 999px; padding: .2em .8em; color: var(--muted); }
-.article-body { max-width: calc(var(--measure) + 6ch); padding-block: calc(var(--space) * 2.5); }
-.article-body h2 { font-size: var(--step-2); margin-top: 1.8em; }
-.article-body h3 { font-size: var(--step-1); margin-top: 1.4em; }
-.article-body a { color: var(--accent); }
-.article-body blockquote {
-  margin: calc(var(--space) * 2) 0; padding-left: calc(var(--space) * 1.2);
-  border-left: 2px solid var(--accent); font-family: var(--font-display);
-  font-size: var(--step-1); color: var(--text);
+.article-hero { padding-block: calc(var(--section-y) * .8) calc(var(--space) * 2.5); border-bottom: var(--rule) solid var(--line); }
+.article-hero__inner { max-width: var(--max-wide); }
+.article-hero__eyebrow { color: var(--accent); }
+.article-hero__title { font-size: var(--step-3); max-width: 30ch; line-height: 1.06; text-wrap: balance; margin-bottom: calc(var(--space) * 1.4); }
+.article-hero__meta {
+  display: flex; flex-wrap: wrap; gap: 1.5em; align-items: baseline;
+  font-size: var(--step--2); letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase; color: var(--muted); font-weight: 600;
+  padding-top: calc(var(--space) * 1.1); border-top: var(--rule) solid var(--line);
 }
-.article-body ul, .article-body ol { color: var(--muted); }
-.article-faq { background: var(--bg-2); padding-block: var(--section-y); }
-.article-faq .container { max-width: calc(var(--measure) + 6ch); }
-.article-faq__title { margin-bottom: calc(var(--space) * 1.5); }
+/* The pills were bordered capsules holding two words each. A meta line does not
+   need six borders; it needs one rule and space. */
+.article-pill { border: 0; padding: 0; color: var(--muted); }
+.article-byline { color: var(--muted); }
+.article-body { padding-block: calc(var(--space) * 3); }
+/* The measure lives on the CHILDREN, not on the wrapper, so the pull-quote can
+   break out of the column while the prose stays on a 68ch line. BODY_HTML is
+   emitted by scripts/build-blog.mjs from markdown, so the only handle on it is
+   the direct-child selector. */
+.article-body > * { max-width: 68ch; }
+.article-body p { color: var(--muted); line-height: 1.75; margin-bottom: 1.3em; }
+.article-body > p:first-child { font-size: var(--step-1); line-height: 1.5; color: var(--text); }
+.article-body strong { color: var(--text); font-weight: 600; }
+.article-body h2 { font-size: var(--step-2); margin: 2.2em 0 .7em; line-height: 1.15; }
+.article-body h3 { font-size: var(--step-1); margin: 1.6em 0 .5em; }
+.article-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+.article-body a:hover { color: var(--accent-soft); border-bottom-color: var(--accent); }
+/* A pull-quote, breaking the measure. It was an indented paragraph one size up,
+   which reads as a paragraph that has been indented. */
+.article-body blockquote {
+  margin: calc(var(--space) * 2.75) 0;
+  padding: calc(var(--space) * 2) 0 calc(var(--space) * 2) calc(var(--space) * 2);
+  border-left: var(--rule-strong) solid var(--accent);
+  max-width: 46ch;
+}
+.article-body > blockquote { max-width: 46ch; }
+.article-body blockquote p {
+  font-family: var(--font-display); font-size: var(--step-2);
+  line-height: 1.28; letter-spacing: var(--display-tracking);
+  color: var(--text); margin-bottom: .9em;
+}
+.article-body blockquote p:last-of-type { margin-bottom: 0; }
+.article-body ul, .article-body ol { color: var(--muted); line-height: 1.75; }
+.article-faq { background: var(--bg-2); border-block: var(--rule) solid var(--line); padding-block: var(--section-y); }
+.article-faq .container { max-width: var(--max-wide); }
+.article-faq__title { margin-bottom: 0; font-size: var(--step-2); max-width: 18ch; }
 .continue-reading { padding-block: var(--section-y); }
-.continue-reading__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: calc(var(--space) * 1.5); margin-top: calc(var(--space) * 2); }
-.continue-reading__card { border: var(--rule) solid var(--line); border-radius: var(--radius); }
-.continue-reading__card a { display: block; padding: calc(var(--space) * 1.2); text-decoration: none; }
-.continue-reading__card:hover { border-color: var(--accent); }
+.continue-reading__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: calc(var(--space) * 2.5); margin-top: calc(var(--space) * 1.75); }
+.continue-reading__card { border-top: var(--rule) solid var(--line); transition: opacity .25s var(--ease); }
+.continue-reading__card:hover { opacity: .72; }
+.continue-reading__card a { display: block; padding-top: calc(var(--space) * 1.2); text-decoration: none; font-family: var(--font-display); font-size: var(--step-1); line-height: 1.25; letter-spacing: var(--display-tracking); }
 
 /* ---------- responsive ---------- */
+/* The nav collapses in two stages, not one.
+ *
+ * `booking.url` is empty for an appointment-only business, so the nav now
+ * carries a phone CTA that the old link-only bar did not — and six links plus a
+ * brand lockup plus a button needs about 1150px. With a single 760px breakpoint
+ * everything between 760px and ~1150px overflowed horizontally: the CTA slid off
+ * the right edge and the whole page got a horizontal scrollbar. Measured, not
+ * theorised — at 909px the nav's inner row wanted 1084px.
+ *
+ * So: tighten first (drop the city line and the wide tracking, close the gaps),
+ * then collapse to the hamburger at 1024px, well before the layout runs out of
+ * room rather than exactly when it does.
+ */
+@media (max-width: 1180px) {
+  .nav__inner { gap: var(--space); }
+  .nav__links { gap: var(--space); }
+  .nav__links a { letter-spacing: .08em; }
+  .nav__meta { display: none; }
+  .topbar__hours { display: none; }
+}
+@media (max-width: 1024px) {
+  .nav__links { display: none; }
+  .nav__toggle { display: block; }
+}
+@media (max-width: 1100px) {
+  .faq-layout { grid-template-columns: 1fr; gap: calc(var(--space) * 2); }
+  .faq-layout > .section__head { position: static; }
+  .footer__inner { grid-template-columns: 1fr 1fr; }
+}
 @media (max-width: 900px) {
-  .grid--about, .grid--visit, .hero__bar, .care, .care-inline, .footer__inner,
-  .service-list, .about__strip, .hero__band { grid-template-columns: 1fr; }
+  .grid--about, .grid--visit, .hero__bar, .care, .care.care--two, .care.care--subjects,
+  .care__notes, .care-inline, .footer__inner, .service-list,
+  .about__strip, .hero__band, .hero__ledger { grid-template-columns: 1fr; }
   .hero__band { height: 180px; grid-template-columns: repeat(3, 1fr); }
-  .footer__cols { grid-template-columns: 1fr 1fr; }
+  .hero__ledger { gap: calc(var(--space) * 1.2); }
   .about__card { position: static; }
+  .section__head--split { grid-template-columns: 1fr; align-items: start; }
+  .section__aside, .section__head--center .section__aside { text-align: left; }
+  .gallery-band { height: clamp(260px, 40vh, 380px); }
 }
 @media (max-width: 760px) {
-  .nav__links, .nav__cta { display: none; }
-  .nav__toggle { display: block; }
   .hero__meta { grid-template-columns: 1fr !important; }
   .service-row { grid-template-columns: 2rem 1fr; }
   .service-row__meta { grid-column: 2; text-align: left; }
-  .visit__row { grid-template-columns: 1fr; }
+  .service-list__desc { flex-direction: column; gap: .5em; }
+  .visit__row { grid-template-columns: 1fr; gap: .35em; }
+  .visit__notes { grid-template-columns: 1fr; gap: .15em; }
+  .visit__notes dd { margin-bottom: .8em; }
   .service-table thead { display: none; }
   .service-table th, .service-table td { display: block; border-bottom: 0; padding: .2em 0; }
   .service-table__row { display: block; border-bottom: var(--rule) solid var(--line); padding-block: var(--space); }
   .service-table__price { text-align: left; }
-  .footer__cols { grid-template-columns: 1fr; }
+  .footer__inner { grid-template-columns: 1fr; }
+  .gallery { grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); }
+}
+/* Phone. The brand collapses to the monogram and the CTA to the micro tier so
+   mark + number + hamburger all fit inside 350px of content width — the number
+   stays on screen, because it is the only action this business has. */
+@media (max-width: 480px) {
+  .nav__name { display: none; }
+  .nav__cta { font-size: var(--step--2); padding: .6em .9em; letter-spacing: .04em; }
+  .nav__inner { gap: .6em; }
 }

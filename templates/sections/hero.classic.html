@@ -1,14 +1,58 @@
+{{!
+  hero.classic — full-viewport, artwork edge to edge, copy anchored bottom-left.
+
+  Was: a centred lockup (eyebrow / name / 6rem gold rule / tagline / positioning
+  paragraph / one ghost button) floating in the middle of a 900px section behind
+  a radial scrim centred on the text.
+
+  Three changes, in order of how much they matter:
+
+  1. The copy moved to a corner. A centred block over a photograph puts the type
+     on whatever the middle of the frame is doing — here, the brightest part of a
+     light shaft — and then needs an 86%-black radial scrim to survive it, which
+     buries the artwork the scrim was protecting. Anchoring bottom-left lets the
+     shaft and the chair stay visible AND raises measured contrast, because the
+     text now sits on the darkest quadrant.
+  2. `business.positioning` is gone from the hero. It is the same sentence that
+     opens the About section two screens later, and at 22px over imagery it was
+     four lines of grey competing with the headline. Nothing is lost; About is
+     now the second section rather than the third.
+  3. The `<hr class="hero__rule">` is gone and the facts arrived. A decorative
+     rule was doing the work that address / hours / booking should be doing —
+     they are why someone opens a local business site, and they were four screens
+     down. `hours_runs` rather than `hours_line` so Saturday's earlier close gets
+     its own line instead of being flattened into a run-on.
+
+  The CTA is an if/else, not two ifs: a business with a booking URL should get
+  one primary button, not a booking button and a phone button competing.
+}}
 <section class="hero hero--classic{{#if derived.has_hero_image}} hero--has-image{{/if}}" id="home">
   {{> hero-media}}
-  <div class="hero__inner container hero__inner--center">
-    <p class="eyebrow">{{business.type}} &middot; {{location.address_city}}</p>
+  <div class="hero__inner container container--wide">
+    <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span>{{business.type}} &middot; {{location.address_city}}</p>
     <h1 class="hero__title">{{business.name}}</h1>
-    <hr class="hero__rule" />
     <p class="hero__tagline">{{business.tagline}}</p>
-    <p class="hero__lede">{{business.positioning}}</p>
     <div class="hero__cta">
-      {{#if ?booking.url}}<a class="btn btn--accent btn--lg" href="{{booking.url}}">Request an appointment</a>{{/if}}
-      <a class="btn btn--ghost btn--lg" href="#services">Services &amp; pricing</a>
+      {{#if ?booking.url}}
+      <a class="btn btn--accent btn--lg" href="{{booking.url}}">Request an appointment</a>
+      {{else}}
+      {{#if ?booking.publish_phone}}<a class="btn btn--accent btn--lg" href="tel:{{booking.phone}}">Call to book</a>{{/if}}
+      {{/if}}
+      <a class="btn btn--glass btn--lg" href="#services">Services &amp; pricing</a>
     </div>
+    <dl class="hero__ledger">
+      <div>
+        <dt>Address</dt>
+        <dd>{{location.address_street}}<br />{{derived.address_city_region_postal}}</dd>
+      </div>
+      <div>
+        <dt>Hours</dt>
+        <dd>{{#each derived.hours_runs}}<span class="nowrap">{{this}}</span>{{#unless @last}}<br />{{/unless}}{{/each}}</dd>
+      </div>
+      <div>
+        <dt>Booking</dt>
+        <dd>{{derived.booking_line_period}}</dd>
+      </div>
+    </dl>
   </div>
 </section>

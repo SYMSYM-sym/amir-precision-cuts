@@ -226,7 +226,7 @@ export function buildInternalLinks(c) {
 // ---------------------------------------------------------------------------
 
 /**
- * "Encino, Encino" is what you get when neighbourhood and city are the same
+ * A doubled place name is what you get when neighbourhood and city are the same
  * word and the template concatenates them anyway. Real single-neighbourhood
  * cities hit this constantly.
  */
@@ -238,7 +238,7 @@ function placeLine(c) {
 
 /**
  * When no tenure was supplied, the prompt must FORBID inventing one rather than
- * simply omitting the fact. A model handed "Practitioner: Amir" and an eeat
+ * simply omitting the fact. A model handed a practitioner name and an eeat
  * topic bucket will reach for "years of experience" unless told not to.
  */
 function tenureRule(c) {

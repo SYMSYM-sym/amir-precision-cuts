@@ -112,6 +112,31 @@ homepage:
     it for a day. Most cuts here sit right for three to four weeks; come back
     when the neckline starts to blur rather than when the length starts to
     bother you, and the shape never has to be rebuilt from scratch.
+
+  # OPTIONAL, read by aftercare.columns. Both are Amir's existing aftercare_body
+  # copy re-sorted into the subjects it already contained — nothing here is a new
+  # claim, a new price, or a promise the shop has not already made in prose.
+  #
+  # They live in config rather than in the template because "hair / beard / after
+  # a shave" is a set that belongs to this trade. The same template renders for a
+  # nail salon, and a nail salon has no beard.
+  aftercare_lede: >-
+    Most cuts here sit right for three to four weeks. Come back when the
+    neckline starts to blur rather than when the length starts to bother you,
+    and the shape never has to be rebuilt from scratch.
+  aftercare_items:
+    - title: "Hair"
+      body: >-
+        Leave a fresh cut alone for the first day — no product, and no cap
+        pulled down hard over the shape. After that, wash with something that
+        does not strip the scalp and towel dry rather than rubbing.
+    - title: "Beard"
+      body: >-
+        A beard holds its shape far longer if you comb it out after every wash
+        and oil it while the skin is still slightly damp.
+    - title: "After a shave"
+      body: >-
+        Skip anything with alcohol in it for a day.
   faq:
     - q: "Do I need an appointment?"
       a: "Yes — the shop runs by appointment so the chair is not double-booked. Call or message on Instagram and we will find you a slot."
@@ -225,6 +250,10 @@ media:
     - src: "/assets/img/media/03-steam-1600.jpg"
       alt: "Ribbons of steam curling through darkness, lit from the side."
       caption: "Hot towel, taken at the pace it needs."
+      # The steam sits in the lower-left corner against black. The grid crops
+      # 4:5 from the centre, which threw all of it away — the tile shipped as
+      # an empty rectangle. See media.gallery[].focus in config-schema.mjs.
+      focus: "left bottom"
     - src: "/assets/img/media/04-light-1600.jpg"
       alt: "Hard light through a narrow gap, throwing long parallel bars of shadow."
       caption: "Ventura Boulevard, late in the afternoon."

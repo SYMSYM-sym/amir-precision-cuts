@@ -6,11 +6,20 @@
 {{{TOPBAR}}}
 {{{NAV}}}
 <main id="main" tabindex="-1">
+  {{!
+    The index is an editorial list, not a card wall. Four bordered boxes on a
+    near-black page read as four empty rectangles; the restyle is in the blog
+    block of styles.css, because the CARD MARKUP comes from
+    scripts/build-blog.mjs rather than from a template. Two consequences worth
+    knowing: the date renders as an ISO string (a one-line change in
+    build-blog.mjs if you want "31 Jul 2026"), and `class="blog-card"` must stay
+    exactly that — verify-live.mjs counts the literal attribute.
+  }}
   <section class="section blog-index-hero">
-    <div class="container">
-      <p class="eyebrow">{{site.blog_title}}</p>
+    <div class="container container--wide">
+      <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span>{{business.short_name}}</p>
       <h1 class="h2">{{site.blog_title}}</h1>
-      <p class="section__sub">{{site.blog_subtitle}}</p>
+      <p class="lead">{{site.blog_subtitle}}</p>
       <div class="blog-filter" role="group" aria-label="Filter by topic">
         <button type="button" class="blog-filter__btn blog-filter__btn--all is-active" data-bucket="">All</button>
         {{{FILTER_BUTTONS}}}
@@ -18,7 +27,7 @@
     </div>
   </section>
   <section class="section section--dark">
-    <div class="container">
+    <div class="container container--wide">
       <div class="blog-grid" id="blogGrid">
         {{{ARTICLE_CARDS}}}
       </div>

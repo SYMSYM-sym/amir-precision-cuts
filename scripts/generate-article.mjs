@@ -75,7 +75,7 @@ function buildSystemPrompt(topic, isoDate) {
   const loc = cfg.location;
 
   // years_experience is OPTIONAL. Interpolating it unguarded printed
-  // "Amir, undefined years experience" into the reference data block and
+  // "<practitioner>, undefined years experience" into the reference block and
   // "the practitioner, undefined years of experience" into the quote rule —
   // which is worse than useless: it hands the model a blank and invites it to
   // fill in a number about someone's career. When we do not know, say so, and

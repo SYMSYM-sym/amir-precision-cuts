@@ -11,7 +11,7 @@
     "publish": "node scripts/index.mjs",
     "build": "node scripts/build-blog.mjs",
     "dry": "node scripts/index.mjs --dry-run",
-    "test": "node --test scripts/*.test.mjs",
+    "test": "node scripts/run-tests.mjs scripts/*.test.mjs",
     "verify": "node scripts/verify-live.mjs",
     "assets": "python3 scripts/generate-assets.py",
     "invariants": "node scripts/assert-invariants.mjs",

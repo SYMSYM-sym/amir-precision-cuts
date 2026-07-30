@@ -7,7 +7,7 @@
       <p class="hero__lede">{{business.positioning}}</p>
     </div>
     <ul class="hero__facts">
-      <li><span class="hero__fact-k">Where</span><span class="hero__fact-v">{{location.neighborhood}}, {{location.address_city}}</span></li>
+      <li><span class="hero__fact-k">Where</span><span class="hero__fact-v">{{derived.place_line}}</span></li>
       <li><span class="hero__fact-k">Hours</span><span class="hero__fact-v">{{derived.hours_line}}</span></li>
       <li><span class="hero__fact-k">Booking</span><span class="hero__fact-v">{{derived.booking_line}}</span></li>
       {{#if derived.has_experience}}<li><span class="hero__fact-k">Since</span><span class="hero__fact-v">{{derived.experience_years}} years in practice</span></li>{{/if}}

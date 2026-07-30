@@ -1,5 +1,26 @@
+{{!
+  about.split — now used by editorial, compact AND classic.
+
+  `classic` used to render `about.centered`: a centred column of body copy with a
+  centred three-cell strip under it and a centred ghost button under that. It was
+  the least confident thing on the page — a paragraph in the middle of nothing —
+  and it is the reason the brief's first complaint is "everything is centred, at
+  the same rhythm, forever". This template already existed and already does the
+  right thing, so the fix was a one-line change in layout-variants.mjs rather
+  than a new template.
+
+  The card rules moved to the SHARED block of styles.css. They were duplicated in
+  the editorial and compact partitions and absent from classic, which is a
+  three-of-four-layouts outage waiting for exactly this change.
+
+  One content fix: the second point was `location.neighborhood` followed by
+  `location.address_city`, which prints the same word twice for any client whose
+  neighborhood IS the city. `derived.place_primary` / `place_secondary` already
+  collapse that case (config-schema.mjs compares them, case-insensitively) and
+  give the place once, then the region, instead.
+}}
 <section class="section {{SECTION_TONE}} section--about" id="about">
-  <div class="container grid grid--about">
+  <div class="container container--wide grid grid--about">
     <div class="about__copy">
       <p class="eyebrow">About</p>
       <h2 class="h2">{{business.short_name}}</h2>
@@ -8,7 +29,7 @@
       <ul class="about__points">
         {{#if derived.has_experience}}<li><span class="check" aria-hidden="true"></span>{{derived.experience_years}} years of practice</li>{{/if}}
         <li><span class="check" aria-hidden="true"></span>{{derived.booking_line}}</li>
-        <li><span class="check" aria-hidden="true"></span>{{location.neighborhood}}, {{location.address_city}}</li>
+        <li><span class="check" aria-hidden="true"></span>{{derived.place_primary}}, {{derived.place_secondary}}</li>
       </ul>
     </div>
     <aside class="about__card">
@@ -17,7 +38,7 @@
         <p class="about__card-address">{{location.address_street}}<br />{{derived.address_city_region_postal}}</p>
       </div>
       <div class="about__card-row">
-        <div><p class="about__card-label">Hours</p><p>{{#if derived.hours_uniform}}{{derived.hours_days_short}}<br />{{derived.hours_times_long}}{{else}}{{derived.hours_line}}{{/if}}</p></div>
+        <div><p class="about__card-label">Hours</p><p>{{#each derived.hours_runs}}{{this}}{{#unless @last}}<br />{{/unless}}{{/each}}</p></div>
         <div><p class="about__card-label">Booking</p><p>{{derived.booking_line}}</p></div>
       </div>
       <a class="btn btn--accent btn--block" href="{{derived.address_maps_url}}" rel="noopener" target="_blank">Get directions</a>

@@ -13,16 +13,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<!-- The webfont stylesheet is loaded NON-BLOCKING.
-     As a plain <link rel="stylesheet"> it is render-blocking, and measured on a
-     network where fonts.googleapis.com was unreachable the page stayed blank for
-     12.9 seconds — first paint waited out the whole timeout. Not hypothetical:
-     that host is slow on some networks and blocked on others, and the visitor
-     sees nothing at all while it hangs.
-     media="print" makes the browser fetch it at low priority without blocking
-     paint; onload promotes it to all media once it lands. The token stack falls
-     back to Georgia / system-ui, so the pre-swap paint is a deliberate design
-     rather than a flash of nothing. <noscript> covers scripting-off. -->
+
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" media="print" onload="this.media='all';this.onload=null" />
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" /></noscript>
 <link rel="stylesheet" href="/assets/styles.css" />
@@ -47,173 +38,310 @@
 
 <body class="layout-classic theme-dark">
 <a class="skip-link" href="#main">Skip to content</a>
-<div class="topbar">
-  <div class="topbar__inner container">
+
+<aside class="topbar" aria-label="Hours and contact">
+  <div class="topbar__inner container container--wide">
     <span class="topbar__item"><span class="dot" aria-hidden="true"></span>By appointment only</span>
     <span class="topbar__spacer"></span>
+    <span class="topbar__item topbar__hours">Tue–Fri 9 AM–8 PM · Sat 9 AM–7 PM</span>
     
     <a class="topbar__item" href="tel:+18188183945" aria-label="Call Amir Precision Cuts">(818) 818-3945</a>
     
   </div>
-</div>
+</aside>
+
 
 <header class="nav" id="nav">
-  <div class="nav__inner container">
+  <div class="nav__inner container container--wide">
     <a class="nav__brand" href="/" aria-label="Amir Precision Cuts — Home">
       <span class="nav__mark">APC</span>
-      <span class="nav__name">Amir Precision</span>
+      <span class="nav__brand-text">
+        <span class="nav__name">Amir Precision</span>
+        <span class="nav__meta">Encino, CA</span>
+      </span>
     </a>
     <nav class="nav__links" aria-label="Primary">
-      <a href="/#about">About</a>
       <a href="/#services">Services</a>
+      <a href="/#about">About</a>
       <a href="/blog/">From the Chair</a>
       <a href="/#aftercare">Aftercare</a>
       <a href="/#faq">FAQ</a>
       <a href="/#visit">Visit</a>
     </nav>
     
+    <a class="btn btn--accent nav__cta" href="tel:+18188183945" aria-label="Call Amir Precision Cuts">(818) 818-3945</a>
+    
     <button class="nav__toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navMobile" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
   </div>
   <div class="nav__mobile" id="navMobile">
-    <a href="/#about">About</a>
-    <a href="/#services">Services</a>
-    <a href="/blog/">From the Chair</a>
-    <a href="/#aftercare">Aftercare</a>
-    <a href="/#faq">FAQ</a>
-    <a href="/#visit">Visit</a>
+    <a href="/#services">Services<span class="nav__mobile-i" aria-hidden="true">01</span></a>
+    <a href="/#about">About<span class="nav__mobile-i" aria-hidden="true">02</span></a>
+    <a href="/blog/">From the Chair<span class="nav__mobile-i" aria-hidden="true">03</span></a>
+    <a href="/#aftercare">Aftercare<span class="nav__mobile-i" aria-hidden="true">04</span></a>
+    <a href="/#faq">FAQ<span class="nav__mobile-i" aria-hidden="true">05</span></a>
+    <a href="/#visit">Visit<span class="nav__mobile-i" aria-hidden="true">06</span></a>
+    
+    <a class="btn btn--accent" href="tel:+18188183945" aria-label="Call Amir Precision Cuts">Call (818) 818-3945</a>
     
   </div>
 </header>
 
 <main id="main" tabindex="-1">
+
 <section class="hero hero--classic hero--has-image" id="home">
   
     <div class="hero__media">
       <picture>
         <source type="image/webp" srcset="/assets/img/media/hero-800.4e07ec32.webp 800w, /assets/img/media/hero-1376.b9e6f298.webp 1376w" sizes="100vw" />
-        <img src="/assets/img/media/hero-1376.b9e6f298.jpg" srcset="/assets/img/media/hero-800.4e07ec32.jpg 800w, /assets/img/media/hero-1376.b9e6f298.jpg 1376w" sizes="100vw"
+        <img class="media-focus--center" src="/assets/img/media/hero-1376.b9e6f298.jpg" srcset="/assets/img/media/hero-800.4e07ec32.jpg 800w, /assets/img/media/hero-1376.b9e6f298.jpg 1376w" sizes="100vw"
              alt="A shaft of warm light crossing a dark room, catching dust, with the silhouette of a barber&#39;s chair at its edge."
              width="1376" height="768"
              fetchpriority="high" decoding="async" />
       </picture>
     </div>
     <div class="hero__scrim" aria-hidden="true"></div>
+    
+    <div class="hero__grain" aria-hidden="true"></div>
 
 
-  <div class="hero__inner container hero__inner--center">
-    <p class="eyebrow">men&#39;s barbershop &middot; Encino</p>
+  <div class="hero__inner container container--wide">
+    <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span>men&#39;s barbershop &middot; Encino</p>
     <h1 class="hero__title">Amir Precision Cuts</h1>
-    <hr class="hero__rule" />
     <p class="hero__tagline">Precision cuts and hot towel shaves in Encino</p>
-    <p class="hero__lede">A barbershop on Ventura Boulevard in Encino for men who want the detail done properly — precision cuts, beard work shaped to the face, and traditional hot towel shaves.</p>
     <div class="hero__cta">
       
-      <a class="btn btn--ghost btn--lg" href="#services">Services &amp; pricing</a>
+      <a class="btn btn--accent btn--lg" href="tel:+18188183945">Call to book</a>
+      
+      <a class="btn btn--glass btn--lg" href="#services">Services &amp; pricing</a>
     </div>
+    <dl class="hero__ledger">
+      <div>
+        <dt>Address</dt>
+        <dd>17388 Ventura Blvd<br />Encino, CA 91316</dd>
+      </div>
+      <div>
+        <dt>Hours</dt>
+        <dd><span class="nowrap">Tue–Fri 9 AM–8 PM</span><br /><span class="nowrap">Sat 9 AM–7 PM</span></dd>
+      </div>
+      <div>
+        <dt>Booking</dt>
+        <dd>By appointment only.</dd>
+      </div>
+    </dl>
   </div>
 </section>
 
-<section class="section  section--about" id="about">
-  <div class="container about__narrow">
-    <div class="section__head section__head--center">
+
+<section class="section  section--services" id="services">
+  <span class="section__halo" aria-hidden="true"></span>
+  <div class="container container--wide">
+    <div class="section__head section__head--split">
+      <div>
+        <p class="eyebrow">Services</p>
+        <h2 class="h2">Services &amp; Pricing</h2>
+      </div>
+      <p class="section__aside">6 services<br />By appointment only</p>
+    </div>
+    <dl class="service-list">
+      
+      <div class="service-list__item" id="service-haircut">
+        <dt class="service-list__term">
+          <span class="service-list__name">Haircut</span>
+          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$50</span>
+        </dt>
+        <dd class="service-list__desc">
+          <span class="service-list__body">A cut shaped to how your hair actually grows, finished with a clean neckline and edges.</span>
+          <span class="service-list__duration">45 min</span>
+        </dd>
+      </div>
+      
+      <div class="service-list__item" id="service-haircut-beard-trim">
+        <dt class="service-list__term">
+          <span class="service-list__name">Haircut and Beard Trim</span>
+          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$70</span>
+        </dt>
+        <dd class="service-list__desc">
+          <span class="service-list__body">The full reset — cut and beard in one sitting, with the two lines shaped to work together.</span>
+          <span class="service-list__duration">1 hr 15 min</span>
+        </dd>
+      </div>
+      
+      <div class="service-list__item" id="service-beard-trim">
+        <dt class="service-list__term">
+          <span class="service-list__name">Beard Trim</span>
+          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$40</span>
+        </dt>
+        <dd class="service-list__desc">
+          <span class="service-list__body">Shaped to the jaw and cheek rather than to a template, with the neckline taken down clean.</span>
+          <span class="service-list__duration">30 min</span>
+        </dd>
+      </div>
+      
+      <div class="service-list__item" id="service-signature-haircut-black-mask">
+        <dt class="service-list__term">
+          <span class="service-list__name">Signature Haircut with Black Mask</span>
+          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$100</span>
+        </dt>
+        <dd class="service-list__desc">
+          <span class="service-list__body">A haircut finished with a charcoal mask over the face and neck. Lifts the skin before the detail work and leaves the edges sharper.</span>
+          <span class="service-list__duration">1 hr 30 min</span>
+        </dd>
+      </div>
+      
+      <div class="service-list__item" id="service-hot-towel-shave">
+        <dt class="service-list__term">
+          <span class="service-list__name">Hot Towel Shave</span>
+          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$60</span>
+        </dt>
+        <dd class="service-list__desc">
+          <span class="service-list__body">A traditional straight razor shave, taken at the pace it needs, with hot towels either side.</span>
+          <span class="service-list__duration">45 min</span>
+        </dd>
+      </div>
+      
+      <div class="service-list__item" id="service-scissor-cut-beard-trim">
+        <dt class="service-list__term">
+          <span class="service-list__name">Scissor Cut and Beard Trim</span>
+          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$90</span>
+        </dt>
+        <dd class="service-list__desc">
+          <span class="service-list__body">Scissor work over the whole head for length and movement, with the beard shaped to match.</span>
+          <span class="service-list__duration">1 hr 30 min</span>
+        </dd>
+      </div>
+      
+    </dl>
+  </div>
+</section>
+
+
+<section class="section section--dark section--about" id="about">
+  <div class="container container--wide grid grid--about">
+    <div class="about__copy">
       <p class="eyebrow">About</p>
       <h2 class="h2">Amir Precision</h2>
+      <p class="lead">A barbershop on Ventura Boulevard in Encino for men who want the detail done properly — precision cuts, beard work shaped to the face, and traditional hot towel shaves.</p>
+      <p>Amir Precision Cuts is a barbershop on Ventura Boulevard, a short walk from the Encino Oak Tree. The work is the kind that only shows up in the details — a neckline that still looks deliberate three weeks later, a beard shaped to the face rather than to a template, a hot towel shave taken at the pace it needs. Every appointment is with Amir, and the chair is not double-booked.</p>
+      <ul class="about__points">
+        
+        <li><span class="check" aria-hidden="true"></span>By appointment only</li>
+        <li><span class="check" aria-hidden="true"></span>Encino, CA 91316</li>
+      </ul>
     </div>
-    <p class="lead about__lead">A barbershop on Ventura Boulevard in Encino for men who want the detail done properly — precision cuts, beard work shaped to the face, and traditional hot towel shaves.</p>
-    <p class="about__body">Amir Precision Cuts is a barbershop on Ventura Boulevard, a short walk from the Encino Oak Tree. The work is the kind that only shows up in the details — a neckline that still looks deliberate three weeks later, a beard shaped to the face rather than to a template, a hot towel shave taken at the pace it needs. Every appointment is with Amir, and the chair is not double-booked.</p>
-    <ul class="about__strip">
-      <li><strong>Amir</strong><span>every appointment</span></li>
-      <li><strong>Encino</strong><span>CA 91316</span></li>
-      <li><strong>Tue – Sat</strong><span>hours vary by day</span></li>
-    </ul>
-    <p class="about__cta"><a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&amp;query=17388%20Ventura%20Blvd%20Encino%20CA%2091316" rel="noopener" target="_blank">Get directions</a></p>
+    <aside class="about__card">
+      <div class="about__card-top">
+        <p class="about__card-label">Visit</p>
+        <p class="about__card-address">17388 Ventura Blvd<br />Encino, CA 91316</p>
+      </div>
+      <div class="about__card-row">
+        <div><p class="about__card-label">Hours</p><p>Tue–Fri 9 AM–8 PM<br />Sat 9 AM–7 PM</p></div>
+        <div><p class="about__card-label">Booking</p><p>By appointment only</p></div>
+      </div>
+      <a class="btn btn--accent btn--block" href="https://www.google.com/maps/search/?api=1&amp;query=17388%20Ventura%20Blvd%20Encino%20CA%2091316" rel="noopener" target="_blank">Get directions</a>
+    </aside>
   </div>
 </section>
 
+
 <section class="section  section--gallery" id="gallery">
-  <div class="container">
-    <div class="section__head section__head--center">
-      <p class="eyebrow">Gallery</p>
-      <h2 class="h2">The work, in shadow</h2>
+  
+  <div class="gallery-band">
+    <picture>
+      <source type="image/webp" srcset="/assets/img/media/01-shears-800.a92816b1.webp 800w, /assets/img/media/01-shears-1200.c57f6085.webp 1200w" sizes="100vw" />
+      <img class="gallery-band__img media-focus--center" src="/assets/img/media/01-shears-1200.c57f6085.jpg" srcset="/assets/img/media/01-shears-800.a92816b1.jpg 800w, /assets/img/media/01-shears-1200.c57f6085.jpg 1200w" sizes="100vw"
+           alt="Barber&#39;s shears in silhouette, edges caught by a thin line of gold light." width="1200" height="896"
+           loading="eager" decoding="async" />
+    </picture>
+    <span class="gallery-band__scrim" aria-hidden="true"></span>
+    <span class="gallery-band__grain" aria-hidden="true"></span>
+    <div class="gallery-band__inner container container--wide">
+      <span class="gallery-band__rule" aria-hidden="true"></span>
+      <p class="gallery-band__line">Scissor work, where the length and movement come from.</p>
+    </div>
+  </div>
+  
+  <div class="container container--wide">
+    <div class="section__head section__head--split section__head--center">
+      <div>
+        <p class="eyebrow">Gallery</p>
+        <h2 class="h2">The work, in shadow</h2>
+      </div>
     </div>
     <ul class="gallery">
       
       <li class="gallery__item">
         <figure class="gallery__figure">
-          <picture>
-            <source type="image/webp" srcset="/assets/img/media/01-shears-800.a92816b1.webp 800w, /assets/img/media/01-shears-1200.c57f6085.webp 1200w" sizes="(max-width: 46em) 100vw, 33vw" />
-            <img class="gallery__img" src="/assets/img/media/01-shears-1200.c57f6085.jpg" srcset="/assets/img/media/01-shears-800.a92816b1.jpg 800w, /assets/img/media/01-shears-1200.c57f6085.jpg 1200w"
-                 sizes="(max-width: 46em) 100vw, 33vw"
-                 alt="Barber&#39;s shears in silhouette, edges caught by a thin line of gold light." width="1200" height="896"
-                 loading="eager" decoding="async" />
-          </picture>
-          <figcaption class="gallery__caption">Scissor work, where the length and movement come from.</figcaption>
-        </figure>
-      </li>
-      
-      <li class="gallery__item">
-        <figure class="gallery__figure">
-          <picture>
-            <source type="image/webp" srcset="/assets/img/media/02-profile-800.b8a6b996.webp 800w, /assets/img/media/02-profile-1200.49a7a77b.webp 1200w" sizes="(max-width: 46em) 100vw, 33vw" />
-            <img class="gallery__img" src="/assets/img/media/02-profile-1200.49a7a77b.jpg" srcset="/assets/img/media/02-profile-800.b8a6b996.jpg 800w, /assets/img/media/02-profile-1200.49a7a77b.jpg 1200w"
-                 sizes="(max-width: 46em) 100vw, 33vw"
-                 alt="Featureless profile silhouette of a head, the tapered neckline reading as pure geometry." width="1200" height="896"
-                 loading="eager" decoding="async" />
-          </picture>
+          <span class="gallery__frame">
+            <picture>
+              <source type="image/webp" srcset="/assets/img/media/02-profile-800.b8a6b996.webp 800w, /assets/img/media/02-profile-1200.49a7a77b.webp 1200w" sizes="(max-width: 46em) 50vw, 25vw" />
+              <img class="gallery__img media-focus--center" src="/assets/img/media/02-profile-1200.49a7a77b.jpg" srcset="/assets/img/media/02-profile-800.b8a6b996.jpg 800w, /assets/img/media/02-profile-1200.49a7a77b.jpg 1200w"
+                   sizes="(max-width: 46em) 50vw, 25vw"
+                   alt="Featureless profile silhouette of a head, the tapered neckline reading as pure geometry." width="1200" height="896"
+                   loading="eager" decoding="async" />
+            </picture>
+          </span>
           <figcaption class="gallery__caption">The neckline is the part that dates first.</figcaption>
         </figure>
       </li>
       
       <li class="gallery__item">
         <figure class="gallery__figure">
-          <picture>
-            <source type="image/webp" srcset="/assets/img/media/03-steam-800.8c24cffd.webp 800w, /assets/img/media/03-steam-1200.fd4a7758.webp 1200w" sizes="(max-width: 46em) 100vw, 33vw" />
-            <img class="gallery__img" src="/assets/img/media/03-steam-1200.fd4a7758.jpg" srcset="/assets/img/media/03-steam-800.8c24cffd.jpg 800w, /assets/img/media/03-steam-1200.fd4a7758.jpg 1200w"
-                 sizes="(max-width: 46em) 100vw, 33vw"
-                 alt="Ribbons of steam curling through darkness, lit from the side." width="1200" height="896"
-                 loading="eager" decoding="async" />
-          </picture>
+          <span class="gallery__frame">
+            <picture>
+              <source type="image/webp" srcset="/assets/img/media/03-steam-800.8c24cffd.webp 800w, /assets/img/media/03-steam-1200.fd4a7758.webp 1200w" sizes="(max-width: 46em) 50vw, 25vw" />
+              <img class="gallery__img media-focus--left-bottom" src="/assets/img/media/03-steam-1200.fd4a7758.jpg" srcset="/assets/img/media/03-steam-800.8c24cffd.jpg 800w, /assets/img/media/03-steam-1200.fd4a7758.jpg 1200w"
+                   sizes="(max-width: 46em) 50vw, 25vw"
+                   alt="Ribbons of steam curling through darkness, lit from the side." width="1200" height="896"
+                   loading="eager" decoding="async" />
+            </picture>
+          </span>
           <figcaption class="gallery__caption">Hot towel, taken at the pace it needs.</figcaption>
         </figure>
       </li>
       
       <li class="gallery__item">
         <figure class="gallery__figure">
-          <picture>
-            <source type="image/webp" srcset="/assets/img/media/04-light-800.20c6e1d9.webp 800w, /assets/img/media/04-light-1014.55e2d016.webp 1014w" sizes="(max-width: 46em) 100vw, 33vw" />
-            <img class="gallery__img" src="/assets/img/media/04-light-1014.55e2d016.jpg" srcset="/assets/img/media/04-light-800.20c6e1d9.jpg 800w, /assets/img/media/04-light-1014.55e2d016.jpg 1014w"
-                 sizes="(max-width: 46em) 100vw, 33vw"
-                 alt="Hard light through a narrow gap, throwing long parallel bars of shadow." width="1014" height="720"
-                 loading="lazy" decoding="async" />
-          </picture>
+          <span class="gallery__frame">
+            <picture>
+              <source type="image/webp" srcset="/assets/img/media/04-light-800.20c6e1d9.webp 800w, /assets/img/media/04-light-1014.55e2d016.webp 1014w" sizes="(max-width: 46em) 50vw, 25vw" />
+              <img class="gallery__img media-focus--center" src="/assets/img/media/04-light-1014.55e2d016.jpg" srcset="/assets/img/media/04-light-800.20c6e1d9.jpg 800w, /assets/img/media/04-light-1014.55e2d016.jpg 1014w"
+                   sizes="(max-width: 46em) 50vw, 25vw"
+                   alt="Hard light through a narrow gap, throwing long parallel bars of shadow." width="1014" height="720"
+                   loading="lazy" decoding="async" />
+            </picture>
+          </span>
           <figcaption class="gallery__caption">Ventura Boulevard, late in the afternoon.</figcaption>
         </figure>
       </li>
       
       <li class="gallery__item">
         <figure class="gallery__figure">
-          <picture>
-            <source type="image/webp" srcset="/assets/img/media/05-beard-800.afbdf9f1.webp 800w, /assets/img/media/05-beard-1200.4c6725df.webp 1200w" sizes="(max-width: 46em) 100vw, 33vw" />
-            <img class="gallery__img" src="/assets/img/media/05-beard-1200.4c6725df.jpg" srcset="/assets/img/media/05-beard-800.afbdf9f1.jpg 800w, /assets/img/media/05-beard-1200.4c6725df.jpg 1200w"
-                 sizes="(max-width: 46em) 100vw, 33vw"
-                 alt="Silhouette of a bearded profile, the cheek line and jaw edge shown as deliberate shapes." width="1200" height="896"
-                 loading="lazy" decoding="async" />
-          </picture>
+          <span class="gallery__frame">
+            <picture>
+              <source type="image/webp" srcset="/assets/img/media/05-beard-800.afbdf9f1.webp 800w, /assets/img/media/05-beard-1200.4c6725df.webp 1200w" sizes="(max-width: 46em) 50vw, 25vw" />
+              <img class="gallery__img media-focus--center" src="/assets/img/media/05-beard-1200.4c6725df.jpg" srcset="/assets/img/media/05-beard-800.afbdf9f1.jpg 800w, /assets/img/media/05-beard-1200.4c6725df.jpg 1200w"
+                   sizes="(max-width: 46em) 50vw, 25vw"
+                   alt="Silhouette of a bearded profile, the cheek line and jaw edge shown as deliberate shapes." width="1200" height="896"
+                   loading="lazy" decoding="async" />
+            </picture>
+          </span>
           <figcaption class="gallery__caption">A beard shaped to the face, not to a template.</figcaption>
         </figure>
       </li>
       
       <li class="gallery__item">
         <figure class="gallery__figure">
-          <picture>
-            <source type="image/webp" srcset="/assets/img/media/06-razor-800.5cbdee36.webp 800w, /assets/img/media/06-razor-1146.1187d26a.webp 1146w" sizes="(max-width: 46em) 100vw, 33vw" />
-            <img class="gallery__img" src="/assets/img/media/06-razor-1146.1187d26a.jpg" srcset="/assets/img/media/06-razor-800.5cbdee36.jpg 800w, /assets/img/media/06-razor-1146.1187d26a.jpg 1146w"
-                 sizes="(max-width: 46em) 100vw, 33vw"
-                 alt="An open straight razor as a black graphic shape against a gold field." width="1146" height="844"
-                 loading="lazy" decoding="async" />
-          </picture>
+          <span class="gallery__frame">
+            <picture>
+              <source type="image/webp" srcset="/assets/img/media/06-razor-800.5cbdee36.webp 800w, /assets/img/media/06-razor-1146.1187d26a.webp 1146w" sizes="(max-width: 46em) 50vw, 25vw" />
+              <img class="gallery__img media-focus--center" src="/assets/img/media/06-razor-1146.1187d26a.jpg" srcset="/assets/img/media/06-razor-800.5cbdee36.jpg 800w, /assets/img/media/06-razor-1146.1187d26a.jpg 1146w"
+                   sizes="(max-width: 46em) 50vw, 25vw"
+                   alt="An open straight razor as a black graphic shape against a gold field." width="1146" height="844"
+                   loading="lazy" decoding="async" />
+            </picture>
+          </span>
           <figcaption class="gallery__caption">Straight razor, one pass at a time.</figcaption>
         </figure>
       </li>
@@ -225,80 +353,46 @@
   </div>
 </section>
 
-<section class="section  section--services" id="services">
-  <div class="container">
-    <div class="section__head section__head--center">
-      <p class="eyebrow">Services</p>
-      <h2 class="h2">Services &amp; Pricing</h2>
-    </div>
-    <dl class="service-list">
-      
-      <div class="service-list__item" id="service-haircut">
-        <dt class="service-list__term">
-          <span class="service-list__name">Haircut</span>
-          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$50</span>
-        </dt>
-        <dd class="service-list__desc">A cut shaped to how your hair actually grows, finished with a clean neckline and edges. <span class="service-list__duration">(45 min)</span></dd>
-      </div>
-      
-      <div class="service-list__item" id="service-haircut-beard-trim">
-        <dt class="service-list__term">
-          <span class="service-list__name">Haircut and Beard Trim</span>
-          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$70</span>
-        </dt>
-        <dd class="service-list__desc">The full reset — cut and beard in one sitting, with the two lines shaped to work together. <span class="service-list__duration">(1 hr 15 min)</span></dd>
-      </div>
-      
-      <div class="service-list__item" id="service-beard-trim">
-        <dt class="service-list__term">
-          <span class="service-list__name">Beard Trim</span>
-          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$40</span>
-        </dt>
-        <dd class="service-list__desc">Shaped to the jaw and cheek rather than to a template, with the neckline taken down clean. <span class="service-list__duration">(30 min)</span></dd>
-      </div>
-      
-      <div class="service-list__item" id="service-signature-haircut-black-mask">
-        <dt class="service-list__term">
-          <span class="service-list__name">Signature Haircut with Black Mask</span>
-          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$100</span>
-        </dt>
-        <dd class="service-list__desc">A haircut finished with a charcoal mask over the face and neck. Lifts the skin before the detail work and leaves the edges sharper. <span class="service-list__duration">(1 hr 30 min)</span></dd>
-      </div>
-      
-      <div class="service-list__item" id="service-hot-towel-shave">
-        <dt class="service-list__term">
-          <span class="service-list__name">Hot Towel Shave</span>
-          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$60</span>
-        </dt>
-        <dd class="service-list__desc">A traditional straight razor shave, taken at the pace it needs, with hot towels either side. <span class="service-list__duration">(45 min)</span></dd>
-      </div>
-      
-      <div class="service-list__item" id="service-scissor-cut-beard-trim">
-        <dt class="service-list__term">
-          <span class="service-list__name">Scissor Cut and Beard Trim</span>
-          <span class="service-list__leader" aria-hidden="true"></span><span class="service-list__price">$90</span>
-        </dt>
-        <dd class="service-list__desc">Scissor work over the whole head for length and movement, with the beard shaped to match. <span class="service-list__duration">(1 hr 30 min)</span></dd>
-      </div>
-      
-    </dl>
-  </div>
-</section>
 
-<section class="section  section--aftercare" id="aftercare">
-  <div class="container">
-    <div class="section__head section__head--center">
-      <p class="eyebrow">Aftercare</p>
-      <h2 class="h2">Look after the work and it lasts.</h2>
+<section class="section section--dark section--aftercare" id="aftercare">
+  <div class="container container--wide">
+    <div class="section__head section__head--split">
+      <div>
+        <p class="eyebrow">Aftercare</p>
+        <h2 class="h2">Look after the work and it lasts.</h2>
+      </div>
+      <p class="lead care__lead">Most cuts here sit right for three to four weeks. Come back when the neckline starts to blur rather than when the length starts to bother you, and the shape never has to be rebuilt from scratch.</p>
     </div>
-    <p class="lead care__lead">Leave a fresh cut alone for the first day — no product, and no cap pulled down hard over the shape. After that, wash with something that does not strip the scalp and towel dry rather than rubbing. A beard holds its shape far longer if you comb it out after every wash and oil it while the skin is still slightly damp. After a hot towel shave, skip anything with alcohol in it for a day. Most cuts here sit right for three to four weeks; come back when the neckline starts to blur rather than when the length starts to bother you, and the shape never has to be rebuilt from scratch.</p>
-    <div class="care care--two">
+    
+    <div class="care care--subjects">
+      
       <div class="care__col care__col--accent">
-        <h3 class="h3 care__title">Staying on schedule</h3>
+        <p class="care__num" aria-hidden="true"></p>
+        <h3 class="h3 care__title">Hair</h3>
+        <p>Leave a fresh cut alone for the first day — no product, and no cap pulled down hard over the shape. After that, wash with something that does not strip the scalp and towel dry rather than rubbing.</p>
+      </div>
+      
+      <div class="care__col">
+        <p class="care__num" aria-hidden="true"></p>
+        <h3 class="h3 care__title">Beard</h3>
+        <p>A beard holds its shape far longer if you comb it out after every wash and oil it while the skin is still slightly damp.</p>
+      </div>
+      
+      <div class="care__col">
+        <p class="care__num" aria-hidden="true"></p>
+        <h3 class="h3 care__title">After a shave</h3>
+        <p>Skip anything with alcohol in it for a day.</p>
+      </div>
+      
+    </div>
+    
+    <div class="care__notes">
+      <div>
+        <h3>Staying on schedule</h3>
         <p>Regular visits do more for the result than any product does. If you are not sure when to come back, ask Amir at the end of your appointment &mdash; the interval depends on you, not on a chart.</p>
       </div>
-      <div class="care__col">
-        <h3 class="h3 care__title">If something is not right</h3>
+      <div>
+        <h3>If something is not right</h3>
         <p>Tell us. Small adjustments are free and quick, and we would much rather hear about it in the first few days than not at all.</p>
         
       </div>
@@ -306,8 +400,9 @@
   </div>
 </section>
 
+
 <section class="section  section--faq" id="faq">
-  <div class="container">
+  <div class="container container--wide faq-layout">
     <div class="section__head section__head--center">
       <p class="eyebrow">Frequently asked</p>
       <h2 class="h2">Questions people actually ask.</h2>
@@ -358,71 +453,95 @@
   </div>
 </section>
 
-<section class="section  section--visit" id="visit">
-  <div class="container">
-    <div class="section__head section__head--center">
+
+<section class="section section--dark section--visit" id="visit">
+  <div class="container container--wide grid grid--visit">
+    <div class="visit__copy">
       <p class="eyebrow">Visit</p>
       <h2 class="h2">Find us in Encino</h2>
       <p class="section__sub">Close to Ventura Boulevard and Louise Avenue.</p>
+      <p class="visit__address">17388 Ventura Blvd<br />Encino, CA 91316</p>
+      <a class="visit__link" href="https://www.google.com/maps/search/?api=1&amp;query=17388%20Ventura%20Blvd%20Encino%20CA%2091316" rel="noopener" target="_blank">Get directions <span aria-hidden="true">&rarr;</span></a>
     </div>
-    <div class="visit__panels">
-      <div class="visit__panel">
-        <h3 class="h3 visit__panel-title">Address</h3>
-        <p>17388 Ventura Blvd<br />Encino, CA 91316</p>
-        <p class="visit__panel-link"><a href="https://www.google.com/maps/search/?api=1&amp;query=17388%20Ventura%20Blvd%20Encino%20CA%2091316" rel="noopener" target="_blank">Get directions</a></p>
+    <dl class="visit__ledger">
+      <div class="visit__row">
+        <dt>Hours</dt>
+        <dd>
+          <span class="nowrap">Tue–Fri 9 AM–8 PM</span><br /><span class="nowrap">Sat 9 AM–7 PM</span>
+          <br /><span class="muted">Closed Sunday and Monday.</span>
+        </dd>
       </div>
-      <div class="visit__panel">
-        <h3 class="h3 visit__panel-title">Hours</h3>
-        <p>Tue–Fri 9 AM–8 PM · Sat 9 AM–7 PM</p>
-        <p class="visit__panel-note">By appointment only.</p>
+      <div class="visit__row">
+        <dt>Booking</dt>
+        <dd>
+          By appointment only.
+          <br /><span class="muted">Saturdays fill first. A day or two ahead is usually enough midweek.</span>
+        </dd>
       </div>
       
-      <div class="visit__panel">
-        <h3 class="h3 visit__panel-title">Contact</h3>
-        <p><a href="tel:+18188183945">Call Amir Precision</a></p>
-        <p><a href="mailto:amirarsang86@gmail.com">amirarsang86@gmail.com</a></p>
+      <div class="visit__row">
+        <dt>Contact</dt>
+        <dd>
+          <a href="tel:+18188183945">(818) 818-3945</a>
+          <br /><a href="mailto:amirarsang86@gmail.com">amirarsang86@gmail.com</a>
+        </dd>
       </div>
       
-    </div>
-    
-    <dl class="visit__notes visit__notes--center">
-      <dt>Transit</dt><dd>Metro runs along Ventura Boulevard; the nearest stops are a short walk either side of Louise Avenue.</dd>
-      <dt>Parking</dt><dd>Street parking along Ventura Boulevard, metered nearest the shop. Leave a few extra minutes on Saturdays.</dd>
+      
+      <div class="visit__row">
+        <dt>Transit</dt>
+        <dd class="muted">Metro runs along Ventura Boulevard; the nearest stops are a short walk either side of Louise Avenue.</dd>
+      </div>
+      
+      
+      <div class="visit__row">
+        <dt>Parking</dt>
+        <dd class="muted">Street parking along Ventura Boulevard, metered nearest the shop. Leave a few extra minutes on Saturdays.</dd>
+      </div>
+      
       
     </dl>
-    
-    
   </div>
+  
 </section>
 
 </main>
+
 <footer class="footer">
-  <div class="container footer__inner">
-    <div class="footer__brand">
+  <div class="container container--wide">
+    <div class="footer__lockup">
       <span class="nav__mark">APC</span>
-      <p>Precision cuts and hot towel shaves in Encino.</p>
+      <span class="footer__name">Amir Precision Cuts</span>
     </div>
-    <div class="footer__cols">
-      <div>
-        <p class="footer__col-title">Visit</p>
-        <p>17388 Ventura Blvd<br />Encino, CA 91316</p>
-      </div>
-      <div>
-        <p class="footer__col-title">Hours</p>
-        <p><span class="nowrap">Tue–Fri 9 AM–8 PM</span> &middot; <span class="nowrap">Sat 9 AM–7 PM</span></p>
-      </div>
-      <div>
-        <p class="footer__col-title">Booking</p>
-        <p>By appointment only</p>
-        <p><a href="tel:+18188183945" aria-label="Call Amir Precision Cuts">(818) 818-3945</a></p>
-        <p><a href="mailto:amirarsang86@gmail.com">amirarsang86@gmail.com</a></p>
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <p class="footer__tagline">Precision cuts and hot towel shaves in Encino.</p>
+        
+        <p class="footer__social"><a href="https://www.instagram.com/amirprecisioncuts" rel="noopener" target="_blank">Instagram</a></p>
         
       </div>
+      <div class="footer__cols">
+        <div>
+          <p class="footer__col-title">Visit</p>
+          <p>17388 Ventura Blvd<br />Encino, CA 91316</p>
+        </div>
+        <div>
+          <p class="footer__col-title">Hours</p>
+          <p><span class="nowrap">Tue–Fri 9 AM–8 PM</span><br /><span class="nowrap">Sat 9 AM–7 PM</span></p>
+        </div>
+        <div>
+          <p class="footer__col-title">Booking</p>
+          <p>By appointment only</p>
+          <p><a href="tel:+18188183945" aria-label="Call Amir Precision Cuts">(818) 818-3945</a></p>
+          <p><a href="mailto:amirarsang86@gmail.com">amirarsang86@gmail.com</a></p>
+          
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="container footer__base">
-    <p>&copy; <span id="year"></span> Amir Precision Cuts &middot; All rights reserved.</p>
-    <p class="footer__meta">By appointment only.</p>
+    <div class="footer__base">
+      <p>&copy; <span id="year"></span> Amir Precision Cuts &middot; All rights reserved.</p>
+      <p class="footer__meta">By appointment only.</p>
+    </div>
   </div>
 </footer>
 

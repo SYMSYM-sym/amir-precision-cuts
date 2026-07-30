@@ -1,17 +1,58 @@
+{{!
+  aftercare.columns — split by subject.
+
+  USED BY editorial AND classic. New classes need rules in the SHARED block.
+
+  Was: one 90-word paragraph covering hair, beard and post-shave care with no
+  structure that said so, followed by two short columns of standing advice. The
+  section had no shape because the content had three subjects and one paragraph.
+
+  `homepage.aftercare_items` is a NEW OPTIONAL config key (see the patch note in
+  the deliverable README). When it is present the subjects render as columns; when
+  it is absent this falls back to the existing prose blob, so every client config
+  that predates the key keeps working unchanged.
+
+  It has to be config rather than markup: the subjects a client aftercares for
+  are specific to their trade. One trade's set is meaningless for the next, and a
+  template that names them has a business fact welded into it — which the grep in
+  assert-invariants.mjs would reject, correctly.
+
+  The two standing notes moved BELOW the subjects into `care__notes` and dropped
+  to the micro tier. They are a footnote to the aftercare, not a fourth and fifth
+  subject, and at the same weight as the subjects they were competing with them.
+
+  HEAD_ALIGN is not interpolated: both variants that use this template want a
+  left-aligned head, and `classic` neutralises the centre modifier anyway.
+}}
 <section class="section {{SECTION_TONE}} section--aftercare" id="aftercare">
-  <div class="container">
-    <div class="section__head {{HEAD_ALIGN}}">
-      <p class="eyebrow">Aftercare</p>
-      <h2 class="h2">Look after the work and it lasts.</h2>
+  <div class="container container--wide">
+    <div class="section__head section__head--split">
+      <div>
+        <p class="eyebrow">Aftercare</p>
+        <h2 class="h2">Look after the work and it lasts.</h2>
+      </div>
+      {{#if ?homepage.aftercare_lede}}<p class="lead care__lead">{{homepage.aftercare_lede}}</p>{{/if}}
     </div>
+    {{#if ?homepage.aftercare_items}}
+    <div class="care care--subjects">
+      {{#each homepage.aftercare_items}}
+      <div class="care__col{{#if @first}} care__col--accent{{/if}}">
+        <p class="care__num" aria-hidden="true"></p>
+        <h3 class="h3 care__title">{{title}}</h3>
+        <p>{{body}}</p>
+      </div>
+      {{/each}}
+    </div>
+    {{else}}
     <p class="lead care__lead">{{homepage.aftercare_body}}</p>
-    <div class="care care--two">
-      <div class="care__col care__col--accent">
-        <h3 class="h3 care__title">Staying on schedule</h3>
+    {{/if}}
+    <div class="care__notes">
+      <div>
+        <h3>Staying on schedule</h3>
         <p>Regular visits do more for the result than any product does. If you are not sure when to come back, ask {{business.practitioner_name}} at the end of your appointment &mdash; the interval depends on you, not on a chart.</p>
       </div>
-      <div class="care__col">
-        <h3 class="h3 care__title">If something is not right</h3>
+      <div>
+        <h3>If something is not right</h3>
         <p>Tell us. Small adjustments are free and quick, and we would much rather hear about it in the first few days than not at all.</p>
         {{#if ?booking.url}}<a class="btn btn--accent btn--block" href="{{booking.url}}">Book your next visit</a>{{/if}}
       </div>

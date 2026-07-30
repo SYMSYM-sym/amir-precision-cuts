@@ -278,9 +278,21 @@ async function renderBlogIndex(all, partials) {
     .map((a) => {
       const bucket = escapeHtml(String(a.data.bucket || '').replace(/-/g, ' '));
       const dt = escapeHtml(String(a.data.date || ''));
+      // The <time> keeps the ISO value in datetime= for machines and shows a
+      // readable one to people. Formatted from the date PARTS, not through a
+      // Date object: `new Date('2026-07-31')` parses as midnight UTC and prints
+      // the 30th for every reader west of Greenwich, which is where this
+      // client's readers are.
+      const dtHuman = (() => {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(a.data.date || ''));
+        if (!m) return dt;
+        const MONTHS = ['January','February','March','April','May','June',
+                        'July','August','September','October','November','December'];
+        return `${MONTHS[Number(m[2]) - 1]} ${Number(m[3])}, ${m[1]}`;
+      })();
       return `<article class="blog-card" data-bucket="${escapeHtml(String(a.data.bucket || ''))}">
 <a class="blog-card__link" href="/blog/${a.slug}">
-<span class="blog-card__meta"><time datetime="${dt}">${dt}</time><span class="blog-card__pill">${bucket}</span></span>
+<span class="blog-card__meta"><time datetime="${dt}">${dtHuman}</time><span class="blog-card__pill">${bucket}</span></span>
 <h2 class="blog-card__title h3">${escapeHtml(a.data.title)}</h2>
 <p class="blog-card__excerpt muted">${escapeHtml(excerpt(a.mainMd))}</p>
 </a></article>`;

@@ -469,7 +469,7 @@ describe('publish crons are derived, and cover DST [NEW]', () => {
 });
 
 describe('duplicated constants stay in sync', () => {
-  test('verify-live.mjs FEED_MAX_FALLBACK equals constants.mjs FEED_MAX', async () => {
+  it('verify-live.mjs FEED_MAX_FALLBACK equals constants.mjs FEED_MAX', async () => {
     // verify-live.mjs must run in a bare CI job with no node_modules, so it
     // cannot statically import constants.mjs and carries its own fallback.
     // This is the test that makes that duplication safe: bump the cap in one

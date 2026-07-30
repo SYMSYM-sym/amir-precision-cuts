@@ -26,7 +26,7 @@ function wordCount(text) {
 
 /**
  * Words a keyword phrase is allowed to gain when it is written as English.
- * "mens haircut encino" is typed by a searcher; "a men's haircut in Encino" is
+ * "mens haircut <city>" is typed by a searcher; "a men's haircut in <City>" is
  * how it appears in a sentence. Matching the raw phrase as a substring scored
  * every well-written article at 0.00% and the warning became noise nobody read.
  */
@@ -343,7 +343,7 @@ export async function validateArticleFile(mdPath, options = {}) {
     const occurrences = countKeywordPhrase(main, kw);
     const pct = (occurrences / Math.max(wcMain, 1)) * 100;
     // A percentage floor only makes sense for a SINGLE-term head keyword. Applied
-    // to a phrase it demands stuffing: "barber near tarzana" is two significant
+    // to a phrase it demands stuffing: "<trade> near <town>" is two significant
     // terms, and 0.5% of a 950-word article is five proximate repetitions of
     // them — which no barber would write and no reader would forgive. Any
     // multi-word phrase therefore gets an occurrence floor of 2: present in the

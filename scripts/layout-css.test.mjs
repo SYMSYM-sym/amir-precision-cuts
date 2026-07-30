@@ -124,3 +124,48 @@ describe('layout variants ship their own CSS', () => {
     assert.ok(LAYOUT_VARIANTS.includes(loadConfig(FIXTURE).brand.layout_variant));
   });
 });
+
+/**
+ * "Springfield, Springfield".
+ *
+ * A very common case for a local business: the neighbourhood IS the city. Both
+ * dev fixtures have a neighbourhood distinct from their city (Fox Point in
+ * Providence, Boise Bench in Boise), so every test passed while three templates
+ * wrote `neighborhood`, `address_city` side by side and printed the same word
+ * twice on the live site — in an <h2>, in a hero fact row, and in an about card.
+ *
+ * config-schema.mjs already collapses that case in `place_line` and
+ * `place_primary`/`place_secondary`. This is the test that makes templates
+ * actually use them: force the two fields equal and assert no rendered word is
+ * immediately followed by itself.
+ */
+describe('a neighbourhood that IS the city never renders twice', () => {
+  const templates = noFixture ? null : loadTemplateSet(ROOT);
+
+  for (const variant of LAYOUT_VARIANTS) {
+    test(`${variant}: no doubled place name`, { skip: noFixture }, () => {
+      const cfg = loadConfig(FIXTURE);
+      cfg.brand.layout_variant = variant;
+      cfg.location.neighborhood = cfg.location.address_city;
+      const { indexHtml } = renderSiteFrom(cfg, templates);
+
+      // Text only: JSON-LD legitimately repeats addressLocality next to the
+      // neighbourhood, and a <meta> may carry both. This is about what a
+      // visitor reads.
+      const text = indexHtml
+        .replace(/<script[\s\S]*?<\/script>/g, ' ')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&[a-z]+;/g, ' ');
+      const city = cfg.location.address_city;
+      const doubled = new RegExp(`\\b${city}\\b[\\s,·|/–—-]+\\b${city}\\b`, 'i');
+      const hit = text.match(doubled);
+
+      assert.equal(
+        hit, null,
+        `layout_variant "${variant}" renders "${hit && hit[0]}" — the neighbourhood and the `
+        + 'city are the same word and a template printed both. Use derived.place_line for a '
+        + 'one-line label, or derived.place_primary / place_secondary for a two-line one.',
+      );
+    });
+  }
+});

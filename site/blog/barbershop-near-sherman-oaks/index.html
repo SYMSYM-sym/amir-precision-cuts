@@ -12,16 +12,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<!-- The webfont stylesheet is loaded NON-BLOCKING.
-     As a plain <link rel="stylesheet"> it is render-blocking, and measured on a
-     network where fonts.googleapis.com was unreachable the page stayed blank for
-     12.9 seconds — first paint waited out the whole timeout. Not hypothetical:
-     that host is slow on some networks and blocked on others, and the visitor
-     sees nothing at all while it hangs.
-     media="print" makes the browser fetch it at low priority without blocking
-     paint; onload promotes it to all media once it lands. The token stack falls
-     back to Georgia / system-ui, so the pre-swap paint is a deliberate design
-     rather than a flash of nothing. <noscript> covers scripting-off. -->
+
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" media="print" onload="this.media='all';this.onload=null" />
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" /></noscript>
 <link rel="stylesheet" href="/assets/styles.css" />
@@ -44,51 +35,62 @@
 
 <body class="blog-page">
 <a class="skip-link" href="#main">Skip to content</a>
-<div class="topbar">
-  <div class="topbar__inner container">
+
+<aside class="topbar" aria-label="Hours and contact">
+  <div class="topbar__inner container container--wide">
     <span class="topbar__item"><span class="dot" aria-hidden="true"></span>By appointment only</span>
     <span class="topbar__spacer"></span>
+    <span class="topbar__item topbar__hours">Tue–Fri 9 AM–8 PM · Sat 9 AM–7 PM</span>
     
     <a class="topbar__item" href="tel:+18188183945" aria-label="Call Amir Precision Cuts">(818) 818-3945</a>
     
   </div>
-</div>
+</aside>
+
 
 <header class="nav" id="nav">
-  <div class="nav__inner container">
+  <div class="nav__inner container container--wide">
     <a class="nav__brand" href="/" aria-label="Amir Precision Cuts — Home">
       <span class="nav__mark">APC</span>
-      <span class="nav__name">Amir Precision</span>
+      <span class="nav__brand-text">
+        <span class="nav__name">Amir Precision</span>
+        <span class="nav__meta">Encino, CA</span>
+      </span>
     </a>
     <nav class="nav__links" aria-label="Primary">
-      <a href="/#about">About</a>
       <a href="/#services">Services</a>
+      <a href="/#about">About</a>
       <a href="/blog/" class="nav__link--active" aria-current="page">From the Chair</a>
       <a href="/#aftercare">Aftercare</a>
       <a href="/#faq">FAQ</a>
       <a href="/#visit">Visit</a>
     </nav>
     
+    <a class="btn btn--accent nav__cta" href="tel:+18188183945" aria-label="Call Amir Precision Cuts">(818) 818-3945</a>
+    
     <button class="nav__toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navMobile" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
   </div>
   <div class="nav__mobile" id="navMobile">
-    <a href="/#about">About</a>
-    <a href="/#services">Services</a>
-    <a href="/blog/">From the Chair</a>
-    <a href="/#aftercare">Aftercare</a>
-    <a href="/#faq">FAQ</a>
-    <a href="/#visit">Visit</a>
+    <a href="/#services">Services<span class="nav__mobile-i" aria-hidden="true">01</span></a>
+    <a href="/#about">About<span class="nav__mobile-i" aria-hidden="true">02</span></a>
+    <a href="/blog/">From the Chair<span class="nav__mobile-i" aria-hidden="true">03</span></a>
+    <a href="/#aftercare">Aftercare<span class="nav__mobile-i" aria-hidden="true">04</span></a>
+    <a href="/#faq">FAQ<span class="nav__mobile-i" aria-hidden="true">05</span></a>
+    <a href="/#visit">Visit<span class="nav__mobile-i" aria-hidden="true">06</span></a>
+    
+    <a class="btn btn--accent" href="tel:+18188183945" aria-label="Call Amir Precision Cuts">Call (818) 818-3945</a>
     
   </div>
 </header>
 
 <main id="main" tabindex="-1">
+  
   <article class="article-shell" itemscope itemtype="https://schema.org/Article">
     <header class="article-hero">
-      <div class="article-hero__inner container">
-        <p class="eyebrow article-hero__eyebrow">hyperlocal</p>
+      <div class="article-hero__inner container container--wide">
+        <p class="eyebrow article-hero__eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span>hyperlocal</p>
         <h1 class="article-hero__title" itemprop="headline">Coming From Sherman Oaks for a Haircut</h1>
         <div class="article-hero__meta">
           <span class="article-pill">5 min read</span>
@@ -96,7 +98,7 @@
         </div>
       </div>
     </header>
-    <div class="article-body container" itemprop="articleBody">
+    <div class="article-body container container--wide" itemprop="articleBody">
       <p>A barbershop near Sherman Oaks does not have to be in Sherman Oaks. Amir Precision Cuts is a short hop west along Ventura Boulevard, at 17388 in Encino. For most men on the Sherman Oaks side the drive is under ten minutes, and it buys a single-barber chair instead of whoever is free.</p>
 <h2>The trip west</h2>
 <p>Ventura Boulevard is the whole route. It runs continuously from Sherman Oaks into Encino, so there is no clever way to do it and no reason to look for one. You stay on the boulevard, you pass Hayvenhurst Avenue, and the shop is between there and Louise Avenue.</p>
@@ -131,33 +133,42 @@
     <section class="section section--dark continue-reading"><div class="container"><p class="eyebrow">Continue reading</p><h2 class="h2">More from <span class="accent">From the Chair</span></h2><div class="continue-reading__grid"><article class="continue-reading__card"><a href="/blog/mens-haircut-encino"><h3 class="h3">Men's Haircuts in Encino: What $50 Actually Buys</h3><p class="muted">A men's haircut in Encino is $50 at Amir Precision Cuts. That covers the consultation, the cut itself shaped to how your hair grows, and th…</p></a></article><article class="continue-reading__card"><a href="/blog/barber-tarzana-reseda-side"><h3 class="h3">For Men in Tarzana and Reseda: Worth the Ten Minutes</h3><p class="muted">A barber near Tarzana is usually a barber in Tarzana. This one is ten minutes east, on Ventura Boulevard in Encino, and the reason men make…</p></a></article><article class="continue-reading__card"><a href="/blog/barber-near-encino-oak-tree"><h3 class="h3">A Barber a Short Walk From the Encino Oak Tree</h3><p class="muted">Amir Precision Cuts sits on Ventura Boulevard in Encino, a few minutes on foot from the Encino Oak Tree and just west of Louise Avenue. Any…</p></a></article></div></div></section>
   </article>
 </main>
+
 <footer class="footer">
-  <div class="container footer__inner">
-    <div class="footer__brand">
+  <div class="container container--wide">
+    <div class="footer__lockup">
       <span class="nav__mark">APC</span>
-      <p>Precision cuts and hot towel shaves in Encino.</p>
+      <span class="footer__name">Amir Precision Cuts</span>
     </div>
-    <div class="footer__cols">
-      <div>
-        <p class="footer__col-title">Visit</p>
-        <p>17388 Ventura Blvd<br />Encino, CA 91316</p>
-      </div>
-      <div>
-        <p class="footer__col-title">Hours</p>
-        <p><span class="nowrap">Tue–Fri 9 AM–8 PM</span> &middot; <span class="nowrap">Sat 9 AM–7 PM</span></p>
-      </div>
-      <div>
-        <p class="footer__col-title">Booking</p>
-        <p>By appointment only</p>
-        <p><a href="tel:+18188183945" aria-label="Call Amir Precision Cuts">(818) 818-3945</a></p>
-        <p><a href="mailto:amirarsang86@gmail.com">amirarsang86@gmail.com</a></p>
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <p class="footer__tagline">Precision cuts and hot towel shaves in Encino.</p>
+        
+        <p class="footer__social"><a href="https://www.instagram.com/amirprecisioncuts" rel="noopener" target="_blank">Instagram</a></p>
         
       </div>
+      <div class="footer__cols">
+        <div>
+          <p class="footer__col-title">Visit</p>
+          <p>17388 Ventura Blvd<br />Encino, CA 91316</p>
+        </div>
+        <div>
+          <p class="footer__col-title">Hours</p>
+          <p><span class="nowrap">Tue–Fri 9 AM–8 PM</span><br /><span class="nowrap">Sat 9 AM–7 PM</span></p>
+        </div>
+        <div>
+          <p class="footer__col-title">Booking</p>
+          <p>By appointment only</p>
+          <p><a href="tel:+18188183945" aria-label="Call Amir Precision Cuts">(818) 818-3945</a></p>
+          <p><a href="mailto:amirarsang86@gmail.com">amirarsang86@gmail.com</a></p>
+          
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="container footer__base">
-    <p>&copy; <span id="year"></span> Amir Precision Cuts &middot; All rights reserved.</p>
-    <p class="footer__meta">By appointment only.</p>
+    <div class="footer__base">
+      <p>&copy; <span id="year"></span> Amir Precision Cuts &middot; All rights reserved.</p>
+      <p class="footer__meta">By appointment only.</p>
+    </div>
   </div>
 </footer>
 

@@ -282,8 +282,18 @@ async function main() {
   console.log('\nAll live-site checks passed. ✅');
 }
 
-main().catch((e) => {
-  // R2: a broken verifier must go RED, never quietly green.
-  console.error('verify-live crashed:', e);
-  process.exit(1);
-});
+// Run main() ONLY when this file is the entry point.
+//
+// pipeline.test.mjs imports it for FEED_MAX_FALLBACK, to prove that constant has
+// not drifted from constants.mjs. Without this guard that import RAN the whole
+// verifier against no server: 26 checks failed, process.exit(1) fired, and the
+// test file exited non-zero while every individual assertion still reported ok.
+// `node --test` surfaced that as one unexplained file-level failure.
+const { pathToFileURL } = await import('node:url');   // builtin — safe in a bare CI job
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((e) => {
+    // R2: a broken verifier must go RED, never quietly green.
+    console.error('verify-live crashed:', e);
+    process.exit(1);
+  });
+}

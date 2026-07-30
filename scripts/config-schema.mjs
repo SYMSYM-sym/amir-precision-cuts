@@ -25,6 +25,32 @@ export const SCHEMA_TYPES = [
   'MassageTherapy', 'SkinCareClinic',
 ];
 export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+/**
+ * Where the subject of an image sits, for the crops.
+ *
+ * Every image on the site is `object-fit: cover` inside a fixed ratio — 4:5 in
+ * the gallery grid, wide in the hero and the interstitial band — so a subject
+ * that is not centred gets cropped out. That is not hypothetical: the steam
+ * study is a curl of light in the LOWER LEFT against black, and a centred 4:5
+ * crop of it is an empty rectangle. It rendered as one.
+ *
+ * This is an ALLOWLIST, and it maps to a class rather than to an inline
+ * `style="object-position:…"`, for two reasons. A config value interpolated
+ * into a style attribute is a CSS injection sink reachable from a file a
+ * non-technical client edits; and the site ships no inline styles today, so
+ * a strict Content-Security-Policy stays available as an option.
+ *
+ * It is a fact about the ARTWORK, not about the business, so it belongs in
+ * config next to the alt text rather than welded into a template.
+ */
+export const FOCUS_POSITIONS = [
+  'center',
+  'top', 'bottom', 'left', 'right',
+  'left top', 'left bottom', 'right top', 'right bottom',
+];
+export const focusClass = (v) =>
+  `media-focus--${(v && FOCUS_POSITIONS.includes(v) ? v : 'center').replace(/ /g, '-')}`;
 export const BOOKING_MODELS = ['appointment-only', 'walk-ins welcome', 'online booking'];
 
 export const HEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
@@ -196,6 +222,40 @@ export function validateConfig(c, { allowPlaceholders = false } = {}) {
   // --- homepage prose (keeps the site render deterministic — §02.6) ---
   req(c, 'homepage.about_body', errors);
   req(c, 'homepage.aftercare_body', errors);
+  // OPTIONAL. aftercare.columns renders aftercare split by subject when these are
+  // present and falls back to the aftercare_body prose blob when they are not, so
+  // every config written before this key keeps rendering byte-for-byte.
+  //
+  // They are config rather than markup because the SUBJECTS are a business fact:
+  // one trade's aftercare list means nothing for the next, and a template that
+  // named them would be a weld the forbidden-values grep is meant to catch.
+  //
+  // Validated even though optional: a malformed entry here would otherwise
+  // surface as a strict-mode template throw halfway through a render, which
+  // names a template path rather than the config line that is actually wrong.
+  const acLede = c.homepage?.aftercare_lede;
+  if (acLede !== undefined && (typeof acLede !== 'string' || !acLede.trim())) {
+    errors.push('homepage.aftercare_lede, when present, must be a non-empty string');
+  }
+  const acItems = c.homepage?.aftercare_items;
+  if (acItems !== undefined) {
+    if (!Array.isArray(acItems) || acItems.length === 0) {
+      errors.push('homepage.aftercare_items, when present, must be a non-empty array');
+    } else {
+      if (acItems.length > 6) {
+        errors.push(`homepage.aftercare_items should be 1-6 entries (got ${acItems.length})`);
+      }
+      acItems.forEach((it, i) => {
+        if (!it || typeof it.title !== 'string' || !it.title.trim()) {
+          errors.push(`homepage.aftercare_items[${i}].title is required`);
+        }
+        if (!it || typeof it.body !== 'string' || !it.body.trim()) {
+          errors.push(`homepage.aftercare_items[${i}].body is required`);
+        }
+      });
+    }
+  }
+
   const faq = req(c, 'homepage.faq', errors, { type: 'array', min: 6 });
   if (Array.isArray(faq)) {
     if (faq.length > 10) errors.push(`homepage.faq should be 6-10 entries (got ${faq.length})`);
@@ -315,10 +375,10 @@ export function validateConfig(c, { allowPlaceholders = false } = {}) {
   // bucket, the article prompt) is conditional on it.
   opt('business.years_experience', (v) => /^\d{1,2}$/.test(String(v).replace(/\+$/, '')),
     'should be a plain number of years (e.g. "14"), or omitted entirely');
-  // OPTIONAL. Attributes pull-quotes ("— Amir, barber"). The reference hardcoded
-  // the word "practitioner", which reads as placeholder text in every vertical;
-  // omitting the role yields a bare "— Amir", correct everywhere. A vertical
-  // noun may only ever come from config.
+  // OPTIONAL. Attributes pull-quotes ("— <name>, <role>"). The reference
+  // hardcoded the word "practitioner", which reads as placeholder text in every
+  // vertical; omitting the role yields a bare "— <name>", correct everywhere. A
+  // vertical noun may only ever come from config.
   opt('business.practitioner_role', (v) => typeof v === 'string' && v.length <= 40 && !/[.!?]/.test(v),
     'should be a short role noun with no trailing punctuation (e.g. "barber", "esthetician")');
   opt('location.latitude', (v) => Math.abs(Number(v)) <= 90, 'must be between -90 and 90');
@@ -342,6 +402,9 @@ export function validateConfig(c, { allowPlaceholders = false } = {}) {
     if (!imgOk(media.hero_image)) {
       errors.push('media.hero_image must be a site-absolute path like "/assets/img/hero.jpg"');
     }
+    if (media.hero_focus !== undefined && !FOCUS_POSITIONS.includes(media.hero_focus)) {
+      errors.push(`media.hero_focus "${media.hero_focus}" is not one of: ${FOCUS_POSITIONS.join(' | ')}`);
+    }
     if (!media.hero_image_alt || String(media.hero_image_alt).trim().length < 10) {
       errors.push(
         'media.hero_image is set but media.hero_image_alt is missing or too short. '
@@ -361,6 +424,11 @@ export function validateConfig(c, { allowPlaceholders = false } = {}) {
         if (!imgOk(g?.src)) errors.push(`media.gallery[${i}].src must be a site-absolute image path`);
         if (!g?.alt || String(g.alt).trim().length < 10) {
           errors.push(`media.gallery[${i}].alt is missing or too short — describe the image (WCAG 1.1.1)`);
+        }
+        if (g?.focus !== undefined && !FOCUS_POSITIONS.includes(g.focus)) {
+          errors.push(
+            `media.gallery[${i}].focus "${g.focus}" is not one of: ${FOCUS_POSITIONS.join(' | ')}`,
+          );
         }
       });
       if (gallery.length === 1) {
@@ -516,9 +584,9 @@ export function buildDerived(c) {
   ).test(business.tagline || '');
 
   // booking.phone is stored in E.164 because that is what `tel:` and schema.org
-  // want. Printing it as-is put "+18188183945" in the topbar and the footer —
-  // technically the number, and not how anyone reads a phone number. The link
-  // target stays E.164; only the visible text changes.
+  // want. Printing it as-is put a bare "+1XXXXXXXXXX" in the topbar and the
+  // footer — technically the number, and not how anyone reads a phone number.
+  // The link target stays E.164; only the visible text changes.
   const phoneDisplay = (() => {
     const raw = String(booking.phone || '');
     if (!raw) return '';
@@ -542,9 +610,9 @@ export function buildDerived(c) {
     hours_days_tight: daysTight,                  // "Tue–Sat"
 
     // A SINGLE times string is only true when every open day shares the same
-    // pair. Amir Precision Cuts is 9-8 Tuesday to Friday and 9-7 on Saturday;
-    // rendering "Tuesday – Saturday / 9:00 AM – 8:00 PM" put a lie on the
-    // client's homepage and told men the door was open an hour after it shut.
+    // pair. The first real client closed an hour earlier on Saturday than on
+    // weekdays; rendering one combined range put a lie on their homepage and
+    // told people the door was open an hour after it shut.
     //
     // These are therefore UNDEFINED when hours are not uniform, which makes the
     // strict template engine THROW on any template that reaches for them. That
@@ -571,15 +639,26 @@ export function buildDerived(c) {
     address_city_region_postal: cityRegionPostal,
 
     // A two-line place label for stat strips. Naively that is neighbourhood over
-    // "city, region" — which renders "Encino / Encino, CA" for the very common
-    // case of a business whose neighbourhood IS its city. Same defect as the
-    // duplicated city in meta_title; same fix, one place.
+    // "city, region" — which renders "<city> / <city>, <region>" for the very
+    // common case of a business whose neighbourhood IS its city. Same defect as
+    // the duplicated city in meta_title; same fix, one place.
     place_primary: loc.neighborhood && loc.neighborhood.toLowerCase() !== loc.address_city.toLowerCase()
       ? loc.neighborhood
       : loc.address_city,
     place_secondary: loc.neighborhood && loc.neighborhood.toLowerCase() !== loc.address_city.toLowerCase()
       ? `${loc.address_city}, ${loc.address_region}`
       : `${loc.address_region} ${loc.address_postal}`,
+    // A ONE-LINE place label, for headings and fact rows — "<neighbourhood>,
+    // <city>" normally, and just the city when the neighbourhood IS the city.
+    //
+    // Distinct from place_primary/place_secondary, which are a two-LINE label:
+    // their second line falls back to "<region> <postal>", and a postal code in
+    // an <h2> is not a heading. Three templates were writing
+    // `{ {location.neighborhood} }, { {location.address_city} }` by hand and all
+    // three printed the same word twice on the first real client's site.
+    place_line: loc.neighborhood && loc.neighborhood.toLowerCase() !== loc.address_city.toLowerCase()
+      ? `${loc.neighborhood}, ${loc.address_city}`
+      : loc.address_city,
     address_one_line: addressOneLine,
     address_maps_url: `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`,
 
@@ -592,7 +671,7 @@ export function buildDerived(c) {
     // extras
     social_urls: socialUrls,
     has_experience: Boolean(business.years_experience),
-    // "— Amir, barber" when a role is configured, "— Amir" when it is not.
+    // "— <name>, <role>" when a role is configured, "— <name>" when it is not.
     quote_attribution: business.practitioner_role
       ? `${business.practitioner_name}, ${business.practitioner_role}`
       : business.practitioner_name,
@@ -624,6 +703,17 @@ export function buildDerived(c) {
       lead: i === 0 && arr.length >= 4 && (arr.length - 1) % 3 === 0,
       // Only the first row is worth blocking on; the rest are below the fold.
       loading: i < 3 ? 'eager' : 'lazy',
+      // Always emitted, always a valid class — a template that has to ask
+      // whether a focal point was configured is a template with a branch in it.
+      focus_class: focusClass(g.focus),
+    })),
+    hero_focus_class: focusClass(c.media?.hero_focus),
+    // The `gallery` variant opens with a three-tile band. It was three CSS
+    // gradients — placeholder art that shipped as final on a client who had
+    // supplied seven real images. Use the photographs when they exist; the
+    // gradient tiles stay as the no-imagery fallback.
+    hero_band: (c.media?.gallery || []).slice(0, 3).map((g, i) => ({
+      ...g, index: i, focus_class: focusClass(g.focus),
     })),
     services_display: (c.services || []).map((sv) => ({
       ...sv,
@@ -648,16 +738,16 @@ export function buildDerived(c) {
 
     // seo copy formulas (07 §B)
     // Only append the city when the tagline has not already said it. The naive
-    // formula produced "Amir Precision Cuts — Precision cuts and hot towel
-    // shaves in Encino | Encino", which is what a title tag looks like when a
-    // template never met a real tagline.
+    // formula produced "<name> — <tagline that already names the city> |
+    // <city>", which is what a title tag looks like when a template never met a
+    // real tagline.
     meta_title: site.meta_title_override
       || (taglineNamesCity
         ? `${business.name} — ${business.tagline}`
         : `${business.name} — ${business.tagline} | ${loc.address_city}`),
 
     // Same defect, second location: the footer read "<tagline>. <city>." and
-    // printed "…hot towel shaves in Encino. Encino."
+    // repeated the city when the tagline had already named it.
     footer_tagline: taglineNamesCity
       ? `${business.tagline}.`
       : `${business.tagline}. ${loc.address_city}.`,

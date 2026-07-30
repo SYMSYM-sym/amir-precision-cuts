@@ -88,12 +88,18 @@
   });
 
   // --- reveal on scroll (skipped entirely under prefers-reduced-motion) ---
+  //
+  // This list is a hand-maintained mirror of the section templates, which means
+  // it goes stale silently: an element that is not listed simply never animates,
+  // and nobody notices because a static element looks correct. Updated with the
+  // 2026-07 redesign — .visit__panel is gone (visit.stacked no longer renders
+  // panels) and the four structures that replaced it are listed instead.
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var targets = document.querySelectorAll(
-    '.hero__title, .hero__lede, .hero__cta, .hero__meta, .hero__facts, .section__head,' +
-    '.about__copy, .about__card, .about__strip, .service-row, .service-card,' +
-    '.service-list__item, .service-table__row, .care__col, .care-steps__step,' +
-    '.faq__item, .visit__copy, .visit__aside, .visit__panel'
+    '.hero__title, .hero__tagline, .hero__lede, .hero__cta, .hero__meta, .hero__facts, .hero__ledger,' +
+    '.section__head, .about__copy, .about__card, .about__strip, .service-row, .service-card,' +
+    '.service-list__item, .service-table__row, .care__col, .care-steps__step, .care__notes,' +
+    '.gallery-band__inner, .faq__item, .visit__copy, .visit__aside, .visit__ledger'
   );
   if (reduce || !('IntersectionObserver' in window)) {
     Array.prototype.forEach.call(targets, function (el) { el.classList.add('is-visible'); });

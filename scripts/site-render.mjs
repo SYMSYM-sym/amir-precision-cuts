@@ -184,7 +184,7 @@ export function renderSiteFrom(cfg, templates, mediaManifest = {}) {
   // already says "Find us in <neighbourhood>". When the anchor list starts with
   // the city — which it does for every business whose neighbourhood IS its city,
   // because that is the obvious first thing to write in location_anchors — the
-  // page said "Find us in Encino / Close to Encino and Ventura Boulevard."
+  // page said "Find us in <city> / Close to <city> and <street>."
   // A business is not close to the place it is in. Drop the self-references.
   const selfNames = new Set(
     [cfg.location.address_city, cfg.location.neighborhood, cfg.location.address_region]
@@ -253,6 +253,10 @@ export function renderSiteFrom(cfg, templates, mediaManifest = {}) {
       derived: {
         ...cfg.derived,
         gallery_display: cfg.derived.gallery_display.map(withMedia),
+        // hero_band is a SLICE of the same list, so it needs the same manifest
+        // pass. Missing it renders the config's logical path — which 404s,
+        // because the shipped filenames carry a content hash.
+        hero_band: cfg.derived.hero_band.map(withMedia),
       },
       media: (() => {
         const m = { ...(cfg.media || {}) };

@@ -6,10 +6,21 @@
 {{{TOPBAR}}}
 {{{NAV}}}
 <main id="main" tabindex="-1">
+  {{!
+    Both shells widened to `container--wide` so the article aligns to the same
+    left edge as the nav and the homepage. The reading measure lives on
+    .article-body's CHILDREN instead (styles.css), which is what lets the
+    pull-quote break out of the column — BODY_HTML comes from markdown via
+    scripts/build-blog.mjs, so a direct-child selector is the only handle on it.
+
+    The meta line lost its capsule borders. Six bordered pills holding two words
+    each is a lot of drawing for "5 min read"; one hairline and the micro type
+    tier do the same job quietly.
+  }}
   <article class="article-shell" itemscope itemtype="https://schema.org/Article">
     <header class="article-hero">
-      <div class="article-hero__inner container">
-        <p class="eyebrow article-hero__eyebrow">{{BUCKET_EYEBROW}}</p>
+      <div class="article-hero__inner container container--wide">
+        <p class="eyebrow article-hero__eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span>{{BUCKET_EYEBROW}}</p>
         <h1 class="article-hero__title" itemprop="headline">{{TITLE}}</h1>
         <div class="article-hero__meta">
           <span class="article-pill">{{READING_TIME}} min read</span>
@@ -17,7 +28,7 @@
         </div>
       </div>
     </header>
-    <div class="article-body container" itemprop="articleBody">
+    <div class="article-body container container--wide" itemprop="articleBody">
       {{{BODY_HTML}}}
     </div>
     {{{FAQ_HTML}}}
