@@ -312,6 +312,6 @@ compliance:
 integrations:
   anthropic_model: "claude-sonnet-4-5-20250929"
   vercel_project: "amir-precision-cuts"
-  github_repo: ""
+  github_repo: "SYMSYM-sym/amir-precision-cuts"
   sentry_dsn: ""
   analytics: ""

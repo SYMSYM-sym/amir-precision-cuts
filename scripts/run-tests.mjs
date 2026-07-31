@@ -29,7 +29,7 @@ import { spawnSync } from 'node:child_process';
 // Raise this when tests are added. It is deliberately a floor, not an equality:
 // the point is to catch a file that silently stopped contributing, not to make
 // adding a test a two-file change.
-const MIN_TESTS = 100;
+const MIN_TESTS = 107;
 
 const res = spawnSync(
   process.execPath,

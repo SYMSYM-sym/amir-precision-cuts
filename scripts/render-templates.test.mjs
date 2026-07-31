@@ -159,3 +159,44 @@ describe('render-templates: compile caching does not leak scope', () => {
     assert.equal(fn({ a: 2 }), '2');
   });
 });
+
+
+/**
+ * `${{ ... }}` belongs to the host system, not to this engine.
+ *
+ * Every derived GitHub Actions workflow shipped with `GH_TOKEN: $` because the
+ * tokenizer ate `${{ secrets.GITHUB_TOKEN }}`. Workflows are the one thing
+ * rendered with strict:false — an escape hatch that exists precisely so a
+ * workflow may contain braces — so the unresolved path returned "" instead of
+ * throwing, and the corruption was silent. The repo's auto-merge job then
+ * failed every hour on an unauthenticated `gh pr list`.
+ */
+describe('render-templates: host expression syntax is left alone', () => {
+  const CASES = [
+    'GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}',
+    'if: ${{ github.event_name == \'schedule\' }}',
+    'slug: ${{ github.event.inputs.slug }}',
+    'blob: ${{ toJSON(github) }}',
+    'nested: ${{ fromJSON(steps.x.outputs.y).z }}',
+  ];
+
+  for (const src of CASES) {
+    test(`passes through: ${src}`, () => {
+      // Both modes: strict is what most templates use, non-strict is what
+      // workflows use and is where this went wrong.
+      assert.equal(render(src, {}, { name: 't' }), src);
+      assert.equal(render(src, {}, { name: 't', strict: false }), src);
+    });
+  }
+
+  test("still renders a real tag on the same line", () => {
+    assert.equal(
+      render('${{ secrets.TOKEN }} and {{business.name}}', { business: { name: 'Acme' } }, { name: 't' }),
+      '${{ secrets.TOKEN }} and Acme',
+    );
+  });
+
+  test("a lone brace pair preceded by other punctuation is still a tag", () => {
+    assert.equal(render('#{{business.name}}', { business: { name: 'Acme' } }, { name: 't' }), '#Acme');
+  });
+});

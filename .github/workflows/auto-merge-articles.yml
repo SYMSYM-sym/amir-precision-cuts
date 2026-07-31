@@ -43,7 +43,7 @@ jobs:
 
       - name: Merge one eligible auto-article PR
         env:
-          GH_TOKEN: $
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail

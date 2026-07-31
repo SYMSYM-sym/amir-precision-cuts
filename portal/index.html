@@ -1182,6 +1182,28 @@ function tokenize(src) {
       tokens.push({ t: 'text', v: rest });
       break;
     }
+    // `${{ ... }}` IS NOT A MUSTACHE TAG.
+    //
+    // GitHub Actions expressions — `${{ secrets.GITHUB_TOKEN }}`,
+    // `${{ github.event.inputs.slug }}` — open with a brace pair this tokenizer
+    // is otherwise delighted to eat. It did. Every derived workflow shipped
+    // with `GH_TOKEN: $` instead of a token, because the workflow templates are
+    // the ONE place rendered with strict:false, so the unresolved path returned
+    // an empty string rather than throwing.
+    //
+    // The result was a repo whose auto-merge job failed every hour on an
+    // unauthenticated `gh pr list`, and whose publish job would have failed the
+    // same way the first time it ran. The strict-mode escape hatch that exists
+    // so a workflow can contain literal braces is exactly what hid it.
+    //
+    // A `$` immediately before `{{` means the author meant the host system's
+    // expression syntax, not ours. Emit it verbatim and carry on scanning.
+    if (m.index > 0 && rest[m.index - 1] === '$') {
+      tokens.push({ t: 'text', v: rest.slice(0, m.index + m[0].length) });
+      rest = rest.slice(m.index + m[0].length);
+      continue;
+    }
+
     if (m.index > 0) tokens.push({ t: 'text', v: rest.slice(0, m.index) });
 
     let body = m[1].trim();

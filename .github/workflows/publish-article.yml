@@ -58,7 +58,7 @@ jobs:
         id: guard
         if: github.event.inputs.slug == ''
         env:
-          GH_TOKEN: $
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -uo pipefail
           n="$(gh pr list --state open --label auto-article --json number --jq 'length' 2>/dev/null || echo 0)"
@@ -83,9 +83,9 @@ jobs:
       - name: Generate article
         if: steps.guard.outputs.skip != 'true'
         env:
-          ANTHROPIC_API_KEY: $
-          ANTHROPIC_MODEL: $
-          FORCE_SLUG: $
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+          FORCE_SLUG: ${{ github.event.inputs != null && github.event.inputs.slug || '' }}
         run: node scripts/index.mjs
 
       - name: Detect changes
@@ -103,16 +103,16 @@ jobs:
         if: steps.guard.outputs.skip != 'true' && steps.git_status.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: 'blog: $'
-          title: 'blog: $'
+          commit-message: 'blog: ${{ env.ARTICLE_TITLE }}'
+          title: 'blog: ${{ env.ARTICLE_TITLE }}'
           body: |
             Auto-generated article. Publishes immediately once it passes validation.
 
-            - Slug: $
-            - Target keyword: $
-            - Bucket: $
-            - Word count: $
-          branch: auto/article-$
+            - Slug: ${{ env.ARTICLE_SLUG }}
+            - Target keyword: ${{ env.ARTICLE_KEYWORD }}
+            - Bucket: ${{ env.ARTICLE_BUCKET }}
+            - Word count: ${{ env.ARTICLE_WORDS }}
+          branch: auto/article-${{ env.ARTICLE_SLUG }}
           labels: auto-article
 
       # R12: instant publish. The validator already gated quality, so there's no wait.
@@ -123,10 +123,10 @@ jobs:
       - name: Publish immediately (merge the new PR)
         if: steps.cpr.outputs.pull-request-number
         env:
-          GH_TOKEN: $
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -uo pipefail
-          PR="$"
+          PR="${{ steps.cpr.outputs.pull-request-number }}"
           for i in 1 2 3 4; do
             if gh pr merge "$PR" --squash --delete-branch; then
               echo "Merged PR #$PR — article is going live."

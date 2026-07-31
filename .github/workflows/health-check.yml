@@ -40,7 +40,7 @@ jobs:
       - name: Open an issue if the site is unhealthy
         if: failure()
         env:
-          GH_TOKEN: $
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -uo pipefail
           existing="$(gh issue list --state open --label site-health --json number --jq 'length' 2>/dev/null || echo 0)"
@@ -50,7 +50,7 @@ jobs:
               --label site-health \
               --body "\`npm run verify\` failed against amirprecisioncuts.com.
 
-          Run: $/$/actions/runs/$
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
           This check exists because the expensive failures in this system are the
           SILENT ones -- an article in the sitemap that 404s, feeds drifting from
@@ -65,5 +65,5 @@ jobs:
       - name: Heartbeat
         if: success() && env.HEARTBEAT_URL != ''
         env:
-          HEARTBEAT_URL: $
+          HEARTBEAT_URL: ${{ secrets.HEARTBEAT_URL }}
         run: curl -fsS --retry 3 --max-time 10 "$HEARTBEAT_URL" > /dev/null
