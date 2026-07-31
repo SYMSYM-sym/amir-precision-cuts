@@ -41,24 +41,24 @@ What $50 does not include is a beard. A [beard trim in Encino](/#services) on it
 
 Plenty of shops quote a men's haircut in Encino "from" a number. That phrasing exists for a reason, and the reason is rarely in the client's favour: it lets the number in the search result be lower than the number at the till.
 
-The price here is $50 because that is what it costs. Length does not change it. Difficulty does not change it. A man with thick hair that needs forty minutes of scissor work over the top pays the same as a man who wants a skin fade and is out in half an hour. Averaging across a week is easier for everyone than negotiating at the mirror.
+The price here is $50 because that is what it costs. Length does not change it. Difficulty does not change it. A man with thick hair that needs the full thirty minutes pays the same as a man who wants a skin fade and is out in twenty. Averaging across a week is easier for everyone than negotiating at the mirror.
 
-The exception is genuinely different work rather than a harder version of the same work. A hot towel shave is its own appointment at $60. Scissor work over the whole head with the beard shaped to match is $90 and takes an hour and a half. Those are not surcharges on a haircut; they are different services with their own time.
+The exception is genuinely different work rather than a harder version of the same work. A hot towel shave is its own appointment at $60. Scissor work over the whole head is its own service at $60, and $90 with the beard shaped to match. Those are not surcharges on a haircut; they are different services with their own time.
 
 > "If I quoted from a price I would be guessing at the end of every appointment. One number means the only thing we discuss in the chair is the hair."
 > — Amir, barber
 
-## What forty-five minutes actually buys
+## What thirty minutes actually buys
 
-A haircut is priced in minutes more honestly than it is priced in skill, and $50 buys about forty-five of them.
+A haircut is priced in minutes more honestly than it is priced in skill, and $50 buys about thirty of them.
 
-That is enough time to cut wet and check dry. Hair lies differently once it dries, particularly at the crown and around a cowlick, and a shape that looked balanced wet can sit two millimetres off once the water leaves it. Forty-five minutes leaves room to go back in. Twenty-five does not.
+That is enough time to cut wet and check dry. Hair lies differently once it dries, particularly at the crown and around a cowlick, and a shape that looked balanced wet can sit two millimetres off once the water leaves it. Thirty minutes leaves room to go back in. Fifteen does not.
 
 It is also enough time to do the neckline once, properly, rather than quickly and then again. And it is enough to say at the end when you should come back — which for most men here is a few weeks longer than they expect, because a cut shaped to a growth pattern grows out into a shape rather than out of one.
 
 Where that time goes is the difference between a cheap cut and a cut that holds. It is not mystique. It is minutes, and minutes are the one input a barber cannot fake.
 
-It is worth saying what forty-five minutes does not buy, because the honest version of a price page has a limit in it. It does not buy a different head of hair. A crown that sits forward will still sit forward. A hairline that has moved back will not come forward because the cut around it is precise. What the time buys is a shape that works with those facts instead of against them, and a barber who tells you which is which before the clippers come out rather than after.
+It is worth saying what thirty minutes does not buy, because the honest version of a price page has a limit in it. It does not buy a different head of hair. A crown that sits forward will still sit forward. A hairline that has moved back will not come forward because the cut around it is precise. What the time buys is a shape that works with those facts instead of against them, and a barber who tells you which is which before the clippers come out rather than after.
 
 ## Booking, and where the shop is
 
@@ -74,10 +74,10 @@ If something here is still unclear before you book, the [frequently asked questi
 $50. That is the price rather than a starting point, and it covers the consultation, the cut and the neckline and edges finished by hand.
 
 **Does a longer or thicker head of hair cost more?**
-No. The price is the same regardless of length or difficulty. Only genuinely different services — a beard trim, a hot towel shave, scissor work with the beard — carry their own prices.
+No. The price is the same regardless of length or difficulty. Only genuinely different services — a beard trim, a hot towel shave, a scissor cut — carry their own prices.
 
 **How long should I allow for a haircut?**
-About forty-five minutes. Allow an hour and a quarter if you are having the beard done in the same appointment.
+About thirty minutes. Allow fifty if you are having the beard done in the same appointment.
 
 **Is this barber in Encino appointment-only?**
 Yes. There is one barber and one chair, and the chair is not double-booked, so there is no walk-in queue. A day or two ahead is usually enough midweek.

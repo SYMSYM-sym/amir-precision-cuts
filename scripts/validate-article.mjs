@@ -210,6 +210,97 @@ function complianceChecks(body) {
     const m = lower.match(/\b(the best|world-class|the ultimate|number one|#1|unrivalled|unrivaled|the finest)\b/);
     if (m) errors.push(`Forbidden: unevidenced superlative "${m[0]}" (compliance.no_superlatives_without_evidence)`);
   }
+  /**
+   * R20, second half: an invented DURATION is the same defect as an invented
+   * price, and it went unguarded until three published articles were found
+   * claiming a haircut takes forty-five minutes after the price board said
+   * thirty. The pipeline publishes unattended, so nothing but this stands
+   * between a model's plausible guess and a live client page.
+   *
+   * SCOPED ON PURPOSE. These articles are full of legitimate durations that
+   * are not service times — "fifteen minutes of walking", "three or four
+   * minutes at the start", "under ten minutes from Sherman Oaks". Flagging
+   * every number followed by "minutes" would quarantine every good article
+   * and the check would be turned off within a week.
+   *
+   * So a duration is only challenged when the SENTENCE it appears in also
+   * names a service or quotes a price — which is exactly the shape of the
+   * sentences that were wrong ("A haircut runs about forty-five minutes",
+   * "$90 and an hour and a half"). A model writing about the drive from
+   * Tarzana is left alone.
+   */
+  if (c.no_invented_prices) {
+    // Spelled-out durations, because that is how this voice writes them.
+    // "forty five" is listed with a space: the sentence is normalised to strip
+    // hyphens before matching, so "forty-five" and "forty five" both land here.
+    const WORDS = [
+      ['ten', 10], ['fifteen', 15], ['twenty', 20], ['twenty five', 25],
+      ['thirty', 30], ['forty', 40], ['forty five', 45], ['fifty', 50],
+      ['sixty', 60], ['ninety', 90],
+    ];
+    const toMinutes = (text) => {
+      const t = text.toLowerCase().replace(/[-\u2011\u2013\u2014]/g, ' ');
+      let m;
+      if ((m = /\b(\d+)\s*(?:hr|hour)s?\s*(\d+)\s*min/.exec(t))) return +m[1] * 60 + +m[2];
+      if ((m = /\ban hour and a quarter\b/.exec(t))) return 75;
+      if ((m = /\ban hour and a half\b/.exec(t))) return 90;
+      if ((m = /\b(?:a|one)\s+(?:full\s+)?hour\b/.exec(t))) return 60;
+      if ((m = /\b(\d+)\s*(?:hr|hour)s?\b/.exec(t))) return +m[1] * 60;
+      if ((m = /\b(\d+)\s*min/.exec(t))) return +m[1];
+      // Longest phrase first, so "forty five" is not read as "forty".
+      for (const [w, n] of [...WORDS].sort((a, b) => b[0].length - a[0].length)) {
+        if (new RegExp(`\\b${w}\\s+minutes?\\b`).test(t)) return n;
+      }
+      return null;
+    };
+
+    const svcs = (cfg.services || [])
+      .map((sv) => ({
+        label: String(sv.label || ''),
+        mins: toMinutes(String(sv.duration || '')),
+        // Words distinctive enough to name a service in prose. Short ones are
+        // dropped because "cut" and "the" match half the article.
+        words: String(sv.label || '').toLowerCase().split(/\s+/)
+          .filter((w) => w.length > 3 && !['with', 'and', 'the'].includes(w)),
+      }))
+      .filter((sv) => sv.mins);
+    const allowedMins = new Set(svcs.map((sv) => sv.mins));
+    const serviceWords = svcs.flatMap((sv) => sv.words);
+
+    if (allowedMins.size) {
+      // Split on sentence ends AND on blank lines. Markdown headings carry no
+      // terminal punctuation, so a sentence-only split glues a heading to the
+      // paragraph under it: "## Whether it is worth the ten minutes" merged
+      // with the next sentence and reported a 10-minute service.
+      for (const sentence of body.split(/(?<=[.!?])\s+|\n{2,}/)) {
+        const low = sentence.toLowerCase();
+        const namesService = /\$\s?\d/.test(sentence)
+          || serviceWords.some((w) => low.includes(w));
+        if (!namesService) continue;
+        const mins = toMinutes(sentence);
+        if (mins === null) continue;
+
+        // Compare against the duration of the service the sentence actually
+        // NAMES, not against every duration on the board. Checking the global
+        // set let "a haircut runs about forty-five minutes" through, because 45
+        // is a real duration — of the shave and the scissor cut. That is the
+        // exact sentence that shipped wrong.
+        const named = svcs.filter((sv) => sv.words.some((w) => low.includes(w)));
+        const candidates = named.length ? named : svcs;
+        if (candidates.some((sv) => sv.mins === mins)) continue;
+
+        errors.push(
+          `Forbidden: "${sentence.trim().slice(0, 90)}…" states ${mins} minutes for ` +
+          (named.length
+            ? `${named.map((sv) => `"${sv.label}" (${sv.mins} min)`).join(' / ')}`
+            : 'a service')
+          + ' (compliance.no_invented_prices)',
+        );
+        break;
+      }
+    }
+  }
+
   if (c.no_invented_prices) {
     const allowed = new Set(
       (cfg.services || [])

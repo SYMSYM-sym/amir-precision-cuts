@@ -48,13 +48,13 @@ Call or message on Instagram a day or two ahead midweek. Saturdays go earlier in
 
 The service most men who drive in choose is the longer one, and it is a sensible instinct.
 
-A haircut on its own is $50 and about forty-five minutes. A [scissor cut and beard trim](/#services) is $90 and an hour and a half — scissor work over the whole head for length and movement, with the beard shaped to sit against it. The second one is not a better version of the first; it is different work, and it is the one that changes how a head looks for a month rather than a fortnight.
+A haircut on its own is $50 and about thirty minutes. A [scissor cut and beard trim](/#services) is $90 and a full hour — scissor work over the whole head for length and movement, with the beard shaped to sit against it. The second one is not a better version of the first; it is different work, and it is the one that changes how a head looks for a month rather than a fortnight.
 
-If you are driving fifteen minutes each way, the arithmetic favours the longer appointment. Two thirty-minute visits cost you an hour of Ventura Boulevard between them. One ninety-minute visit costs you the same half hour of driving as a forty-five-minute one, and the result holds longer. Men from the Tarzana and Reseda side book the longer services more often than men who walk in from three blocks away, and that is not a coincidence.
+If you are driving fifteen minutes each way, the arithmetic favours the longer appointment. The half hour on Ventura Boulevard is the same whether you are in the chair for thirty minutes or sixty — it is a fixed cost, and it gets paid every time you come. Two short visits cost you that half hour twice. One longer one costs it once, and the result holds for longer. Men from the Tarzana and Reseda side book the longer services more often than men who walk in from three blocks away, and that is not a coincidence.
 
 A hot towel shave is its own appointment at $60. It is worth booking as a separate visit rather than tacking it on, because the pace is the product and there is no version of it that is quicker.
 
-One thing not to do is book the longest service on your first visit. A first appointment is partly a conversation about what your hair actually does, and it is easier to have that conversation over a cut than over ninety minutes of scissor work committed to in advance. Come once for the haircut, see whether the shape holds three weeks later, and book the longer service after that. Driving in twice to find out is a smaller cost than driving in once and paying ninety for a shape you did not want.
+One thing not to do is book the longest service on your first visit. A first appointment is partly a conversation about what your hair actually does, and it is easier to have that conversation over a cut than over a full hour of scissor work committed to in advance. Come once for the haircut, see whether the shape holds three weeks later, and book the longer service after that. Driving in twice to find out is a smaller cost than driving in once and paying $90 for a shape you did not want.
 
 ## Before you set off
 
@@ -78,4 +78,4 @@ Not here — the shop is appointment-only, which is what makes a drive in from o
 Before eleven or after seven. Ventura Boulevard slows from about four, and the shop is open until 8 Tuesday to Friday, so an evening slot often means a faster trip both ways.
 
 **Is a longer appointment worth booking if I am driving in?**
-Usually. The driving costs the same whether the appointment is forty-five minutes or ninety, and the longer services hold their shape for longer, so the trip comes round less often.
+Usually. The driving costs the same whether the appointment is thirty minutes or an hour, and the longer services hold their shape for longer, so the trip comes round less often.

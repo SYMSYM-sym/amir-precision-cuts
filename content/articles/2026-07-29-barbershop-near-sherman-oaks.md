@@ -48,7 +48,7 @@ None of that is an argument against the shop down the street from you. It is a d
 
 This barbershop near Sherman Oaks runs appointment-only, so the drive is never wasted on a queue. That is the main practical point for anyone travelling in from the Sherman Oaks side — you are not gambling twelve minutes of Ventura Boulevard on whether there is a seat.
 
-A haircut runs about forty-five minutes. A [haircut and beard trim](/#services) together is $70 and takes about an hour and a quarter, and it is the appointment most men who drive in choose, because the two lines get shaped to work with each other in one visit rather than in two. If you are making a trip out of it anyway, doing both is the version that respects the trip.
+A haircut runs about thirty minutes. A [haircut and beard trim](/#services) together is $70 and takes about fifty, and it is the appointment most men who drive in choose, because the two lines get shaped to work with each other in one visit rather than in two. If you are making a trip out of it anyway, doing both is the version that respects the trip.
 
 Hours are Tuesday to Friday, 9 until 8, and Saturday 9 until 7. Closed Sunday and Monday. Saturday fills before the weekdays do, so if you want a Saturday morning slot, ask earlier in the week. [Directions and hours](/#visit) are on the site, along with parking notes.
 
